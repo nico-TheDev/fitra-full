@@ -1,5 +1,5 @@
 // LIBRARY IMPORTS
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Dimensions } from "react-native";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 
@@ -13,6 +13,8 @@ import CircleBG from "components/common/CircleBG";
 
 import colors from "assets/themes/colors";
 import { DashboardContainer, DashboardDate } from "./styles";
+import useTransactions from "store/useTransactions";
+import * as api from "api";
 
 const dotStyle = {
     width: 15,
@@ -25,9 +27,14 @@ const dotStyle = {
 const DashboardScreen = ({ navigation }) => {
     const SLIDER_WIDTH = Dimensions.get("window").width;
     const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9);
-
     const [pageIndex, setPageIndex] = useState(0);
     const isCarousel = useRef(null);
+    const setTransactions = useTransactions((state) => state.setTransactions);
+    const transactions = useTransactions((state) => state.transactions);
+
+    useEffect(() => {
+        setTransactions();
+    }, []);
 
     const handleNavigation = () =>
         navigation.navigate("Dashboard", {
@@ -48,7 +55,7 @@ const DashboardScreen = ({ navigation }) => {
         return (
             <DashboardRecentPanel
                 data={item}
-                key={item.userID}
+                key={item._id}
                 onPress={handleNavigation}
             />
         );
@@ -86,7 +93,7 @@ const DashboardScreen = ({ navigation }) => {
             />
 
             <Carousel
-                data={transactionData}
+                data={transactions.slice(0, 3)}
                 renderItem={recentPanelRenderItem}
                 sliderWidth={SLIDER_WIDTH}
                 itemWidth={ITEM_WIDTH}

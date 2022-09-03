@@ -8,4 +8,6 @@ const apiInstance = axios.create({
 export const addTransaction = (transactionData) =>
     apiInstance.post("transaction/add", { data: transactionData });
 
+export const getTransactions = () => apiInstance.get("/transaction");
+
 export default apiInstance;

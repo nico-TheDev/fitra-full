@@ -4,7 +4,7 @@ import React from "react";
 import ButtonIcon from "components/ButtonIcon";
 import { IconSelectorContainer, IconList, Title } from "./styles";
 
-const IconSelector = ({ iconData, setSelectedIcon, selectedIcon, onPress }) => {
+const IconSelector = ({ iconData, selectedIcon, onPress }) => {
     return (
         <IconSelectorContainer>
             <Title>Icons:</Title>
@@ -17,14 +17,15 @@ const IconSelector = ({ iconData, setSelectedIcon, selectedIcon, onPress }) => {
                         label={item.categoryName}
                         key={index}
                         type={
-                            selectedIcon.icon === item.categoryIcon
+                            selectedIcon.currentIcon === item.categoryIcon
                                 ? "filled"
                                 : ""
                         }
                         onPress={() =>
                             onPress({
                                 label: item.categoryName,
-                                icon: item.categoryIcon,
+                                icon: item.transactionIcon,
+                                currentIcon: item.categoryIcon,
                             })
                         }
                         styles={{ marginHorizontal: 10 }}

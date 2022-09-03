@@ -25,8 +25,12 @@ import {
 import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
 import useUser from "store/useUser";
+import useTransactionStore from "store/useTransactions";
 
 const AddTransactionScreen = ({ navigation }) => {
+    const setTransactions = useTransactionStore(
+        (state) => state.setTransactions
+    );
     const user = useUser((state) => state.user);
     const initialValues = {
         amount: "",
@@ -41,6 +45,7 @@ const AddTransactionScreen = ({ navigation }) => {
     const [selectedIcon, setSelectedIcon] = useState({
         label: "",
         icon: "",
+        currentIcon: "",
     });
     const [isExpense, setIsExpense] = useState(false);
     let [categoryData, setCategoryData] = useState([]);
@@ -71,29 +76,25 @@ const AddTransactionScreen = ({ navigation }) => {
 
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
-        formik.setFieldValue("transactionIcon", icon.icon);
+        formik.setFieldValue("transactionIcon", icon.currentIcon);
         formik.setFieldValue("transactionCategory", icon.label);
     };
 
     const handleFormikSubmit = async (values, { resetForm }) => {
-        if (isExpense) {
-            values.transactionType = "expense";
-        } else {
-            values.transactionType = "income";
-        }
+        values.transactionType = isExpense ? "expense" : "income";
+
         try {
             const { data } = await api.addTransaction({
                 ...values,
                 userID: user.id,
             });
-
             console.log(data);
         } catch (err) {
             console.log(err);
         }
 
+        setTransactions(); // refetch data to update transactions
         resetForm();
-        // console.log(data);
     };
 
     const formik = useFormik({
@@ -141,7 +142,6 @@ const AddTransactionScreen = ({ navigation }) => {
                         iconData={categoryData}
                         onPress={handleIconPress}
                         selectedIcon={selectedIcon}
-                        setSelectedIcon={setSelectedIcon}
                     />
                 </TransactionCategoryHolder>
                 <ScrollContainer>
