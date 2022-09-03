@@ -1,0 +1,2 @@
+import AccountsCreateTransferScreen from "./AccountsCreateTransferScreen";
+export default AccountsCreateTransferScreen;
