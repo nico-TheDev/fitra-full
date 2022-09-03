@@ -13,7 +13,27 @@ export const get_transaction_get = async (req, res) => {
 };
 
 export const add_transaction_post = async (req, res) => {
+    const data = req.body.data;
     try {
+        console.log(data);
+
+        // CREATE THE TRANSACTION
+
+        const transaction = await Transaction.create({
+            userID: data.userID,
+            amount: Number(data.amount),
+            type: data.transactionType,
+            targetAccount: data.transactionAccount,
+            categoryName: data.transactionCategory,
+            transactionIcon: data.transactionIcon,
+            comments: data.comment,
+            commentImg: data.commentImg,
+        });
+
+        res.status(200).json({
+            message: "Transaction Created",
+            data: transaction,
+        });
     } catch (err) {
         console.log(err);
         res.status(400).json({
