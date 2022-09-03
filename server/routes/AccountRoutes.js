@@ -1,10 +1,10 @@
-const { Router } = require("express");
-const Account = require("../models/Account");
-const accountController = require("../controller/AccountController");
+import express from "express";
+import Account from "../models/Account.js";
+import { get_account_get } from "../controller/AccountController.js";
 
 // TRANSACTION ROUTES
-const router = Router();
+const router = express.Router();
 
-router.get("/:id", accountController.get_account_get);
+router.get("/:id", get_account_get);
 
-module.exports = router;
+export default router;

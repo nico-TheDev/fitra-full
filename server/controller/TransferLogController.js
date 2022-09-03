@@ -1,5 +1,5 @@
-const TransferLog = require("../models/TransferLog");
+import TransferLog from "../models/TransferLog.js";
 
-module.exports.get_transferLog_get = async (req, res) => {
+export const get_transferLog_get = async (req, res) => {
     res.json("GET TRANSFER LOG");
 };

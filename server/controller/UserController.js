@@ -1,5 +1,5 @@
-const User = require("../models/User");
+import User from "../models/User.js";
 
-module.exports.get_user_get = async (req, res) => {
+export const get_user_get = async (req, res) => {
     res.json("GET USER");
 };

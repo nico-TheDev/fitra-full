@@ -1,6 +1,6 @@
-const { model, Schema } = require("mongoose");
+import mongoose from "mongoose";
 
-const TransferLogSchema = new Schema(
+const TransferLogSchema = new mongoose.Schema(
     {
         transferID: {
             type: String,
@@ -34,6 +34,6 @@ const TransferLogSchema = new Schema(
     { timestamps: true }
 );
 
-const TransferLog = model("transferlog", TransferLogSchema);
+const TransferLog = mongoose.model("transferlog", TransferLogSchema);
 
-module.exports = TransferLog;
+export default TransferLog;

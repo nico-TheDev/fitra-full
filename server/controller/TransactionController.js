@@ -1,6 +1,6 @@
-const Transaction = require("../models/Transaction");
+import Transaction from "../models/Transaction.js";
 
-module.exports.get_transaction_get = async (req, res) => {
+export const get_transaction_get = async (req, res) => {
     const { id } = req.params;
     const transactions = await Transaction.findById(id);
 
@@ -10,4 +10,15 @@ module.exports.get_transaction_get = async (req, res) => {
         message: "GET ALL TRANSACTIONS",
         data: transactions,
     });
+};
+
+export const add_transaction_post = async (req, res) => {
+    try {
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({
+            message: err.message,
+            error: err,
+        });
+    }
 };

@@ -1,10 +1,10 @@
-const express = require("express");
+import express from "express";
 
 // ROUTE IMPORTS
-const accountRoutes = require("./routes/AccountRoutes");
-const transactionRoutes = require("./routes/TransactionRoutes");
-const transferLogRoutes = require("./routes/TransferLogRoutes");
-const userRoutes = require("./routes/UserRoutes");
+import accountRoutes from "./routes/AccountRoutes.js";
+import transactionRoutes from "./routes/TransactionRoutes.js";
+import transferLogRoutes from "./routes/TransferLogRoutes.js";
+import userRoutes from "./routes/UserRoutes.js";
 
 const app = express();
 
@@ -20,4 +20,4 @@ app.use("/transaction", transactionRoutes);
 app.use("/transferlog", transferLogRoutes);
 app.use("/user", userRoutes);
 
-module.exports = app;
+export default app;

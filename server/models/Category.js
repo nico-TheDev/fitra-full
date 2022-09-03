@@ -1,6 +1,6 @@
-const { model, Schema } = require("mongoose");
+import mongoose from "mongoose";
 
-const CategorySchema = new Schema(
+const CategorySchema = new mongoose.Schema(
     {
         userID: {
             type: String,
@@ -30,6 +30,6 @@ const CategorySchema = new Schema(
     { timestamps: true }
 );
 
-const Category = model("categories", CategorySchema);
+const Category = mongoose.model("categories", CategorySchema);
 
-module.exports = Category;
+export default Category;

@@ -1,6 +1,6 @@
-const{ model, Schema } = require("mongoose");
+import mongoose from "mongoose";
 
-const AccountSchema = new Schema(
+const AccountSchema = new mongoose.Schema(
     {
         accountID: {
             type: String,
@@ -31,6 +31,6 @@ const AccountSchema = new Schema(
     { timestamps: true }
 );
 
-const Account = model("accounts", AccountSchema);
+const Account = mongoose.model("accounts", AccountSchema);
 
-module.exports = Account;
+export default Account;

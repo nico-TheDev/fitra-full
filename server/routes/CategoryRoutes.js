@@ -1,10 +1,10 @@
-const { Router } = require("express");
-const Category = require("../models/Category");
-const categoryController = require("../controller/CategoryController");
+import express from "express";
+import Category from "../models/Category.js";
+import { get_category_get } from "../controller/CategoryController.js";
 
 // TRANSACTION ROUTES
-const router = Router();
+const router = express.Router();
 
-router.get("/:id", categoryController.get_category_get);
+router.get("/:id", get_category_get);
 
-module.exports = router;
+export default router;

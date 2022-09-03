@@ -1,11 +1,17 @@
-const { Router } = require("express");
-const Transaction = require("../models/Transaction");
-const transactionController = require("../controller/TransactionController");
+import express from "express";
+import Transaction from "../models/Transaction.js";
+import {
+    add_transaction_post,
+    get_transaction_get,
+} from "../controller/TransactionController.js";
 
 // TRANSACTION ROUTES
-const router = Router();
+const router = express.Router();
 
 // GET SPECIFIC TRANSACTION
-router.get("/:id", transactionController.get_transaction_get);
+router.get("/:id", get_transaction_get);
 
-module.exports = router;
+// CREATE TRANSACTION
+router.post("/add", add_transaction_post);
+
+export default router;

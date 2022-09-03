@@ -1,5 +1,5 @@
-const Account = require("../models/Account");
+import Account from "../models/Account.js";
 
-module.exports.get_account_get = async (req, res) => {
+export const get_account_get = async (req, res) => {
     res.json("GET ACCOUNT");
 };
