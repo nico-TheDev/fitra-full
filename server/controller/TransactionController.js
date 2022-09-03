@@ -42,3 +42,14 @@ export const add_transaction_post = async (req, res) => {
         });
     }
 };
+
+export const all_transaction_get = async (req, res) => {
+    const transactions = await Transaction.find().sort({ createdAt: "desc" });
+
+    // DO SOME DATA MANIPULATION
+
+    res.json({
+        message: "GET ALL TRANSACTIONS",
+        data: transactions,
+    });
+};
