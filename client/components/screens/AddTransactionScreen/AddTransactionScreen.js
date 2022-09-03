@@ -1,12 +1,15 @@
 // LIBRARY IMPORTS
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
+
 // LOCAL IMPORTS
 import SwitchCategory from "components/SwitchCategory";
 import CustomDropdown from "components/CustomDropdown";
 import CommentInput from "components/CommentInput";
 import IconSelector from "components/IconSelector";
 import Button from "components/Button";
+
+import * as api from "api/index";
 
 import ScreenHeader from "components/ScreenHeader";
 import {
@@ -21,19 +24,24 @@ import {
 } from "./styles";
 import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
+import useUser from "store/useUser";
 
 const AddTransactionScreen = ({ navigation }) => {
+    const user = useUser((state) => state.user);
     const initialValues = {
         amount: "",
         transactionType: "",
         transactionAccount: "",
         transactionIcon: "",
-        transacitonCategory: "",
+        transactionCategory: "",
         comment: "",
         commentImg: "",
     };
 
-    const [selectedIcon, setSelectedIcon] = useState("");
+    const [selectedIcon, setSelectedIcon] = useState({
+        label: "",
+        icon: "",
+    });
     const [isExpense, setIsExpense] = useState(false);
     let [categoryData, setCategoryData] = useState([]);
     const [accountItems, setAccountItems] = useState([
@@ -63,17 +71,29 @@ const AddTransactionScreen = ({ navigation }) => {
 
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
-        formik.setFieldValue("transactionIcon", icon);
+        formik.setFieldValue("transactionIcon", icon.icon);
+        formik.setFieldValue("transactionCategory", icon.label);
     };
 
-    const handleFormikSubmit = (values) => {
+    const handleFormikSubmit = async (values, { resetForm }) => {
         if (isExpense) {
             values.transactionType = "expense";
         } else {
             values.transactionType = "income";
         }
+        try {
+            const { data } = await api.addTransaction({
+                ...values,
+                userID: user.id,
+            });
 
-        console.log(values);
+            console.log(data);
+        } catch (err) {
+            console.log(err);
+        }
+
+        resetForm();
+        // console.log(data);
     };
 
     const formik = useFormik({

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
     ItemContainer,
     Title,
@@ -33,4 +33,4 @@ const CategoryPanelItem = ({
     );
 };
 
-export default CategoryPanelItem;
+export default memo(CategoryPanelItem);

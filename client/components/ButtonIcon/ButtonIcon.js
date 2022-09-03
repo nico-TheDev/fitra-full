@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 import { ButtonContainer, ButtonLabel, ButtonIconContainer } from "./styles";
 
@@ -34,4 +34,4 @@ const ButtonIcon = ({
     );
 };
 
-export default ButtonIcon;
+export default memo(ButtonIcon);

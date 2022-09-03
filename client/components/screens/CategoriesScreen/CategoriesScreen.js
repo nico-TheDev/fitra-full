@@ -45,11 +45,11 @@ const CategoriesScreen = () => {
 
     return (
         <CategoriesScreenContainer>
-            <ScreenHeader title="Categories"
+            <ScreenHeader
+                title="Categories"
                 iconName={ICON_NAMES.ADD}
-                onPressIcon={() =>
-                    navigation.push("CategoriesCreate")
-                } />
+                onPressIcon={() => navigation.push("CategoriesCreate")}
+            />
             <CategoryPanel>
                 <SwitchCategory
                     isEnabled={isExpense}

@@ -17,9 +17,16 @@ const IconSelector = ({ iconData, setSelectedIcon, selectedIcon, onPress }) => {
                         label={item.categoryName}
                         key={index}
                         type={
-                            selectedIcon === item.categoryIcon ? "filled" : ""
+                            selectedIcon.icon === item.categoryIcon
+                                ? "filled"
+                                : ""
                         }
-                        onPress={() => onPress(item.categoryIcon)}
+                        onPress={() =>
+                            onPress({
+                                label: item.categoryName,
+                                icon: item.categoryIcon,
+                            })
+                        }
                         styles={{ marginHorizontal: 10 }}
                     />
                 )}
