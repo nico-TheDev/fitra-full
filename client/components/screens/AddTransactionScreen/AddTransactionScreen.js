@@ -160,6 +160,12 @@ const AddTransactionScreen = ({ navigation }) => {
                             type={"filled"}
                             rounded={"10px"}
                             onPress={formik.handleSubmit}
+                            buttonProps={{
+                                disabled:
+                                    !formik.values.amount &&
+                                    !formik.values.transactionAccount &&
+                                    !formik.values.transactionCategory,
+                            }}
                         />
                     </ButtonHolder>
                 </ScrollContainer>

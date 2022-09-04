@@ -1,6 +1,8 @@
 //LIBRARY IMPORTS
 import React, { useState } from "react";
+import { Text } from "react-native";
 import { useFormik } from "formik";
+import { TriangleColorPicker } from "react-native-color-picker";
 
 //LOCAL IMPORTS
 import CircleBG from "components/common/CircleBG";
@@ -16,15 +18,20 @@ import {
     FunctionContainer,
     ButtonContainer,
     SwitchContainer,
+    ColorPickerContainer,
+    CloseBtn,
 } from "./styles";
 
 import { colorCollection } from "fitra/SampleData";
 import { categories } from "fitra/SampleData";
+import Icon from "components/common/Icon";
+import { ICON_NAMES } from "constants/constant";
 
 const CategoriesCreateScreen = () => {
     const [isExpense, setIsExpense] = useState(false);
     const [selectedIcon, setSelectedIcon] = useState("");
     const [selectedColor, setSelectedColor] = useState("");
+    const [showColorWheel, setShowColorWheel] = useState(false);
 
     const initialValues = {
         categoryName: "",
@@ -47,14 +54,40 @@ const CategoriesCreateScreen = () => {
         formik.setFieldValue("categoryColor", color);
     };
 
-    const handleFormikSubmit = (values) => {
-        console.log(values);
-    };
+    const handleColorSelect = (color) => {};
+
+    const handleFormikSubmit = (values) => {};
 
     return (
         <CategoriesContainer>
             <CircleBG circleSize={250} />
             <ScreenHeader title="Create Category" />
+            {showColorWheel && (
+                <ColorPickerContainer>
+                    <CloseBtn onPress={() => setShowColorWheel(false)}>
+                        {/* <Icon color="white" name={ICON_NAMES.ADD} size={50} /> */}
+                        <Text
+                            style={{
+                                color: "white",
+                                fontSize: 25,
+                                fontWeight: "bold",
+                            }}
+                        >
+                            X
+                        </Text>
+                    </CloseBtn>
+                    <TriangleColorPicker
+                        onColorSelected={handleColorSelect}
+                        style={{
+                            flex: 1,
+                            backgroundColor: "white",
+                            height: "100%",
+                            width: "100%",
+                            padding: 20,
+                        }}
+                    />
+                </ColorPickerContainer>
+            )}
 
             <FunctionContainer>
                 <CustomTextInput
@@ -82,6 +115,7 @@ const CategoriesCreateScreen = () => {
                 onColorPress={handleColorPress}
                 selectedColor={selectedColor}
                 setSelectedColor={setSelectedColor}
+                onAddPress={() => setShowColorWheel(true)}
             />
             <ButtonContainer>
                 <Button

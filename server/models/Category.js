@@ -6,23 +6,19 @@ const CategorySchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        categoryID: {
+        name: {
             type: String,
             required: true,
         },
-        categoryName: {
+        icon: {
             type: String,
             required: true,
         },
-        categoryIcon: {
+        color: {
             type: String,
             required: true,
         },
-        categoryColor: {
-            type: String,
-            required: true,
-        },
-        categoryType: {
+        type: {
             type: String,
             required: true,
         },
