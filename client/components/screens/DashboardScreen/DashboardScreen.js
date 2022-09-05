@@ -33,6 +33,7 @@ const DashboardScreen = ({ navigation }) => {
     const transactions = useTransactions((state) => state.transactions);
 
     useEffect(() => {
+        // GET ALL THE RECENT TRANSACTIONS
         setTransactions();
     }, []);
 
