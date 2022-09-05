@@ -8,7 +8,7 @@ import { TriangleColorPicker } from "react-native-color-picker";
 import CircleBG from "components/common/CircleBG";
 import CustomTextInput from "components/CustomTextInput";
 import ColorPickerPanel from "components/ColorPickerPanel";
-import IconSelector from "components/IconSelector";
+import IconOnlySelector from "components/IconOnlySelector";
 import SwitchCategory from "components/SwitchCategory";
 import Button from "components/Button";
 
@@ -39,11 +39,6 @@ const CategoriesCreateScreen = () => {
         categoryColor: "",
     };
 
-    const formik = useFormik({
-        initialValues,
-        onSubmit: handleFormikSubmit,
-    });
-
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
         formik.setFieldValue("categoryIcon", icon);
@@ -52,11 +47,23 @@ const CategoriesCreateScreen = () => {
     const handleColorPress = (color) => {
         setSelectedColor(color);
         formik.setFieldValue("categoryColor", color);
+        setShowColorWheel(false);
     };
 
-    const handleColorSelect = (color) => {};
+    const handleFormikSubmit = (values) => {
+        console.log(values);
+    };
 
-    const handleFormikSubmit = (values) => {};
+    const handleClear = () => {
+        setSelectedColor("");
+        setSelectedIcon("");
+        formik.resetForm();
+    };
+
+    const formik = useFormik({
+        initialValues,
+        onSubmit: handleFormikSubmit,
+    });
 
     return (
         <CategoriesContainer>
@@ -77,7 +84,7 @@ const CategoriesCreateScreen = () => {
                         </Text>
                     </CloseBtn>
                     <TriangleColorPicker
-                        onColorSelected={handleColorSelect}
+                        onColorSelected={handleColorPress}
                         style={{
                             flex: 1,
                             backgroundColor: "white",
@@ -94,6 +101,7 @@ const CategoriesCreateScreen = () => {
                     inputProps={{
                         placeholder: "Enter Category Name",
                         onChangeText: formik.handleChange("categoryName"),
+                        value: formik.values.categoryName,
                     }}
                     customLabel="Category Name:"
                 />
@@ -104,8 +112,8 @@ const CategoriesCreateScreen = () => {
                     setIsEnabled={setIsExpense}
                 />
             </SwitchContainer>
-            <IconSelector
-                iconData={categories}
+            <IconOnlySelector
+                iconData={Object.values(ICON_NAMES)}
                 onPress={handleIconPress}
                 selectedIcon={selectedIcon}
                 setSelectedIcon={setSelectedIcon}
@@ -134,6 +142,7 @@ const CategoriesCreateScreen = () => {
                     rounded="8px"
                     textSize={14}
                     noBorder={false}
+                    onPress={handleClear}
                 />
             </ButtonContainer>
         </CategoriesContainer>

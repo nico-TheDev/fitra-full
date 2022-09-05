@@ -27,9 +27,11 @@ const ButtonIcon = ({
                     size={iconSize}
                 />
             </ButtonIconContainer>
-            <ButtonLabel type={type} color={iconColor}>
-                {label.substring(0, 8)}
-            </ButtonLabel>
+            {label && (
+                <ButtonLabel type={type} color={iconColor}>
+                    {label.substring(0, 8)}
+                </ButtonLabel>
+            )}
         </ButtonContainer>
     );
 };

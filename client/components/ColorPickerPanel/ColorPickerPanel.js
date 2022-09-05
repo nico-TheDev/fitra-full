@@ -27,7 +27,7 @@ const ColorPickerPanel = ({
                 <AddColorBtn onPress={onAddPress}>
                     <Icon
                         name={ICON_NAMES.ADD}
-                        color={colors.primary.colorFive}
+                        color={selectedColor || colors.primary.colorFive}
                         size={50}
                     />
                 </AddColorBtn>
