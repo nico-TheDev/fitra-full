@@ -1,12 +1,13 @@
 // LIBRARY IMPORTS
 import { useState, useEffect, useCallback } from "react";
+import { Provider } from "react-redux";
 
 // FONT IMPORTS
 import { loadAsync } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 // LOCAL IMPORTS
-
+import store from "./store";
 // COMPONENTS
 import MainApp from "components/MainApp";
 // CONTEXTS
@@ -52,7 +53,9 @@ export default function App() {
     return (
         <AuthProvider>
             <ThemeProvider>
-                <MainApp onLayoutRootView={onLayoutRootView} />
+                <Provider store={store}>
+                    <MainApp onLayoutRootView={onLayoutRootView} />
+                </Provider>
             </ThemeProvider>
         </AuthProvider>
     );

@@ -9,8 +9,6 @@ import CommentInput from "components/CommentInput";
 import IconSelector from "components/IconSelector";
 import Button from "components/Button";
 
-import * as api from "api/index";
-
 import ScreenHeader from "components/ScreenHeader";
 import {
     AddTransactionScreenContainer,
@@ -25,12 +23,11 @@ import {
 import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
 import useUser from "store/useUser";
-import useTransactionStore from "store/useTransactions";
+import { useDispatch } from "react-redux";
+import { postTransaction } from "store/transactionSlice";
 
 const AddTransactionScreen = ({ navigation }) => {
-    const setTransactions = useTransactionStore(
-        (state) => state.setTransactions
-    );
+    const dispatch = useDispatch();
     const user = useUser((state) => state.user);
     const initialValues = {
         amount: "",
@@ -82,18 +79,7 @@ const AddTransactionScreen = ({ navigation }) => {
 
     const handleFormikSubmit = async (values, { resetForm }) => {
         values.transactionType = isExpense ? "expense" : "income";
-
-        try {
-            const { data } = await api.addTransaction({
-                ...values,
-                userID: user.id,
-            });
-            console.log(data);
-        } catch (err) {
-            console.log(err);
-        }
-
-        setTransactions(); // refetch data to update transactions
+        dispatch(postTransaction({ ...values, userID: user.id }));
         resetForm();
     };
 
