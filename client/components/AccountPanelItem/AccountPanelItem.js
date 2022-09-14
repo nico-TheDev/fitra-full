@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 import Icon from "components/common/Icon";
 import { ICON_NAMES } from "constants/constant";
@@ -19,19 +20,11 @@ const CategoryPanelItem = ({ onPress, sender, receiver, price }) => {
             <Icon name={ICON_NAMES.TRANSFER} color={mainColor} size={24} />
             <LeftContainer>
                 <TitleContainer>
-                    <Icon
-                        name={ICON_NAMES.SENDMONEY}
-                        color={mainColor}
-                        size={16}
-                    />
+                    <Icon name={ICON_NAMES.SENDMONEY} color={mainColor} size={16} />
                     <Title color={mainColor}>{sender}</Title>
                 </TitleContainer>
                 <TitleContainer>
-                    <Icon
-                        name={ICON_NAMES.RECEIVEMONEY}
-                        color={mainColor}
-                        size={16}
-                    />
+                    <Icon name={ICON_NAMES.RECEIVEMONEY} color={mainColor} size={16} />
                     <Title color={mainColor}>{receiver}</Title>
                 </TitleContainer>
             </LeftContainer>
@@ -40,6 +33,13 @@ const CategoryPanelItem = ({ onPress, sender, receiver, price }) => {
             </PriceContainer>
         </ItemContainer>
     );
+};
+
+CategoryPanelItem.propTypes = {
+    onPress: PropTypes.func.isRequired,
+    sender: PropTypes.string.isRequired,
+    receiver: PropTypes.string.isRequired,
+    price: PropTypes.string.isRequired,
 };
 
 export default CategoryPanelItem;

@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native";
 import { ButtonContainer, ButtonLabel } from "./styles";
 import Icon from "components/common/Icon";
 import colors from "assets/themes/colors";
+import PropTypes from "prop-types";
 
 // Default Styles Of active BUttons
 TouchableOpacity.defaultProps = {
@@ -34,8 +35,7 @@ const Button = ({
             rounded={rounded}
             noBorder={noBorder}
             style={styles}
-            {...buttonProps}
-        >
+            {...buttonProps}>
             {iconName && (
                 <Icon
                     name={iconName}
@@ -44,15 +44,26 @@ const Button = ({
                 />
             )}
 
-            <ButtonLabel
-                type={type}
-                textSize={textSize}
-                style={buttonLabelStyle}
-            >
+            <ButtonLabel type={type} textSize={textSize} style={buttonLabelStyle}>
                 {title}
             </ButtonLabel>
         </ButtonContainer>
     );
+};
+
+Button.propTypes = {
+    onPress: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired,
+    type: PropTypes.string,
+    textSize: PropTypes.number,
+    iconName: PropTypes.string,
+    iconColor: PropTypes.string,
+    iconSize: PropTypes.number,
+    buttonProps: PropTypes.object,
+    buttonLabelStyle: PropTypes.object,
+    styles: PropTypes.object,
+    rounded: PropTypes.string,
+    width: PropTypes.string,
 };
 
 export default Button;

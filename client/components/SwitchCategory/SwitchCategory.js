@@ -1,5 +1,6 @@
 import { Switch } from "react-native";
 import React from "react";
+import PropTypes from "prop-types";
 
 import {
     ExpenseText,
@@ -49,6 +50,12 @@ const SwitchCategory = ({ isEnabled, setIsEnabled, type }) => {
             <IncomeText enabled={isEnabled}>Income</IncomeText>
         </SwitchContainer>
     );
+};
+
+SwitchCategory.propTypes = {
+    isEnabled: PropTypes.bool.isRequired,
+    setIsEnabled: PropTypes.func.isRequired,
+    type: PropTypes.string,
 };
 
 export default SwitchCategory;

@@ -1,23 +1,10 @@
 import React, { memo } from "react";
-import {
-    ItemContainer,
-    Title,
-    PriceLabel,
-    LeftContainer,
-    PriceContainer,
-    Subhead,
-} from "./styles";
+import PropTypes from "prop-types";
+
+import { ItemContainer, Title, PriceLabel, LeftContainer, PriceContainer, Subhead } from "./styles";
 import Icon from "components/common/Icon";
 
-const CategoryPanelItem = ({
-    onPress,
-    title,
-    price,
-    iconColor,
-    iconName,
-    comment,
-    priceSub,
-}) => {
+const CategoryPanelItem = ({ onPress, title, price, iconColor, iconName, comment, priceSub }) => {
     return (
         <ItemContainer color={iconColor} onPress={onPress}>
             <Icon name={iconName} color={iconColor} size={24} />
@@ -31,6 +18,16 @@ const CategoryPanelItem = ({
             </PriceContainer>
         </ItemContainer>
     );
+};
+
+CategoryPanelItem.propTypes = {
+    onPress: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired,
+    comment: PropTypes.string,
+    priceSub: PropTypes.string,
+    price: PropTypes.string,
+    iconColor: PropTypes.string,
+    iconName: PropTypes.string,
 };
 
 export default memo(CategoryPanelItem);

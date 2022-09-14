@@ -1,5 +1,5 @@
 import React from "react";
-
+import PropTypes from "prop-types";
 import {
     ColorPickerPanelContainer,
     ColorButton,
@@ -13,12 +13,7 @@ import Icon from "components/common/Icon";
 import colors from "assets/themes/colors";
 import { ICON_NAMES } from "constants/constant";
 
-const ColorPickerPanel = ({
-    colorList = [],
-    selectedColor,
-    onColorPress,
-    onAddPress,
-}) => {
+const ColorPickerPanel = ({ colorList = [], selectedColor, onColorPress, onAddPress }) => {
     return (
         <ColorPickerPanelContainer>
             <TextLabel>Colors:</TextLabel>
@@ -34,13 +29,8 @@ const ColorPickerPanel = ({
                 <ColorContainer
                     data={colorList}
                     renderItem={({ item }) => (
-                        <ColorButton
-                            color={item.color}
-                            onPress={() => onColorPress(item.color)}
-                        >
-                            {selectedColor === item.color && (
-                                <Selected>X</Selected>
-                            )}
+                        <ColorButton color={item.color} onPress={() => onColorPress(item.color)}>
+                            {selectedColor === item.color && <Selected>X</Selected>}
                         </ColorButton>
                     )}
                     keyExtractor={(item) => item.colorID}
@@ -50,6 +40,13 @@ const ColorPickerPanel = ({
             </ListContainer>
         </ColorPickerPanelContainer>
     );
+};
+
+ColorPickerPanel.propTypes = {
+    colorList: PropTypes.arrayOf(PropTypes.string),
+    selectedColor: PropTypes.string,
+    onColorPress: PropTypes.func,
+    onAddPress: PropTypes.func,
 };
 
 export default ColorPickerPanel;
