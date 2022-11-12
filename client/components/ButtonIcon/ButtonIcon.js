@@ -5,7 +5,7 @@ import { ButtonContainer, ButtonLabel, ButtonIconContainer } from "./styles";
 import Icon from "components/common/Icon";
 import colors from "assets/themes/colors";
 
-const ButtonIcon = ({ onPress, label, name, type, iconColor, iconSize, styles }) => {
+const ButtonIcon = ({ onPress, label, name, type, iconColor = colors.primary.colorFive, iconSize = 30, styles }) => {
     return (
         <ButtonContainer style={styles}>
             <ButtonIconContainer onPress={onPress} type={type} color={iconColor}>
@@ -27,10 +27,9 @@ const ButtonIcon = ({ onPress, label, name, type, iconColor, iconSize, styles })
 ButtonIcon.propTypes = {
     onPress: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
-    color: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    iconColor: PropTypes.string.isRequired,
-    iconSize: PropTypes.number.isRequired,
+    iconColor: PropTypes.string,
+    iconSize: PropTypes.number,
     styles: PropTypes.object,
 };
 

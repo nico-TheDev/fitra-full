@@ -89,7 +89,7 @@ const ChartsScreen = () => {
                 noBorder={false}
                 textSize={14}
                 width="30%"
-                type={currentTab === item && "filled"}
+                type={currentTab === item ? "filled" : "outlined"}
                 onPress={() => setCurrentTab(item)}
             />
         );
@@ -101,6 +101,7 @@ const ChartsScreen = () => {
             iconColor={item.iconColor}
             title={item.title}
             price={item.price}
+            onPress={() => { }}
         />
     );
 

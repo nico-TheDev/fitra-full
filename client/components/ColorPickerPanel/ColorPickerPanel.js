@@ -43,7 +43,7 @@ const ColorPickerPanel = ({ colorList = [], selectedColor, onColorPress, onAddPr
 };
 
 ColorPickerPanel.propTypes = {
-    colorList: PropTypes.arrayOf(PropTypes.string),
+    colorList: PropTypes.arrayOf(PropTypes.object),
     selectedColor: PropTypes.string,
     onColorPress: PropTypes.func,
     onAddPress: PropTypes.func,

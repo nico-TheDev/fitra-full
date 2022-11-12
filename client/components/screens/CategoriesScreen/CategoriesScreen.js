@@ -62,6 +62,7 @@ const CategoriesScreen = () => {
                     <ButtonIcon
                         name={item.categoryIcon}
                         iconColor={item.categoryColor}
+                        iconSize={25}
                         label={item.categoryName}
                         key={index}
                         type={

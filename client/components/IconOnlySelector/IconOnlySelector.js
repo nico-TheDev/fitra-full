@@ -11,7 +11,7 @@ const IconOnlySelector = ({ iconData, selectedIcon, onPress }) => {
             name={iconName}
             iconColor={colors.primary.colorFive}
             key={index + iconName}
-            type={iconName === selectedIcon && "filled"}
+            type={iconName === selectedIcon ? "filled" : "outlined"}
             onPress={() => onPress(iconName)}
             styles={{ marginHorizontal: 10 }}
         />

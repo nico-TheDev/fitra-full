@@ -30,7 +30,7 @@ const CustomDatePicker = ({ date, width = "100%", onChange, buttonProps }) => {
 };
 
 CustomDatePicker.propTypes = {
-    date: PropTypes.string.isRequired,
+    date: PropTypes.instanceOf(Date).isRequired,
     width: PropTypes.string,
     onChange: PropTypes.func,
     buttonProps: PropTypes.object,

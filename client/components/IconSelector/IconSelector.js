@@ -14,6 +14,7 @@ const IconSelector = ({ iconData, selectedIcon, onPress }) => {
                     <ButtonIcon
                         name={item.categoryIcon}
                         iconColor={item.categoryColor}
+                        iconSize={25}
                         label={item.categoryName}
                         key={index}
                         type={
