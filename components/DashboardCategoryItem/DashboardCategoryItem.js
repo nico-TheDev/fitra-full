@@ -24,7 +24,7 @@ const DashboardCategoryItem = ({
 DashboardCategoryItem.propTypes = {
     onPress: PropTypes.func.isRequired,
     categoryName: PropTypes.string,
-    total: PropTypes.string,
+    total: PropTypes.number,
     inputProps: PropTypes.object,
     iconColor: PropTypes.string,
     iconName: PropTypes.string,
