@@ -22,13 +22,8 @@ import {
 } from "./styles";
 import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
-import useUser from "store/useUser";
-import { useDispatch } from "react-redux";
-import { postTransaction } from "store/transactionSlice";
 
 const AddTransactionScreen = ({ navigation }) => {
-    const dispatch = useDispatch();
-    const user = useUser((state) => state.user);
     const initialValues = {
         amount: "",
         transactionType: "",
@@ -79,7 +74,6 @@ const AddTransactionScreen = ({ navigation }) => {
 
     const handleFormikSubmit = async (values, { resetForm }) => {
         values.transactionType = isExpense ? "expense" : "income";
-        dispatch(postTransaction({ ...values, userID: user.id }));
         resetForm();
     };
 

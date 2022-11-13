@@ -2,7 +2,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Dimensions } from "react-native";
 import Carousel, { Pagination } from "react-native-snap-carousel";
-import { useDispatch, useSelector } from "react-redux";
 import { onSnapshot, collection } from 'firebase/firestore'
 
 
@@ -18,7 +17,6 @@ import colors from "assets/themes/colors";
 import { DashboardContainer, DashboardDate } from "./styles";
 import { db } from "fitra/firebase.config";
 
-import { fetchTransaction } from "store/transactionSlice";
 
 const dotStyle = {
     width: 15,
@@ -34,7 +32,6 @@ const DashboardScreen = ({ navigation }) => {
     const [pageIndex, setPageIndex] = useState(0);
     const [transactions, setTransactions] = useState([]);
     const isCarousel = useRef(null);
-    const dispatch = useDispatch();
 
 
     const transactionColRef = collection(db, "transactions");
@@ -50,7 +47,6 @@ const DashboardScreen = ({ navigation }) => {
         return unsubscribe;
 
         // GET ALL THE RECENT TRANSACTIONS
-        // dispatch(fetchTransaction());
     }, []);
 
     const handleNavigation = () =>
