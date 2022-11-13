@@ -1,5 +1,5 @@
 import React from "react";
-
+import PropTypes from "prop-types";
 import Icon from "components/common/Icon";
 import colors from "assets/themes/colors";
 import {
@@ -30,6 +30,12 @@ const CustomTextInput = ({
             </InputContainer>
         </CustomInputContainer>
     );
+};
+
+CustomTextInput.propTypes = {
+    customLabel: PropTypes.string,
+    width: PropTypes.string,
+    inputProps: PropTypes.object,
 };
 
 export default CustomTextInput;

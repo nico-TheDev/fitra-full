@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-
+import PropTypes from "prop-types";
 import DashboardCategoryItem from "components/DashboardCategoryItem";
 import imgPlaceholder from "assets/img/img-placeholder.png";
 import { RecentPanel, Comment, CommentImg, DetailsHolder } from "./styles";
@@ -19,6 +19,10 @@ const DashboardRecentPanel = ({ data, onPress }) => {
             </DetailsHolder>
         </RecentPanel>
     );
+};
+
+DashboardRecentPanel.propTypes = {
+    onPress: PropTypes.func.isRequired,
 };
 
 export default memo(DashboardRecentPanel);

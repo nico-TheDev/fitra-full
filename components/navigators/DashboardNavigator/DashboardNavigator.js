@@ -7,6 +7,7 @@ import TransactionDetailsScreen from "components/screens/TransactionDetailsScree
 import TransactionHistoryScreen from "components/screens/TransactionHistoryScreen";
 import AddTransactionScreen from "components/screens/AddTransactionScreen";
 import EditTransactionScreen from "components/screens/EditTransactionScreen";
+import MoreScreen from "components/screens/MoreScreen";
 
 const DashboardStack = createNativeStackNavigator();
 
@@ -37,6 +38,10 @@ const DashboardNavigator = () => {
             <DashboardStack.Screen
                 name="EditTransaction"
                 component={EditTransactionScreen}
+            />
+            <DashboardStack.Screen
+                name="More"
+                component={MoreScreen}
             />
         </DashboardStack.Navigator>
     );
