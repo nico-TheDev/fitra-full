@@ -32,4 +32,10 @@ const CustomTextInput = ({
     );
 };
 
+CustomTextInput.propTypes = {
+    customLabel: PropTypes.string,
+    width: PropTypes.string,
+    inputProps: PropTypes.object,
+};
+
 export default CustomTextInput;
