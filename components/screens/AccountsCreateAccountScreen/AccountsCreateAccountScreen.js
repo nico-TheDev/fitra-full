@@ -99,6 +99,7 @@ const AccountsCreateAccountScreen = () => {
                     rounded="8px"
                     textSize={14}
                     noBorder={false}
+                    onPress={() => { console.log("delete") }}
                 />
             </ButtonContainer>
         </AccountsContainer>
