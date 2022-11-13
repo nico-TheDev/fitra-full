@@ -1,5 +1,5 @@
 import React from "react";
-
+import PropTypes from "prop-types";
 import Icon from "components/common/Icon";
 import colors from "assets/themes/colors";
 import {
