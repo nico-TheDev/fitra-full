@@ -1,7 +1,7 @@
 // LIBRARY IMPORTS
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-
+import { collection } from "firebase/firestore";
 // LOCAL IMPORTS
 import SwitchCategory from "components/SwitchCategory";
 import CustomDropdown from "components/CustomDropdown";
@@ -15,15 +15,18 @@ import {
     TransactionAmountInput,
     TransactionPanelHolder,
     SwitchCategoryHolder,
-    TrasactionFormHolder,
+    TransactionFormHolder,
     TransactionCategoryHolder,
     ButtonHolder,
     ScrollContainer,
 } from "./styles";
 import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
+import useTransactionData from "hooks/useTransactionData";
 
 const AddTransactionScreen = ({ navigation }) => {
+    const addTransaction = useTransactionData(state => state.addTransaction);
+
     const initialValues = {
         amount: "",
         transactionType: "",
@@ -74,6 +77,16 @@ const AddTransactionScreen = ({ navigation }) => {
 
     const handleFormikSubmit = async (values, { resetForm }) => {
         values.transactionType = isExpense ? "expense" : "income";
+        console.log(values);
+        addTransaction({
+            amount: Number(values.amount),
+            categoryName: values.transactionCategory,
+            commentImg: "",
+            comments: values.comment,
+            targetAccount: values.transactionAccount,
+            transactionIcon: values.transactionIcon,
+            type: values.transactionType,
+        })
         resetForm();
     };
 
@@ -103,7 +116,7 @@ const AddTransactionScreen = ({ navigation }) => {
                 </SwitchCategoryHolder>
             </TransactionPanelHolder>
 
-            <TrasactionFormHolder>
+            <TransactionFormHolder>
                 <CustomDropdown
                     dropdownItems={accountItems}
                     setDropdownItems={setAccountItems}
@@ -149,7 +162,7 @@ const AddTransactionScreen = ({ navigation }) => {
                         />
                     </ButtonHolder>
                 </ScrollContainer>
-            </TrasactionFormHolder>
+            </TransactionFormHolder>
         </AddTransactionScreenContainer>
     );
 };
