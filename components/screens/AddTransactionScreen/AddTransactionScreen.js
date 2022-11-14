@@ -8,6 +8,7 @@ import CustomDropdown from "components/CustomDropdown";
 import CommentInput from "components/CommentInput";
 import IconSelector from "components/IconSelector";
 import Button from "components/Button";
+import CustomDatePicker from "components/CustomDatePicker";
 
 import ScreenHeader from "components/ScreenHeader";
 import {
@@ -42,6 +43,7 @@ const AddTransactionScreen = ({ navigation }) => {
         icon: "",
         currentIcon: "",
     });
+    const [date, setDate] = useState(new Date());
     const [isExpense, setIsExpense] = useState(false);
     let [categoryData, setCategoryData] = useState([]);
     const [accountItems, setAccountItems] = useState([
@@ -117,6 +119,7 @@ const AddTransactionScreen = ({ navigation }) => {
             </TransactionPanelHolder>
 
             <TransactionFormHolder>
+
                 <CustomDropdown
                     dropdownItems={accountItems}
                     setDropdownItems={setAccountItems}
@@ -129,15 +132,20 @@ const AddTransactionScreen = ({ navigation }) => {
                     }}
                     width="100%"
                 />
-
-                <TransactionCategoryHolder>
-                    <IconSelector
-                        iconData={categoryData}
-                        onPress={handleIconPress}
-                        selectedIcon={selectedIcon}
-                    />
-                </TransactionCategoryHolder>
                 <ScrollContainer>
+
+                    <TransactionCategoryHolder>
+                        <IconSelector
+                            iconData={categoryData}
+                            onPress={handleIconPress}
+                            selectedIcon={selectedIcon}
+                        />
+                    </TransactionCategoryHolder>
+
+                    <CustomDatePicker
+                        date={date}
+                        buttonProps={{ disabled: true }}
+                    />
                     <CommentInput
                         customLabel={"Comments"}
                         inputProps={{
