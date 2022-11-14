@@ -12,6 +12,7 @@ const DashboardRecentPanel = ({ data, onPress }) => {
                 iconColor={data.color || "green"}
                 iconName={data.transactionIcon}
                 total={data.amount}
+                onPress={() => console.log("CLICKED")}
             />
             <DetailsHolder>
                 <Comment>{data.comments || "ADD COMMENT"}</Comment>
