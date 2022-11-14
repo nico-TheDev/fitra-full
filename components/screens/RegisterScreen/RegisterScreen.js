@@ -1,6 +1,6 @@
 import { Text } from "react-native";
 import React from "react";
-import { Formik } from "formik";
+import { Formik, useFormik } from "formik";
 
 // LOCAL IMPORTS
 import Button from "components/Button";
@@ -19,10 +19,13 @@ import {
     InputHolder,
     Input,
 } from "./styles";
+import useAuthentication from 'hooks/useAuthentication';
 
 const RegisterScreen = () => {
     const circleBigBgSize = 400;
     const registerScreenLogoSize = 100;
+
+    const addUser = useAuthentication(state => state.addUser)
 
     const initialValues = {
         firstName: "",
@@ -31,7 +34,15 @@ const RegisterScreen = () => {
         password: "",
     };
 
-    const handleFormikSubmit = (values) => console.log(values);
+    const handleFormikSubmit = async (values) => {
+        console.log(values);
+        addUser({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password: values.password
+        })
+    }
 
     return (
         <RegisterScreenContainer>
@@ -40,7 +51,7 @@ const RegisterScreen = () => {
             </RegisterScreenBg>
             <GreetingsHolder>
                 <RegisterWelcomeTextHolder>
-                    <RegisterWelcomeText1>Create Acount</RegisterWelcomeText1>
+                    <RegisterWelcomeText1>Create Account</RegisterWelcomeText1>
                     <RegisterWelcomeText2>
                         Start your financial journey !
                     </RegisterWelcomeText2>
@@ -59,7 +70,7 @@ const RegisterScreen = () => {
                         <>
                             <InputHolder>
                                 <Input
-                                    onChangeText={handleChange("FirstName")}
+                                    onChangeText={handleChange("firstName")}
                                     value={values.firstName}
                                     placeholder="First Name"
                                     placeholderTextColor={
@@ -108,6 +119,7 @@ const RegisterScreen = () => {
                         rounded={"10px"}
                         type={"filled"}
                         width={"100%"}
+                        onPress={formik.handleSubmit}
                     />
                     <Text style={{ color: colors.primary.colorFive }}>
                         Lorem Ipsum Dolor amet
