@@ -51,9 +51,13 @@ const DashboardScreen = ({ navigation }) => {
         // GET ALL THE RECENT TRANSACTIONS
     }, []);
 
-    const handleNavigation = () =>
+    const handleNavigation = (id) =>
         navigation.navigate("Dashboard", {
             screen: "TransactionDetails",
+            params: {
+                transactionID: id
+            }
+
         });
 
     const dashboardChartRenderItem = ({ item, index }) => {
@@ -70,8 +74,8 @@ const DashboardScreen = ({ navigation }) => {
         return (
             <DashboardRecentPanel
                 data={item}
-                key={item._id}
-                onPress={handleNavigation}
+                key={item.id}
+                onPress={() => handleNavigation(item.id)}
             />
         );
     };

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Formik } from "formik";
+import { useEffect } from "react";
 
 import { FormContainer, TransactionDetailsContainer } from "./styles";
 import ScreenHeader from "components/ScreenHeader";
@@ -10,8 +11,12 @@ import CustomDropdown from "components/CustomDropdown";
 import { categories } from "fitra/SampleData";
 import CommentInput from "components/CommentInput";
 import Button from "components/Button";
+import useTransactionData from "hooks/useTransactionData";
 
-const TransactionDetailsScreen = ({ navigation }) => {
+const TransactionDetailsScreen = ({ route, navigation }) => {
+    const { transactionID } = route.params;
+    const [currentTransaction, setCurrentTransaction] = useState({});
+    const transactionList = useTransactionData(state => state.transactions);
     const [date, setDate] = useState(new Date());
     const [categoryList, setCategoryList] = useState(() => {
         return categories.map((item, index) => {
@@ -29,90 +34,87 @@ const TransactionDetailsScreen = ({ navigation }) => {
         { label: "UnionBank", value: "unionbank" },
     ]);
     const initialValues = {
-        amount: "20000000",
-        accountName: "",
-        categoryName: "",
+        amount: currentTransaction.amount,
+        accountName: currentTransaction.targetAccount,
+        categoryName: currentTransaction.categoryName,
         date: "",
-        comment: "",
+        comment: currentTransaction.comments,
         commentImg: "",
     };
+
+
+    useEffect(() => {
+        const targetTransaction = transactionList.find(transaction => transaction.id === transactionID);
+        console.log(targetTransaction);
+        setCurrentTransaction(targetTransaction);
+    }, [transactionID])
 
     return (
         <TransactionDetailsContainer>
             <ScreenHeader title="Transaction Details" />
-            <Formik initialValues={initialValues}>
-                {({ values, handleChange, setFieldValue }) => (
-                    <FormContainer>
-                        <CustomTextInput
-                            customLabel="Amount: "
-                            inputProps={{
-                                value: values.amount,
-                                editable: false,
-                            }}
-                        />
-                        <CustomDropdown
-                            dropdownItems={accountList}
-                            setDropdownItems={setAccountList}
-                            dropdownProps={{
-                                placeholder: "Choose Account",
-                                zIndex: 3000,
-                                zIndexInverse: 1000,
-                                onChangeValue:
-                                    handleChange("accountName"),
-                                disabled: true,
-                            }}
-                            customLabel="Account"
-                        />
-                        <CustomDropdown
-                            dropdownItems={categoryList}
-                            setDropdownItems={setCategoryList}
-                            dropdownProps={{
-                                placeholder: "Select Category",
-                                zIndex: 1000,
-                                zIndexInverse: 3000,
-                                onChangeValue:
-                                    handleChange("categoryName"),
-                                itemKey: "userId",
-                                disabled: true,
-                            }}
-                            customLabel="Category"
-                        />
-                        <CustomDatePicker
-                            date={date}
-                            buttonProps={{ disabled: true }}
-                            onChange={(event, selectedDate) => {
-                                setFieldValue(
-                                    "date",
-                                    formatDate(selectedDate)
-                                );
-                                setDate(selectedDate);
-                            }}
-                        />
 
-                        <CommentInput
-                            customLabel="Comments:"
-                            inputProps={{
-                                value: values.comment,
-                                placeholder: "Add a comment",
-                                editable: false,
-                            }}
-                        />
+            <FormContainer>
+                <CustomTextInput
+                    customLabel="Amount: "
+                    inputProps={{
+                        value: String(currentTransaction.amount),
+                        editable: false,
+                    }}
+                />
+                <CustomDropdown
+                    dropdownItems={accountList}
+                    setDropdownItems={setAccountList}
+                    dropdownProps={{
+                        placeholder: "Choose Account",
+                        zIndex: 3000,
+                        zIndexInverse: 1000,
+                        disabled: true,
+                        value: currentTransaction.targetAccount
+                    }}
+                    customLabel="Account"
+                />
+                <CustomDropdown
+                    dropdownItems={categoryList}
+                    setDropdownItems={setCategoryList}
+                    dropdownProps={{
+                        placeholder: "Select Category",
+                        zIndex: 1000,
+                        zIndexInverse: 3000,
+                        itemKey: "userId",
+                        disabled: true,
+                        value: currentTransaction.transactionIcon
+                    }}
+                    customLabel="Category"
+                />
+                <CustomDatePicker
+                    date={date}
+                    buttonProps={{ disabled: true }}
+                />
 
-                        <Button
-                            title="Edit"
-                            noBorder={false}
-                            width="50%"
-                            styles={{ marginLeft: "auto" }}
-                            textSize={16}
-                            onPress={() =>
-                                navigation.navigate("Dashboard", {
-                                    screen: "EditTransaction",
-                                })
-                            }
-                        />
-                    </FormContainer>
-                )}
-            </Formik>
+                <CommentInput
+                    customLabel="Comments:"
+                    inputProps={{
+                        value: currentTransaction.comments,
+                        placeholder: "Add a comment",
+                        editable: false,
+                    }}
+                />
+
+                <Button
+                    title="Edit"
+                    noBorder={false}
+                    width="50%"
+                    styles={{ marginLeft: "auto" }}
+                    textSize={16}
+                    onPress={() =>
+                        navigation.navigate("Dashboard", {
+                            screen: "EditTransaction",
+                            params: { transactionID }
+                        })
+                    }
+                />
+            </FormContainer>
+
         </TransactionDetailsContainer>
     );
 };

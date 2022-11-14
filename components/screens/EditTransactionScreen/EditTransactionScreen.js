@@ -21,15 +21,21 @@ import {
 } from "./styles";
 import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
+import useTransactionData from "hooks/useTransactionData";
 
-const EditTransactionScreen = ({ navigation }) => {
+const EditTransactionScreen = ({ route, navigation }) => {
+    const { transactionID } = route.params;
+    const transactionList = useTransactionData(state => state.transactions);
+    const [currentTransaction, setCurrentTransaction] = useState(() => {
+        return transactionList.find(transaction => transaction.id === transactionID);
+    });
     const initialValues = {
-        amount: "69.420",
-        transactionType: "income",
-        transactionAccount: "",
-        transactionIcon: "",
-        transacitonCategory: "",
-        comment: "Sample Comment",
+        amount: String(currentTransaction.amount),
+        transactionType: currentTransaction.type,
+        transactionAccount: currentTransaction.targetAccount,
+        transactionIcon: currentTransaction.transactionIcon,
+        transacitonCategory: currentTransaction.categoryName,
+        comment: currentTransaction.comments,
         commentImg: "",
     };
 
@@ -60,6 +66,10 @@ const EditTransactionScreen = ({ navigation }) => {
             );
         }
     }, [isExpense]);
+
+    useEffect(() => {
+
+    }, [])
 
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
@@ -110,6 +120,7 @@ const EditTransactionScreen = ({ navigation }) => {
                         placeholder: "Choose Account",
                         zIndex: 3000,
                         zIndexInverse: 1000,
+                        value: formik.values.transactionAccount,
                         onChangeValue:
                             formik.handleChange("transactionAccount"),
                     }}
