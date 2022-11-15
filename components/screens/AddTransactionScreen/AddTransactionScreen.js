@@ -31,7 +31,7 @@ const AddTransactionScreen = ({ navigation }) => {
     const addTransaction = useTransactionData(state => state.addTransaction);
     let photoId = uuid.v4();
     // UPLOAD
-    const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transaction/");
+    const [image, chooseImage, uploadImage, filename, imgSrc] = useUploadImage(photoId, "transaction/");
     const initialValues = {
         amount: "",
         transactionType: "",
@@ -84,17 +84,18 @@ const AddTransactionScreen = ({ navigation }) => {
     const handleFormikSubmit = async (values, { resetForm }) => {
         values.transactionType = isExpense ? "expense" : "income";
         console.log(values);
+        const url = await uploadImage();
         addTransaction({
             amount: Number(values.amount),
             categoryName: values.transactionCategory,
-            commentImg: photoId,
+            commentImg: url,
             comments: values.comment,
             targetAccount: values.transactionAccount,
             transactionIcon: values.transactionIcon,
             type: values.transactionType,
         });
-        uploadImage();
         resetForm();
+        navigation.navigate("Dashboard", { screen: "DashboardMain" });
     };
 
     const formik = useFormik({
