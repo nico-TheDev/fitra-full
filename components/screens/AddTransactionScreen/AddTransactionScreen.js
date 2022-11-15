@@ -1,7 +1,8 @@
 // LIBRARY IMPORTS
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import { collection } from "firebase/firestore";
+import uuid from 'react-native-uuid';
+
 // LOCAL IMPORTS
 import SwitchCategory from "components/SwitchCategory";
 import CustomDropdown from "components/CustomDropdown";
@@ -24,10 +25,13 @@ import {
 import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
 import useTransactionData from "hooks/useTransactionData";
+import useUploadImage from "hooks/useUploadImage";
 
 const AddTransactionScreen = ({ navigation }) => {
     const addTransaction = useTransactionData(state => state.addTransaction);
-
+    let photoId = uuid.v4();
+    // UPLOAD
+    const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transaction/");
     const initialValues = {
         amount: "",
         transactionType: "",
@@ -83,12 +87,13 @@ const AddTransactionScreen = ({ navigation }) => {
         addTransaction({
             amount: Number(values.amount),
             categoryName: values.transactionCategory,
-            commentImg: "",
+            commentImg: photoId,
             comments: values.comment,
             targetAccount: values.transactionAccount,
             transactionIcon: values.transactionIcon,
             type: values.transactionType,
-        })
+        });
+        uploadImage();
         resetForm();
     };
 
@@ -96,6 +101,8 @@ const AddTransactionScreen = ({ navigation }) => {
         initialValues: initialValues,
         onSubmit: handleFormikSubmit,
     });
+
+
 
     return (
         <AddTransactionScreenContainer>
@@ -153,6 +160,9 @@ const AddTransactionScreen = ({ navigation }) => {
                             value: formik.values.comment,
                             onChangeText: formik.handleChange("comment"),
                         }}
+                        imageUri={image}
+                        onPress={chooseImage}
+                        filename={filename}
                     />
                     <ButtonHolder>
                         <Button
