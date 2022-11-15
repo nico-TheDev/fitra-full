@@ -51,8 +51,7 @@ export default function App() {
     return (
         <AuthProvider>
             <ThemeProvider>
-                <RegisterScreen />
-                {/* <MainApp onLayoutRootView={onLayoutRootView} /> */}
+                <MainApp onLayoutRootView={onLayoutRootView} />
             </ThemeProvider>
         </AuthProvider>
     );

@@ -1,6 +1,6 @@
 import { TouchableOpacity } from "react-native";
 import React from "react";
-import { Formik } from "formik";
+import { useFormik ,Formik } from "formik";
 
 // LOCAL IMPORTS
 import EllipseBg from "assets/illustrations/Ellipse-Bg.svg";
@@ -25,15 +25,34 @@ import {
 import userProfile from "assets/img/user-1.jpg";
 import Button from "components/Button";
 import { useAuth } from "contexts/AuthContext";
+import useAuthentication, { googleSignIn } from 'hooks/useAuthentication';
 
 const LoginScreen = ({ navigation }) => {
     const { isLoggedIn, setIsLoggedIn } = useAuth();
+    const verifyUser = useAuthentication(state => state.verifyUser);
     const initialValues = { email: "", password: "" };
 
     const handleFormikSubmit = (values) => {
         console.log(values);
+        verifyUser({
+            email: values.email,
+            password: values.password
+        })
         setIsLoggedIn(true);
         navigation.navigate("Dashboard");
+    };
+
+    const formik = useFormik({
+        initialValues: initialValues,
+        onSubmit: handleFormikSubmit,
+    });
+
+    const handleGoogleSignIn = async () =>{
+        try{
+            await googleSignIn();
+        }catch(err){
+            console.log(err);
+        }
     };
 
     return (
@@ -43,49 +62,46 @@ const LoginScreen = ({ navigation }) => {
                 <WelcomeText2>start monitoring your spending</WelcomeText2>
                 <UserImg source={userProfile} />
             </WelcomeTextContainer>
-            <Formik initialValues={initialValues} onSubmit={handleFormikSubmit}>
-                {({ values, handleChange, handleSubmit }) => (
-                    <LoginForm>
-                        <InputHolder>
-                            <Input
-                                onChangeText={handleChange("email")}
-                                value={values.email}
-                                placeholder="Email"
-                                placeholderTextColor={colors.primary.colorFive}
-                            />
-                        </InputHolder>
-                        <InputHolder>
-                            <Input
-                                onChangeText={handleChange("password")}
-                                value={values.password}
-                                placeholder="Password"
-                                secureTextEntry={true}
-                                placeholderTextColor={colors.primary.colorFive}
-                            />
-                        </InputHolder>
-                        <ForgotPasswordHolder>
-                            <TouchableOpacity onPress={() => {}}>
-                                <ForgotPasswordText>
-                                    Forgot your Password?
-                                </ForgotPasswordText>
-                            </TouchableOpacity>
-                        </ForgotPasswordHolder>
-                        <LoginFormButtonsHolder>
-                            <Button
-                                title={"LOGIN"}
-                                type={"filled"}
-                                rounded={"10px"}
-                                onPress={handleSubmit}
-                            />
-                            <Button
-                                title={"SIGN IN WITH GOOGLE"}
-                                rounded={"10px"}
-                                noBorder={false}
-                            />
-                        </LoginFormButtonsHolder>
-                    </LoginForm>
-                )}
-            </Formik>
+                <LoginForm>
+                    <InputHolder>
+                        <Input
+                            onChangeText={formik.handleChange("email")}
+                            value={formik.values.email}
+                            placeholder="Email"
+                            placeholderTextColor={colors.primary.colorFive}
+                        />
+                    </InputHolder>
+                    <InputHolder>
+                        <Input
+                            onChangeText={formik.handleChange("password")}
+                            value={formik.values.password}
+                            placeholder="Password"
+                            secureTextEntry={true}
+                            placeholderTextColor={colors.primary.colorFive}
+                        />
+                    </InputHolder>
+                    <ForgotPasswordHolder>
+                        <TouchableOpacity onPress={() => {}}>
+                            <ForgotPasswordText>
+                                Forgot your Password?
+                            </ForgotPasswordText>
+                        </TouchableOpacity>
+                    </ForgotPasswordHolder>
+                    <LoginFormButtonsHolder>
+                        <Button
+                            title={"LOGIN"}
+                            type={"filled"}
+                            rounded={"10px"}
+                            onPress={formik.handleSubmit}
+                        />
+                        <Button
+                            title={"SIGN IN WITH GOOGLE"}
+                            rounded={"10px"}
+                            noBorder={false}
+                            onPress={handleGoogleSignIn}
+                        />
+                    </LoginFormButtonsHolder>
+                </LoginForm>
             <RegisterLinkBg>
                 <EllipseBg width={"100%"} height={"100%"} />
             </RegisterLinkBg>
