@@ -1,7 +1,7 @@
 import create from 'zustand';
 import { addDoc, collection } from 'firebase/firestore';
-
-import { db } from 'fitra/firebase.config.js';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from 'firebase.config';
 
 const useAuthentication = create(set => ({
     user:[],
@@ -18,3 +18,5 @@ const useAuthentication = create(set => ({
         }
     }
 }));
+
+export default useAuthentication;

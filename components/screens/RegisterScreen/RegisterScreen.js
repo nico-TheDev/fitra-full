@@ -25,7 +25,7 @@ const RegisterScreen = () => {
     const circleBigBgSize = 400;
     const registerScreenLogoSize = 100;
 
-    const addUser = useAuthentication(state => state.addUser)
+    const addUser = useAuthentication(state => state.addUser);
 
     const initialValues = {
         firstName: "",
@@ -42,7 +42,12 @@ const RegisterScreen = () => {
             email: values.email,
             password: values.password
         })
-    }
+    };
+
+    const formik = useFormik({
+        initialValues: initialValues,
+        onSubmit: handleFormikSubmit,
+    });
 
     return (
         <RegisterScreenContainer>
@@ -62,56 +67,47 @@ const RegisterScreen = () => {
                 />
             </GreetingsHolder>
             <RegisterForm>
-                <Formik
-                    initialValues={initialValues}
-                    onSubmit={handleFormikSubmit}
-                >
-                    {({ values, handleChange }) => (
-                        <>
-                            <InputHolder>
-                                <Input
-                                    onChangeText={handleChange("firstName")}
-                                    value={values.firstName}
-                                    placeholder="First Name"
-                                    placeholderTextColor={
-                                        colors.primary.colorFive
-                                    }
-                                />
-                            </InputHolder>
-                            <InputHolder>
-                                <Input
-                                    onChangeText={handleChange("lastName")}
-                                    value={values.lastName}
-                                    placeholder="Last Name"
-                                    placeholderTextColor={
-                                        colors.primary.colorFive
-                                    }
-                                />
-                            </InputHolder>
-                            <InputHolder>
-                                <Input
-                                    onChangeText={handleChange("email")}
-                                    value={values.email}
-                                    placeholder="Email"
-                                    placeholderTextColor={
-                                        colors.primary.colorFive
-                                    }
-                                />
-                            </InputHolder>
-                            <InputHolder>
-                                <Input
-                                    onChangeText={handleChange("password")}
-                                    value={values.password}
-                                    placeholder="Password"
-                                    secureTextEntry={true}
-                                    placeholderTextColor={
-                                        colors.primary.colorFive
-                                    }
-                                />
-                            </InputHolder>
-                        </>
-                    )}
-                </Formik>
+                <InputHolder>
+                    <Input
+                        onChangeText={formik.handleChange("firstName")}
+                        value={formik.values.firstName}
+                        placeholder="First Name"
+                        placeholderTextColor={
+                        colors.primary.colorFive
+                        }
+                    />
+                </InputHolder>
+                <InputHolder>
+                    <Input
+                        onChangeText={formik.handleChange("lastName")}
+                        value={formik.values.lastName}
+                        placeholder="Last Name"
+                        placeholderTextColor={
+                        colors.primary.colorFive
+                        }
+                    />
+                </InputHolder>
+                <InputHolder>
+                    <Input
+                        onChangeText={formik.handleChange("email")}
+                        value={formik.values.email}
+                        placeholder="Email"
+                        placeholderTextColor={
+                        colors.primary.colorFive
+                        }
+                    />
+                </InputHolder>
+                <InputHolder>
+                    <Input
+                        onChangeText={formik.handleChange("password")}
+                        value={formik.values.password}
+                        placeholder="Password"
+                        secureTextEntry={true}
+                        placeholderTextColor={
+                        colors.primary.colorFive
+                        }
+                    />
+                </InputHolder>
 
                 <RegisterFormButtonsHolder>
                     <Button
