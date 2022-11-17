@@ -3,7 +3,6 @@ import { useState, useEffect, useCallback } from "react";
 // FONT IMPORTS
 import { loadAsync } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-
 // LOCAL IMPORTS
 // COMPONENTS
 import MainApp from "components/MainApp";

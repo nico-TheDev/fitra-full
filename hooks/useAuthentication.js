@@ -1,6 +1,6 @@
 import create from 'zustand';
 import { doc, setDoc } from 'firebase/firestore';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from '../firebase.config';
 
 const useAuthentication = create(set => ({
@@ -9,12 +9,12 @@ const useAuthentication = create(set => ({
     addUser: async (newUser) => {
         try {
             console.log(newUser);
-            const res = await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);
-            await setDoc(doc(db, "users", res.user.uid), {
-                uid: res.user.uid,
-                firstName: newUser.firstName, 
-                lastName: newUser.lastName, 
-                email: newUser.email});
+            const res = await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);   //creates user
+            await setDoc(doc(db, "users", res.user.uid), {      //sets document of user
+                uid: res.user.uid,                  //generate unique id
+                first_Name: newUser.firstName,      //fetched data from firstName (RegisterScreen) will be stored here
+                last_Name: newUser.lastName,        //fetched data from lastName (RegisterScreen) will be stored here
+                email: newUser.email});             //fetched data from email (RegisterScreen) will be stored here
             console.log("A NEW USER CREATED");
         }
         catch (err) {
@@ -24,8 +24,8 @@ const useAuthentication = create(set => ({
     verifyUser: async (currentUser) => {
         try {
             console.log(currentUser);
-            await signInWithEmailAndPassword(auth, currentUser.email, currentUser.password);
-            navigate("/")
+            await signInWithEmailAndPassword(auth, currentUser.email, currentUser.password);     //checks if user is registered, email and password correct
+            navigate("/")                           // finds user's data
             console.log("USER IS PRESENT");
         }
         catch (err) {
@@ -33,28 +33,5 @@ const useAuthentication = create(set => ({
         }
     },
 }));
-
-export function googleSignIn() {
-    const provider = new GoogleAuthProvider();
-    signInWithRedirect(auth, provider)
-    getRedirectResult(auth)
-    .then((result) => {
-        // This gives you a Google Access Token. You can use it to access Google APIs.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-
-        // The signed-in user info.
-        const user = result.user;
-    }).catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-    });
-};
 
 export default useAuthentication;
