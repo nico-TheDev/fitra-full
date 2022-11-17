@@ -32,14 +32,15 @@ const AddTransactionScreen = ({ navigation }) => {
     let photoId = uuid.v4();
     // UPLOAD
     const [image, chooseImage, uploadImage, filename, imgSrc] = useUploadImage(photoId, "transaction/");
+
     const initialValues = {
         amount: "",
-        transactionType: "",
-        transactionAccount: "",
+        type: "",
+        targetAccount: "",
         transactionIcon: "",
-        transactionCategory: "",
-        comment: "",
-        commentImg: "",
+        transactionColor: "",
+        categoryName: "",
+        comments: "",
     };
 
     const [selectedIcon, setSelectedIcon] = useState({
@@ -49,6 +50,7 @@ const AddTransactionScreen = ({ navigation }) => {
     });
     const [date, setDate] = useState(new Date());
     const [isExpense, setIsExpense] = useState(false);
+    // TODO: To be replaced with actual data
     let [categoryData, setCategoryData] = useState([]);
     const [accountItems, setAccountItems] = useState([
         { label: "Wallet", value: "wallet" },
@@ -58,7 +60,7 @@ const AddTransactionScreen = ({ navigation }) => {
 
     useEffect(() => {
         // INCOME TYPE
-        if (!isExpense) {
+        if (isExpense) {
             setCategoryData(
                 categories.filter(
                     (item) => item.type === "income" && item.userID === "1"
@@ -78,30 +80,39 @@ const AddTransactionScreen = ({ navigation }) => {
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
         formik.setFieldValue("transactionIcon", icon.currentIcon);
-        formik.setFieldValue("transactionCategory", icon.label);
+        formik.setFieldValue("categoryName", icon.label);
+        formik.setFieldValue("transactionColor", icon.color);
     };
 
     const handleFormikSubmit = async (values, { resetForm }) => {
-        values.transactionType = isExpense ? "expense" : "income";
         console.log(values);
-        const url = await uploadImage();
+        values.type = isExpense ? "expense" : "income";
+        const imgFile = await uploadImage();
         addTransaction({
             amount: Number(values.amount),
-            categoryName: values.transactionCategory,
-            commentImg: url,
-            comments: values.comment,
-            targetAccount: values.transactionAccount,
-            transactionIcon: values.transactionIcon,
-            type: values.transactionType,
+            category_name: values.categoryName,
+            comment_img_ref: imgFile.imgRef,
+            comment_img: imgFile.imgUri,
+            comments: values.comments,
+            target_account: values.targetAccount,
+            transaction_icon: values.transactionIcon,
+            transaction_color: values.transactionColor,
+            user_id: uuid.v4(),
+            type: values.type,
         });
         resetForm();
         navigation.navigate("Dashboard", { screen: "DashboardMain" });
     };
 
     const formik = useFormik({
-        initialValues: initialValues,
+        initialValues,
         onSubmit: handleFormikSubmit,
     });
+
+    const handleSelectDate = (event, selectedDate) => {
+        console.log(selectedDate);
+        setDate(selectedDate);
+    };
 
 
 
@@ -136,7 +147,7 @@ const AddTransactionScreen = ({ navigation }) => {
                         zIndex: 3000,
                         zIndexInverse: 1000,
                         onChangeValue:
-                            formik.handleChange("transactionAccount"),
+                            formik.handleChange("targetAccount"),
                     }}
                     width="100%"
                 />
@@ -152,14 +163,15 @@ const AddTransactionScreen = ({ navigation }) => {
 
                     <CustomDatePicker
                         date={date}
-                        buttonProps={{ disabled: true }}
+                        buttonProps={{ disabled: false }}
+                        onChange={handleSelectDate}
                     />
                     <CommentInput
                         customLabel={"Comments"}
                         inputProps={{
                             placeholder: "Add a comment",
                             value: formik.values.comment,
-                            onChangeText: formik.handleChange("comment"),
+                            onChangeText: formik.handleChange("comments"),
                         }}
                         imageUri={image}
                         onPress={chooseImage}
@@ -175,8 +187,8 @@ const AddTransactionScreen = ({ navigation }) => {
                             buttonProps={{
                                 disabled:
                                     !formik.values.amount &&
-                                    !formik.values.transactionAccount &&
-                                    !formik.values.transactionCategory,
+                                    !formik.values.targetAccount &&
+                                    !formik.values.categoryName,
                             }}
                         />
                     </ButtonHolder>

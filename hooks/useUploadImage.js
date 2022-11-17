@@ -59,21 +59,24 @@ export default function useUploadImage(id, filepath, metadata = {}) {
         const fileBlob = await response.blob();
         // CREATE AN ID FOR THE COMMENT ID
         const fileId = id;
+        // GET A REFERENCE IN THE STORAGE WITH FILEPATH (e.g transactions/) and the unique ID
         const storageRef = ref(storage, filepath + fileId);
+
         let fileExtension = image.uri.substring(image.uri.lastIndexOf('.') + 1);
 
         try {
             const snapshot = await uploadBytes(storageRef, fileBlob, { ...metadata, fileExtension });
             const imgUrl = await getDownloadURL(snapshot.ref);
-            console.log("UPLOADED");
+            // console.log(fileExtension);
+            // console.log("UPLOADED");
             setImage(null);
             setIsUploading(false);
             setFilename("");
             Alert.alert("Upload Completed", "The image upload was successful.");
-            return imgUrl;
+            return { imgUri: imgUrl, imgRef: `${filepath}${fileId}.${fileExtension}`, mediaType: fileExtension };
         } catch (err) {
             console.log(err);
-            console.log("UPLOAD FAILED");
+            // console.log("UPLOAD FAILED");
             Alert.alert(
                 'Error',
                 "Something went wrong in uploading the image. Try again."

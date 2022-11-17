@@ -1,17 +1,15 @@
 import React, { useState } from "react";
-import { Formik } from "formik";
 import { useEffect } from "react";
 
 import { FormContainer, TransactionDetailsContainer } from "./styles";
 import ScreenHeader from "components/ScreenHeader";
 import CustomTextInput from "components/CustomTextInput";
-import CustomDatePicker from "components/CustomDatePicker";
-import formatDate from "fitra/util/formatDate";
-import CustomDropdown from "components/CustomDropdown";
 import { categories } from "fitra/SampleData";
 import CommentInput from "components/CommentInput";
 import Button from "components/Button";
 import useTransactionData from "hooks/useTransactionData";
+import formatDate from "fitra/util/formatDate";
+import convertTimestamp from "util/convertTimestamp";
 
 const TransactionDetailsScreen = ({ route, navigation }) => {
     const { transactionID } = route.params;
@@ -33,26 +31,16 @@ const TransactionDetailsScreen = ({ route, navigation }) => {
         { label: "GCASH", value: "gcash" },
         { label: "UnionBank", value: "unionbank" },
     ]);
-    const initialValues = {
-        amount: currentTransaction.amount,
-        accountName: currentTransaction.targetAccount,
-        categoryName: currentTransaction.categoryName,
-        date: "",
-        comment: currentTransaction.comments,
-        commentImg: "",
-    };
-
 
     useEffect(() => {
         const targetTransaction = transactionList.find(transaction => transaction.id === transactionID);
         console.log(targetTransaction);
         setCurrentTransaction(targetTransaction);
-    }, [transactionID])
+    }, [transactionID]);
 
     return (
         <TransactionDetailsContainer>
             <ScreenHeader title="Transaction Details" />
-
             <FormContainer>
                 <CustomTextInput
                     customLabel="Amount: "
@@ -61,34 +49,31 @@ const TransactionDetailsScreen = ({ route, navigation }) => {
                         editable: false,
                     }}
                 />
-                <CustomDropdown
-                    dropdownItems={accountList}
-                    setDropdownItems={setAccountList}
-                    dropdownProps={{
-                        placeholder: "Choose Account",
-                        zIndex: 3000,
-                        zIndexInverse: 1000,
-                        disabled: true,
-                        value: currentTransaction.targetAccount
+                <CustomTextInput
+                    customLabel="Account: "
+                    inputProps={{
+                        value: currentTransaction.target_account,
+                        editable: false,
                     }}
-                    customLabel="Account"
+                    iconName="account-icon"
+
                 />
-                <CustomDropdown
-                    dropdownItems={categoryList}
-                    setDropdownItems={setCategoryList}
-                    dropdownProps={{
-                        placeholder: "Select Category",
-                        zIndex: 1000,
-                        zIndexInverse: 3000,
-                        itemKey: "userId",
-                        disabled: true,
-                        value: currentTransaction.transactionIcon
+                <CustomTextInput
+                    customLabel="Category: "
+                    inputProps={{
+                        value: currentTransaction.category_name,
+                        editable: false,
                     }}
-                    customLabel="Category"
+                    iconName={currentTransaction.transaction_icon}
                 />
-                <CustomDatePicker
-                    date={date}
-                    buttonProps={{ disabled: true }}
+
+                <CustomTextInput
+                    customLabel="Date: "
+                    inputProps={{
+                        value: formatDate(convertTimestamp(currentTransaction.created_at)),
+                        editable: false,
+                    }}
+                    iconName="calendar-icon"
                 />
 
                 <CommentInput
@@ -98,12 +83,13 @@ const TransactionDetailsScreen = ({ route, navigation }) => {
                         placeholder: "Add a comment",
                         editable: false,
                     }}
+                    imageUri={{ uri: currentTransaction.comment_img }}
                 />
 
                 <Button
                     title="Edit"
                     noBorder={false}
-                    width="50%"
+                    width="45%"
                     styles={{ marginLeft: "auto" }}
                     textSize={16}
                     onPress={() =>
