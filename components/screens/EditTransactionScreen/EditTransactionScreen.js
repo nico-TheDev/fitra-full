@@ -14,7 +14,7 @@ import {
     TransactionAmountInput,
     TransactionPanelHolder,
     SwitchCategoryHolder,
-    TrasactionFormHolder,
+    TransactionFormHolder,
     TransactionCategoryHolder,
     ButtonHolder,
     ScrollContainer,
@@ -22,25 +22,27 @@ import {
 import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
 import useTransactionData from "hooks/useTransactionData";
+import { Alert } from "react-native";
 
 const EditTransactionScreen = ({ route, navigation }) => {
     const { transactionID } = route.params;
     const transactionList = useTransactionData(state => state.transactions);
+    const deleteTransaction = useTransactionData(state => state.deleteTransaction);
     const [currentTransaction, setCurrentTransaction] = useState(() => {
         return transactionList.find(transaction => transaction.id === transactionID);
     });
+
     const initialValues = {
         amount: String(currentTransaction.amount),
         transactionType: currentTransaction.type,
-        transactionAccount: currentTransaction.targetAccount,
-        transactionIcon: currentTransaction.transactionIcon,
-        transacitonCategory: currentTransaction.categoryName,
+        transactionAccount: currentTransaction.target_account,
+        transactionIcon: currentTransaction.transaction_icon,
+        categoryName: currentTransaction.category_name,
         comment: currentTransaction.comments,
-        commentImg: "",
     };
 
     const [selectedIcon, setSelectedIcon] = useState("");
-    const [isExpense, setIsExpense] = useState(false);
+    const [isExpense, setIsExpense] = useState(currentTransaction.type === "expense");
     let [categoryData, setCategoryData] = useState([]);
     const [accountItems, setAccountItems] = useState([
         { label: "Wallet", value: "wallet" },
@@ -49,11 +51,25 @@ const EditTransactionScreen = ({ route, navigation }) => {
     ]);
 
     useEffect(() => {
+        const targetTransaction = transactionList.find(transaction => transaction.id === transactionID);
+        console.log(targetTransaction);
+        setCurrentTransaction(targetTransaction);
+        setSelectedIcon({
+            label: currentTransaction.category_name,
+            icon: currentTransaction.transaction_icon,
+            color: currentTransaction.transaction_color,
+            currentIcon: currentTransaction.transaction_icon
+        });
+    }, [transactionID]);
+
+    // TODO: FIX THE MIXUP BETWEEN EXPENSE AND INCOME
+    // TODO: CREATE A CUSTOM HOOK FOR THIS
+    useEffect(() => {
         // INCOME TYPE
-        if (!isExpense) {
+        if (isExpense) {
             setCategoryData(
                 categories.filter(
-                    (item) => item.type === "income" && item.userID === "1"
+                    (item) => item.type === "expense" && item.userID === "1"
                 )
             );
         }
@@ -61,7 +77,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
         else {
             setCategoryData(
                 categories.filter(
-                    (item) => item.type === "expense" && item.userID === "1"
+                    (item) => item.type === "income" && item.userID === "1"
                 )
             );
         }
@@ -84,6 +100,25 @@ const EditTransactionScreen = ({ route, navigation }) => {
         }
 
         console.log(values);
+    };
+
+    const showDeletePrompt = () => {
+        Alert.alert("Deleting file", "Are you sure ?", [{
+            text: "Yes",
+            onPress: handleDelete,
+            style: "destructive"
+        }, {
+            text: "No",
+            onPress: () => { },
+            style: "cancel"
+        }]);
+
+    };
+
+    const handleDelete = () => {
+        deleteTransaction(transactionID, currentTransaction.comment_img_ref);
+        Alert.alert("Success", "Item Deleted.");
+        navigation.navigate("Dashboard", { screen: "DashboardMain" });
     };
 
     const formik = useFormik({
@@ -112,30 +147,31 @@ const EditTransactionScreen = ({ route, navigation }) => {
                 </SwitchCategoryHolder>
             </TransactionPanelHolder>
 
-            <TrasactionFormHolder>
-                <CustomDropdown
-                    dropdownItems={accountItems}
-                    setDropdownItems={setAccountItems}
-                    dropdownProps={{
-                        placeholder: "Choose Account",
-                        zIndex: 3000,
-                        zIndexInverse: 1000,
-                        value: formik.values.transactionAccount,
-                        onChangeValue:
-                            formik.handleChange("transactionAccount"),
-                    }}
-                    width="100%"
-                />
-
-                <TransactionCategoryHolder>
-                    <IconSelector
-                        iconData={categoryData}
-                        onPress={handleIconPress}
-                        selectedIcon={selectedIcon}
-                        setSelectedIcon={setSelectedIcon}
-                    />
-                </TransactionCategoryHolder>
+            <TransactionFormHolder>
                 <ScrollContainer>
+                    <CustomDropdown
+                        dropdownItems={accountItems}
+                        setDropdownItems={setAccountItems}
+                        dropdownProps={{
+                            placeholder: "Choose Account",
+                            zIndex: 3000,
+                            zIndexInverse: 1000,
+                            value: formik.values.transactionAccount,
+                            onChangeValue:
+                                formik.handleChange("transactionAccount"),
+                        }}
+                        width="100%"
+                    />
+
+                    <TransactionCategoryHolder>
+                        <IconSelector
+                            iconData={categoryData}
+                            onPress={handleIconPress}
+                            selectedIcon={selectedIcon}
+                            setSelectedIcon={setSelectedIcon}
+                        />
+                    </TransactionCategoryHolder>
+
                     <CommentInput
                         customLabel={"Comments"}
                         inputProps={{
@@ -143,6 +179,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
                             value: formik.values.comment,
                             onChangeText: formik.handleChange("comment"),
                         }}
+                        imageUri={{ uri: currentTransaction.comment_img }}
                     />
                     <ButtonHolder>
                         <Button
@@ -151,7 +188,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
                             type={"outlined"}
                             noBorder={false}
                             rounded={"10px"}
-                            onPress={() => { }}
+                            onPress={showDeletePrompt}
                         />
                         <Button
                             width="45%"
@@ -162,7 +199,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
                         />
                     </ButtonHolder>
                 </ScrollContainer>
-            </TrasactionFormHolder>
+            </TransactionFormHolder>
         </EditTransactionScreenContainer>
     );
 };

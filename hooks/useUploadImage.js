@@ -73,7 +73,7 @@ export default function useUploadImage(id, filepath, metadata = {}) {
             setIsUploading(false);
             setFilename("");
             Alert.alert("Upload Completed", "The image upload was successful.");
-            return { imgUri: imgUrl, imgRef: `${filepath}${fileId}.${fileExtension}`, mediaType: fileExtension };
+            return { imgUri: imgUrl, imgRef: `${filepath}${fileId}`, mediaType: fileExtension };
         } catch (err) {
             console.log(err);
             // console.log("UPLOAD FAILED");

@@ -1,7 +1,9 @@
 import create from 'zustand';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
+import { deleteObject, ref } from 'firebase/storage';
 
-import { db } from 'fitra/firebase.config.js';
+import { db, storage } from 'fitra/firebase.config.js';
+
 
 const useTransactionData = create(set => ({
     transactions: [],
@@ -16,7 +18,19 @@ const useTransactionData = create(set => ({
             console.log(err);
         }
     },
-    deleteTransaction: async (id) => {
+    deleteTransaction: async (documentId, fileReference) => {
+        // CREATE A REFERENCE FOR THE DOCUMENT AND THE FILE
+        const docRef = doc(db, "transactions", documentId);
+        const fileRef = ref(storage, fileReference);
+        try {
+
+            // DELETE THE DOCUMENT AND OBJECT 
+            await deleteDoc(docRef);
+            await deleteObject(fileRef);
+            // ALERT A MESSAGE
+        } catch (err) {
+            console.log(err);
+        }
 
     }
 }));
