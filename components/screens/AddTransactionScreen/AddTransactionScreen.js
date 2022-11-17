@@ -86,19 +86,23 @@ const AddTransactionScreen = ({ navigation }) => {
 
     const handleFormikSubmit = async (values, { resetForm }) => {
         console.log(values);
+        let imgFile;
         values.type = isExpense ? "expense" : "income";
-        const imgFile = await uploadImage();
+        if (image) {
+            imgFile = await uploadImage();
+        }
         addTransaction({
             amount: Number(values.amount),
             category_name: values.categoryName,
-            comment_img_ref: imgFile.imgRef,
-            comment_img: imgFile.imgUri,
+            comment_img_ref: imgFile ? imgFile.imgRef : "",
+            comment_img: imgFile ? imgFile.imgUri : "",
             comments: values.comments,
             target_account: values.targetAccount,
             transaction_icon: values.transactionIcon,
             transaction_color: values.transactionColor,
             user_id: uuid.v4(),
             type: values.type,
+            created_at: date
         });
         resetForm();
         navigation.navigate("Dashboard", { screen: "DashboardMain" });
@@ -113,8 +117,6 @@ const AddTransactionScreen = ({ navigation }) => {
         console.log(selectedDate);
         setDate(selectedDate);
     };
-
-
 
     return (
         <AddTransactionScreenContainer>

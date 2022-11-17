@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { addDoc, collection, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 
 import { db, storage } from 'fitra/firebase.config.js';
@@ -11,7 +11,7 @@ const useTransactionData = create(set => ({
     addTransaction: async (newTransaction) => {
         try {
             console.log(newTransaction);
-            await addDoc(collection(db, "transactions"), { ...newTransaction, created_at: serverTimestamp() });
+            await addDoc(collection(db, "transactions"), { ...newTransaction, timestamp: serverTimestamp() });
             console.log("NEW DOCUMENT CREATED");
         }
         catch (err) {
@@ -31,6 +31,13 @@ const useTransactionData = create(set => ({
         } catch (err) {
             console.log(err);
         }
+
+    },
+    updateTransaction: async (documentId, updatedTransaction) => {
+        let docRef;
+        // CREATE A REFERENCE TO THE DOCUMENT AND THE FILE
+        docRef = doc(db, "transactions", documentId);
+        await updateDoc(docRef, updatedTransaction);
 
     }
 }));

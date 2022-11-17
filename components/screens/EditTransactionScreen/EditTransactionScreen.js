@@ -1,6 +1,12 @@
 // LIBRARY IMPORTS
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
+import uuid from 'react-native-uuid';
+import { deleteObject, ref } from "firebase/storage";
+
+// firebase
+import { storage } from "fitra/firebase.config";
+
 // LOCAL IMPORTS
 import SwitchCategory from "components/SwitchCategory";
 import CustomDropdown from "components/CustomDropdown";
@@ -9,6 +15,7 @@ import IconSelector from "components/IconSelector";
 import Button from "components/Button";
 
 import ScreenHeader from "components/ScreenHeader";
+import CustomDatePicker from "components/CustomDatePicker";
 import {
     EditTransactionScreenContainer,
     TransactionAmountInput,
@@ -23,22 +30,30 @@ import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
 import useTransactionData from "hooks/useTransactionData";
 import { Alert } from "react-native";
+import convertTimestamp from "util/convertTimestamp";
+import useUploadImage from "hooks/useUploadImage";
 
 const EditTransactionScreen = ({ route, navigation }) => {
     const { transactionID } = route.params;
     const transactionList = useTransactionData(state => state.transactions);
     const deleteTransaction = useTransactionData(state => state.deleteTransaction);
+    const updateTransaction = useTransactionData(state => state.updateTransaction);
     const [currentTransaction, setCurrentTransaction] = useState(() => {
         return transactionList.find(transaction => transaction.id === transactionID);
     });
+    const [date, setDate] = useState(convertTimestamp(currentTransaction.created_at));
+    const photoId = uuid.v4();
+    const [image, chooseImage, uploadImage, filename, imgSrc] = useUploadImage(photoId, "transaction/");
 
     const initialValues = {
         amount: String(currentTransaction.amount),
-        transactionType: currentTransaction.type,
-        transactionAccount: currentTransaction.target_account,
+        type: currentTransaction.type,
+        targetAccount: currentTransaction.target_account,
         transactionIcon: currentTransaction.transaction_icon,
+        transactionColor: currentTransaction.transaction_color,
         categoryName: currentTransaction.category_name,
-        comment: currentTransaction.comments,
+        comments: currentTransaction.comments,
+
     };
 
     const [selectedIcon, setSelectedIcon] = useState("");
@@ -92,14 +107,44 @@ const EditTransactionScreen = ({ route, navigation }) => {
         formik.setFieldValue("transactionIcon", icon);
     };
 
-    const handleFormikSubmit = (values) => {
-        if (isExpense) {
-            values.transactionType = "expense";
-        } else {
-            values.transactionType = "income";
+    const handleFormikSubmit = async (values) => {
+        values.transactionType = isExpense ? "expense" : "income";
+        let imgFile;
+        let oldImgRef = currentTransaction.comment_img_ref;
+
+        // IF THERE IS AN EXISTING IMAGE AND NEW IMAGE IS SELECTED 
+        if (image && oldImgRef) {
+            // THEN DELETE THE OLD IMAGE
+            const oldFileRef = ref(storage, oldImgRef);
+            await deleteObject(oldFileRef);
+            imgFile = await uploadImage();
+        } else if (image && !oldImgRef) {
+            imgFile = await uploadImage();
         }
 
-        console.log(values);
+
+        let updatedImgRef = imgFile ? imgFile.imgRef : currentTransaction.comment_img_ref;
+        let updatedImg = imgFile ? imgFile.imgUri : currentTransaction.comment_img;
+        const newTransaction = {
+            amount: Number(values.amount),
+            category_name: values.categoryName,
+            comment_img_ref: updatedImgRef,
+            comment_img: updatedImg,
+            comments: values.comments,
+            target_account: values.targetAccount,
+            transaction_icon: values.transactionIcon,
+            transaction_color: values.transactionColor,
+            user_id: uuid.v4(),
+            type: values.type,
+            created_at: date
+        };
+        updateTransaction(transactionID, newTransaction);
+
+        Alert.alert("SUCCESS", "Document Updated");
+
+        // console.log({ newTransaction });
+        // console.log(currentTransaction.comment_img_ref);
+        // console.log(values);
     };
 
     const showDeletePrompt = () => {
@@ -121,8 +166,14 @@ const EditTransactionScreen = ({ route, navigation }) => {
         navigation.navigate("Dashboard", { screen: "DashboardMain" });
     };
 
+    const handleSelectDate = (event, selectedDate) => {
+        console.log(selectedDate);
+        setDate(selectedDate);
+    };
+
+
     const formik = useFormik({
-        initialValues: initialValues,
+        initialValues,
         onSubmit: handleFormikSubmit,
     });
 
@@ -156,9 +207,9 @@ const EditTransactionScreen = ({ route, navigation }) => {
                             placeholder: "Choose Account",
                             zIndex: 3000,
                             zIndexInverse: 1000,
-                            value: formik.values.transactionAccount,
+                            value: formik.values.targetAccount,
                             onChangeValue:
-                                formik.handleChange("transactionAccount"),
+                                formik.handleChange("targetAccount"),
                         }}
                         width="100%"
                     />
@@ -172,15 +223,24 @@ const EditTransactionScreen = ({ route, navigation }) => {
                         />
                     </TransactionCategoryHolder>
 
+                    <CustomDatePicker
+                        date={date}
+                        buttonProps={{ disabled: false }}
+                        onChange={handleSelectDate}
+                    />
+
                     <CommentInput
                         customLabel={"Comments"}
                         inputProps={{
                             placeholder: "Add a comment",
-                            value: formik.values.comment,
-                            onChangeText: formik.handleChange("comment"),
+                            value: formik.values.comments,
+                            onChangeText: formik.handleChange("comments"),
                         }}
-                        imageUri={{ uri: currentTransaction.comment_img }}
+                        imageUri={{ uri: image ? image.uri : currentTransaction.comment_img }}
+                        onPress={chooseImage}
+                        filename={filename}
                     />
+
                     <ButtonHolder>
                         <Button
                             width="45%"

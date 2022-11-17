@@ -15,7 +15,7 @@ const TransactionDetailsScreen = ({ route, navigation }) => {
     const { transactionID } = route.params;
     const [currentTransaction, setCurrentTransaction] = useState({});
     const transactionList = useTransactionData(state => state.transactions);
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(convertTimestamp(currentTransaction.created_at));
     const [categoryList, setCategoryList] = useState(() => {
         return categories.map((item, index) => {
             return {
