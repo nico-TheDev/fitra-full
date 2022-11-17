@@ -14,6 +14,7 @@ import { AuthProvider } from "fitra/contexts/AuthContext";
 export default function App() {
     const [isAppReady, setIsAppReady] = useState(false);
 
+
     useEffect(() => {
         async function prepare() {
             try {
