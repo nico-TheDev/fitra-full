@@ -12,15 +12,15 @@ const DashboardRecentPanel = ({ data, onPress }) => {
     return (
         <RecentPanel onPress={onPress}>
             <DashboardCategoryItem
-                categoryName={data.categoryName}
-                iconColor={data.color || "green"}
-                iconName={data.transactionIcon}
+                categoryName={data.category_name}
+                iconColor={data.transaction_color || "green"}
+                iconName={data.transaction_icon}
                 total={data.amount}
                 onPress={() => console.log("CLICKED")}
             />
             <DetailsHolder>
                 <Comment>{data.comments || "ADD COMMENT"}</Comment>
-                <CommentImg source={data.commentImg ? { uri: data.commentImg } : imgPlaceholder} />
+                <CommentImg source={data.comment_img ? { uri: data.comment_img } : imgPlaceholder} />
             </DetailsHolder>
         </RecentPanel>
     );

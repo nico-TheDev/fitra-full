@@ -69,7 +69,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
 
     useEffect(() => {
 
-    }, [])
+    }, []);
 
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
@@ -146,7 +146,15 @@ const EditTransactionScreen = ({ route, navigation }) => {
                     />
                     <ButtonHolder>
                         <Button
-                            width="100%"
+                            width="45%"
+                            title={"DELETE"}
+                            type={"outlined"}
+                            noBorder={false}
+                            rounded={"10px"}
+                            onPress={() => { }}
+                        />
+                        <Button
+                            width="45%"
                             title={"SAVE"}
                             type={"filled"}
                             rounded={"10px"}

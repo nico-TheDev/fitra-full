@@ -26,6 +26,7 @@ const IconSelector = ({ iconData, selectedIcon, onPress }) => {
                             onPress({
                                 label: item.categoryName,
                                 icon: item.transactionIcon,
+                                color: item.categoryColor,
                                 currentIcon: item.categoryIcon,
                             })
                         }

@@ -20,7 +20,7 @@ export const DashboardDate = styled.Text`
 
 export const DefaultTransactionPanel = styled.View`
     width:90%;
-    height:200;
+    height:200px;
     justify-content: center;
     align-items: center;
 `;
