@@ -1,7 +1,8 @@
 const formatDate = (date) => {
-    const formattedDate = `${
-        date.getMonth() + 1
-    }/${date.getDate()}/${date.getFullYear()}`;
+
+    if (!date) return;
+    const formattedDate = `${date.getMonth() + 1
+        }/${date.getDate()}/${date.getFullYear()}`;
 
     return formattedDate;
 };
