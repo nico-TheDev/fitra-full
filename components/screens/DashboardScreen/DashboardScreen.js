@@ -1,8 +1,8 @@
 // LIBRARY IMPORTS
 import React, { useState, useRef, useEffect } from "react";
-import { Dimensions } from "react-native";
+import { Dimensions, Text } from "react-native";
 import Carousel, { Pagination } from "react-native-snap-carousel";
-import { onSnapshot, collection } from 'firebase/firestore'
+import { onSnapshot, collection, orderBy, query } from 'firebase/firestore';
 
 
 // LOCAL IMPORTS
@@ -14,7 +14,7 @@ import DashboardRecentPanel from "components/DashboardRecentPanel";
 import CircleBG from "components/common/CircleBG";
 
 import colors from "assets/themes/colors";
-import { DashboardContainer, DashboardDate } from "./styles";
+import { DashboardContainer, DashboardDate, DefaultText, DefaultTransactionPanel } from "./styles";
 import { db } from "fitra/firebase.config";
 import useTransactionData from "hooks/useTransactionData";
 
@@ -38,11 +38,17 @@ const DashboardScreen = ({ navigation }) => {
 
     const transactionColRef = collection(db, "transactions");
 
+    const transactionQuery = query(transactionColRef);
+
     useEffect(() => {
 
-        const unsubscribe = onSnapshot(transactionColRef, (snapshotData) => {
-            const transactionData = snapshotData.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-            setTransactions(transactionData);
+        const unsubscribe = onSnapshot(transactionQuery, (snapshotData) => {
+            const data = [];
+            snapshotData.forEach(doc => data.push({ ...doc.data(), id: doc.id }));
+            snapshotData.forEach(doc => console.log(doc.data().timestamp));
+            setTransactions(data);
+
+            console.log("data", data);
             console.log("FIREBASE WORKING");
         });
 
@@ -111,13 +117,15 @@ const DashboardScreen = ({ navigation }) => {
                 inactiveDotScale={0.8}
             />
 
-            <Carousel
-                data={transactions}
+            {transactions.length ? <Carousel
+                data={transactions.slice(0, 5)}
                 renderItem={recentPanelRenderItem}
                 sliderWidth={SLIDER_WIDTH}
                 itemWidth={ITEM_WIDTH}
                 loop={true}
-            />
+            /> : (<DefaultTransactionPanel>
+                <DefaultText>💸 Add a Transaction 💸</DefaultText>
+            </DefaultTransactionPanel>)}
         </DashboardContainer>
     );
 };

@@ -16,3 +16,17 @@ export const DashboardDate = styled.Text`
     width: 90%;
     margin-bottom: 20px;
 `;
+
+
+export const DefaultTransactionPanel = styled.View`
+    width:90%;
+    height:200;
+    justify-content: center;
+    align-items: center;
+`;
+
+export const DefaultText = styled.Text`
+    font-family:${FONTS.BOLD};
+    font-size: 25;
+    text-align: center;
+    `;
