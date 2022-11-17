@@ -27,6 +27,6 @@ export const DefaultTransactionPanel = styled.View`
 
 export const DefaultText = styled.Text`
     font-family:${FONTS.BOLD};
-    font-size: 25;
+    font-size: 25px;
     text-align: center;
     `;
