@@ -26,56 +26,28 @@ import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
 import useTransactionData from "hooks/useTransactionData";
 import useUploadImage from "hooks/useUploadImage";
+import useType from "hooks/useType";
+import { Alert } from "react-native";
 
 const AddTransactionScreen = ({ navigation }) => {
+    let photoId = uuid.v4(); // unique id for the photo file name in storage
     const addTransaction = useTransactionData(state => state.addTransaction);
-    let photoId = uuid.v4();
-    // UPLOAD
-    const [image, chooseImage, uploadImage, filename, imgSrc] = useUploadImage(photoId, "transaction/");
-
-    const initialValues = {
-        amount: "",
-        type: "",
-        targetAccount: "",
-        transactionIcon: "",
-        transactionColor: "",
-        categoryName: "",
-        comments: "",
-    };
-
+    // Upload Hook 
+    const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transaction/");
+    const [isExpense, setIsExpense, categoryList] = useType(categories);
     const [selectedIcon, setSelectedIcon] = useState({
         label: "",
         icon: "",
         currentIcon: "",
     });
-    const [date, setDate] = useState(new Date());
-    const [isExpense, setIsExpense] = useState(false);
+    const [date, setDate] = useState(new Date()); // Initial state will always be today 
     // TODO: To be replaced with actual data
-    let [categoryData, setCategoryData] = useState([]);
     const [accountItems, setAccountItems] = useState([
         { label: "Wallet", value: "wallet" },
         { label: "GCASH", value: "gcash" },
         { label: "UnionBank", value: "unionbank" },
     ]);
 
-    useEffect(() => {
-        // INCOME TYPE
-        if (isExpense) {
-            setCategoryData(
-                categories.filter(
-                    (item) => item.type === "income" && item.userID === "1"
-                )
-            );
-        }
-        // EXPENSE TYPE
-        else {
-            setCategoryData(
-                categories.filter(
-                    (item) => item.type === "expense" && item.userID === "1"
-                )
-            );
-        }
-    }, [isExpense]);
 
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
@@ -85,7 +57,7 @@ const AddTransactionScreen = ({ navigation }) => {
     };
 
     const handleFormikSubmit = async (values, { resetForm }) => {
-        console.log(values);
+        // console.log(values);
         let imgFile;
         values.type = isExpense ? "expense" : "income";
         if (image) {
@@ -105,7 +77,18 @@ const AddTransactionScreen = ({ navigation }) => {
             created_at: date
         });
         resetForm();
+        Alert.alert("Success", "Transaction Created.");
         navigation.navigate("Dashboard", { screen: "DashboardMain" });
+    };
+
+    const initialValues = {
+        amount: "",
+        type: "",
+        targetAccount: "",
+        transactionIcon: "",
+        transactionColor: "",
+        categoryName: "",
+        comments: "",
     };
 
     const formik = useFormik({
@@ -114,7 +97,7 @@ const AddTransactionScreen = ({ navigation }) => {
     });
 
     const handleSelectDate = (event, selectedDate) => {
-        console.log(selectedDate);
+        // console.log(selectedDate);
         setDate(selectedDate);
     };
 
@@ -129,7 +112,6 @@ const AddTransactionScreen = ({ navigation }) => {
                     value={formik.values.amount}
                     onChangeText={formik.handleChange("amount")}
                 />
-
                 <SwitchCategoryHolder>
                     <SwitchCategory
                         isEnabled={isExpense}
@@ -140,7 +122,6 @@ const AddTransactionScreen = ({ navigation }) => {
             </TransactionPanelHolder>
 
             <TransactionFormHolder>
-
                 <CustomDropdown
                     dropdownItems={accountItems}
                     setDropdownItems={setAccountItems}
@@ -153,16 +134,15 @@ const AddTransactionScreen = ({ navigation }) => {
                     }}
                     width="100%"
                 />
-                <ScrollContainer>
 
+                <ScrollContainer>
                     <TransactionCategoryHolder>
                         <IconSelector
-                            iconData={categoryData}
-                            onPress={handleIconPress}
+                            iconData={categoryList}
+                            handlePress={handleIconPress}
                             selectedIcon={selectedIcon}
                         />
                     </TransactionCategoryHolder>
-
                     <CustomDatePicker
                         date={date}
                         buttonProps={{ disabled: false }}
@@ -187,10 +167,7 @@ const AddTransactionScreen = ({ navigation }) => {
                             rounded={"10px"}
                             onPress={formik.handleSubmit}
                             buttonProps={{
-                                disabled:
-                                    !formik.values.amount &&
-                                    !formik.values.targetAccount &&
-                                    !formik.values.categoryName,
+                                disabled: !formik.values.amount && !formik.values.targetAccount && !formik.values.categoryName,
                             }}
                         />
                     </ButtonHolder>
