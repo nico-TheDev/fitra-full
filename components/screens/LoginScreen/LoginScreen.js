@@ -2,8 +2,6 @@ import { TouchableOpacity } from "react-native";
 import React from "react";
 import { useFormik ,Formik } from "formik";
 
-import { GoogleAuthProvider, signInWithPopup, signInWithRedirect } from "firebase/auth";
-
 // LOCAL IMPORTS
 import EllipseBg from "assets/illustrations/Ellipse-Bg.svg";
 import colors from "assets/themes/colors";
@@ -28,12 +26,10 @@ import userProfile from "assets/img/user-1.jpg";
 import Button from "components/Button";
 import { useAuth } from "contexts/AuthContext";
 import useAuthentication  from 'hooks/useAuthentication';
-import {auth} from "fitra/firebase.config.js"
 
 
 const LoginScreen = ({ navigation }) => {
     const { isLoggedIn, setIsLoggedIn } = useAuth();
-    const provider = new GoogleAuthProvider();
     const verifyUser = useAuthentication(state => state.verifyUser);
     const initialValues = { email: "", password: "" };
 
@@ -52,26 +48,14 @@ const LoginScreen = ({ navigation }) => {
         onSubmit: handleFormikSubmit,
     });
 
+    const { googleSignIn } = useAuth();
     const handleGoogleSignIn = async () => {
-        await signInWithRedirect(auth, provider)
-        .then((result) => {
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential.accessToken;
-            // The signed-in user info.
-            const user = result.user;
-            // ...
-        }).catch((error) => {
-            // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.customData.email;
-            // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
-            // ...
-        });
-    };
+        try{ 
+            await googleSignIn();
+        }catch(err){
+            console.log(err)
+        }
+    }
 
     return (
         <LoginScreenContainer>
@@ -116,7 +100,7 @@ const LoginScreen = ({ navigation }) => {
                             title={"SIGN IN WITH GOOGLE"}
                             rounded={"10px"}
                             noBorder={false}
-                            onPress={() => handleGoogleSignIn()}
+                            onPress={handleGoogleSignIn}
                         />
                     </LoginFormButtonsHolder>
                 </LoginForm>

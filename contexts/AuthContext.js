@@ -1,5 +1,8 @@
 import { createContext, useContext, useState } from "react";
 
+import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged } from "firebase/auth";
+import {auth} from "fitra/firebase.config.js"
+
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
@@ -7,8 +10,13 @@ const AuthProvider = ({ children }) => {
 
     const value = { isLoggedIn, setIsLoggedIn };
 
+    const googleSignIn = () => {
+        const provider = new GoogleAuthProvider();
+        signInWithRedirect(auth, provider);
+    }
+
     return (
-        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{googleSignIn}}>{children}</AuthContext.Provider>
     );
 };
 
