@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { FormContainer, TransactionDetailsContainer } from "./styles";
 import ScreenHeader from "components/ScreenHeader";
 import CustomTextInput from "components/CustomTextInput";
-import { categories } from "fitra/SampleData";
 import CommentInput from "components/CommentInput";
 import Button from "components/Button";
 import useTransactionData from "hooks/useTransactionData";
@@ -15,28 +14,18 @@ const TransactionDetailsScreen = ({ route, navigation }) => {
     const { transactionID } = route.params;
     const [currentTransaction, setCurrentTransaction] = useState({});
     const transactionList = useTransactionData(state => state.transactions);
-    const [date, setDate] = useState(convertTimestamp(currentTransaction.created_at));
-    const [categoryList, setCategoryList] = useState(() => {
-        return categories.map((item, index) => {
-            return {
-                ...item,
-                label: item.categoryName,
-                value: item.categoryIcon,
-                userId: index,
-            };
-        });
-    });
-    const [accountList, setAccountList] = useState([
-        { label: "Wallet", value: "wallet" },
-        { label: "GCASH", value: "gcash" },
-        { label: "UnionBank", value: "unionbank" },
-    ]);
 
     useEffect(() => {
         const targetTransaction = transactionList.find(transaction => transaction.id === transactionID);
-        console.log(targetTransaction);
+        // console.log(targetTransaction);
         setCurrentTransaction(targetTransaction);
     }, [transactionID]);
+
+    const handleEditNavigation = () =>
+        navigation.navigate("Dashboard", {
+            screen: "EditTransaction",
+            params: { transactionID }
+        });
 
     return (
         <TransactionDetailsContainer>
@@ -92,12 +81,7 @@ const TransactionDetailsScreen = ({ route, navigation }) => {
                     width="45%"
                     styles={{ marginLeft: "auto" }}
                     textSize={16}
-                    onPress={() =>
-                        navigation.navigate("Dashboard", {
-                            screen: "EditTransaction",
-                            params: { transactionID }
-                        })
-                    }
+                    onPress={handleEditNavigation}
                 />
             </FormContainer>
 
