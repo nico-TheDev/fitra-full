@@ -10,12 +10,12 @@ const useTransactionData = create(set => ({
     setTransactions: (data) => set({ transactions: data }),
     addTransaction: async (newTransaction) => {
         try {
-            console.log(newTransaction);
+            // console.log(newTransaction);
             await addDoc(collection(db, "transactions"), { ...newTransaction, timestamp: serverTimestamp() });
             console.log("NEW DOCUMENT CREATED");
         }
         catch (err) {
-            console.log(err);
+            console.log("addTransactionError:", err);
         }
     },
     deleteTransaction: async (documentId, fileReference) => {
@@ -29,15 +29,19 @@ const useTransactionData = create(set => ({
             await deleteObject(fileRef);
             // ALERT A MESSAGE
         } catch (err) {
-            console.log(err);
+            console.log("deleteTransactionError:", err);
         }
 
     },
     updateTransaction: async (documentId, updatedTransaction) => {
-        let docRef;
-        // CREATE A REFERENCE TO THE DOCUMENT AND THE FILE
-        docRef = doc(db, "transactions", documentId);
-        await updateDoc(docRef, updatedTransaction);
+        try {
+            let docRef;
+            // CREATE A REFERENCE TO THE DOCUMENT AND THE FILE
+            docRef = doc(db, "transactions", documentId);
+            await updateDoc(docRef, updatedTransaction);
+        } catch (err) {
+            console.log("updateTransactionError:", err);
+        }
 
     }
 }));

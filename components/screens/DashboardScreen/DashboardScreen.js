@@ -45,10 +45,8 @@ const DashboardScreen = ({ navigation }) => {
         const unsubscribe = onSnapshot(transactionQuery, (snapshotData) => {
             const data = [];
             snapshotData.forEach(doc => data.push({ ...doc.data(), id: doc.id }));
-            snapshotData.forEach(doc => console.log(doc.data().timestamp));
             setTransactions(data);
-
-            console.log("data", data);
+            // console.log("data", data);
             console.log("FIREBASE WORKING");
         });
 
@@ -123,9 +121,10 @@ const DashboardScreen = ({ navigation }) => {
                 sliderWidth={SLIDER_WIDTH}
                 itemWidth={ITEM_WIDTH}
                 loop={true}
-            /> : (<DefaultTransactionPanel>
-                <DefaultText>💸 Add a Transaction 💸</DefaultText>
-            </DefaultTransactionPanel>)}
+            /> : (
+                <DefaultTransactionPanel>
+                    <DefaultText>💸 Add a Transaction 💸</DefaultText>
+                </DefaultTransactionPanel>)}
         </DashboardContainer>
     );
 };

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-export default function useType(categories) {
-    const [isExpense, setIsExpense] = useState(false);
+export default function useType(categories, initialIsExpense = false) {
+    const [isExpense, setIsExpense] = useState(initialIsExpense);
     const [categoryData, setCategoryData] = useState([]);
 
-    console.log(categories);
+    // console.log(categories);
 
     const filterIncomeCategory = (category) => {
         if (category.type === "income" && category.userID === "1") {

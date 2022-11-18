@@ -32,10 +32,8 @@ export default function useUploadImage(id, filepath, metadata = {}) {
             quality: 1
         });
 
-
-
         let source = { uri: result.uri };
-        console.log(result);
+        // console.log(result);
         if (!result.cancelled) {
             const filename = source.uri.substring(source.uri.lastIndexOf('/') + 1);
             setImage(source);
@@ -49,6 +47,12 @@ export default function useUploadImage(id, filepath, metadata = {}) {
             setImage(null);
             setFilename("");
         }
+    };
+
+    const resetState = () => {
+        setImage(null);
+        setIsUploading(false);
+        setFilename("");
     };
 
     const uploadImage = async () => {
@@ -67,12 +71,11 @@ export default function useUploadImage(id, filepath, metadata = {}) {
         try {
             const snapshot = await uploadBytes(storageRef, fileBlob, { ...metadata, fileExtension });
             const imgUrl = await getDownloadURL(snapshot.ref);
-            // console.log(fileExtension);
-            // console.log("UPLOADED");
-            setImage(null);
-            setIsUploading(false);
-            setFilename("");
+
+            // RESET THE STATE
+            resetState();
             Alert.alert("Upload Completed", "The image upload was successful.");
+            // returns the image url string , the imgRef string and fileExtension (optional)
             return { imgUri: imgUrl, imgRef: `${filepath}${fileId}`, mediaType: fileExtension };
         } catch (err) {
             console.log(err);
@@ -81,9 +84,7 @@ export default function useUploadImage(id, filepath, metadata = {}) {
                 'Error',
                 "Something went wrong in uploading the image. Try again."
             );
-            setImage(null);
-            setIsUploading(false);
-            setFilename("");
+            resetState();
         }
         // console.log(blob);
         // console.log("file:", filename);
