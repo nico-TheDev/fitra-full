@@ -4,17 +4,17 @@ import { addDoc, collection, serverTimestamp, deleteDoc, doc, updateDoc } from '
 import { db } from 'fitra/firebase.config.js';
 
 
-const useCategorieData = create(set => ({
+const useCategoryData = create(set => ({
     Categories: [],
     setCategories: (data) => set({ Categories: data }),
-    addCategorie: async (newCategorie) => {
+    addCategory: async (newCategory) => {
         try {
             // console.log(newCategorie);
-            await addDoc(collection(db, "Categories"), { ...newCategorie, timestamp: serverTimestamp() });
+            await addDoc(collection(db, "Categories"), { ...newCategory, timestamp: serverTimestamp() });
             console.log("NEW DOCUMENT CREATED");
         }
         catch (err) {
-            console.log("addCategorieError:", err);
+            console.log("addCategoryError:", err);
         }
     },
     deleteCategorie: async (documentId, fileReference) => {
@@ -25,18 +25,18 @@ const useCategorieData = create(set => ({
             await deleteDoc(docRef);
             // ALERT A MESSAGE
         } catch (err) {
-            console.log("deleteCategorieError:", err);
+            console.log("deleteCategoryError:", err);
         }
 
     },
-    updateCategorie: async (documentId, updatedCategorie) => {
+    updateCategorie: async (documentId, updatedCategory) => {
         try {
             let docRef;
             // CREATE A REFERENCE TO THE DOCUMENT AND THE FILE
             docRef = doc(db, "Categories", documentId);
-            await updateDoc(docRef, updatedCategorie);
+            await updateDoc(docRef, updatedCategory);
         } catch (err) {
-            console.log("updateCategorieError:", err);
+            console.log("updateCategoryError:", err);
         }
 
     }
