@@ -1,6 +1,6 @@
 //LIBRARY IMPORTS
 import React, { useState } from "react";
-import { Text } from "react-native";
+import { Alert, Text } from "react-native";
 import { useFormik } from "formik";
 import { TriangleColorPicker } from "react-native-color-picker";
 
@@ -22,12 +22,14 @@ import {
     CloseBtn,
 } from "./styles";
 
+import useCategoriesData from "hooks/useCategoriesData"
 import { colorCollection } from "fitra/SampleData";
 import { categories } from "fitra/SampleData";
 import Icon from "components/common/Icon";
 import { ICON_NAMES } from "constants/constant";
 
 const CategoriesCreateScreen = () => {
+    const addCategory = useCategoriesData((state) => state.addCategory)
     const [isExpense, setIsExpense] = useState(false);
     const [selectedIcon, setSelectedIcon] = useState("");
     const [selectedColor, setSelectedColor] = useState("");
@@ -50,8 +52,18 @@ const CategoriesCreateScreen = () => {
         setShowColorWheel(false);
     };
 
-    const handleFormikSubmit = (values) => {
+    const handleFormikSubmit = async (values, { resetForm }) => {
         console.log(values);
+        values.type = isExpense ? "expense" : "income";
+        addCategory({
+            category_name: values.categoryName,
+            category_color: values.categoryColor,
+            category_icon: values.categoryIcon,
+            category_type: values.type,
+            // created_at: date
+        });
+        resetForm();
+        Alert.alert("Success", "Created a New Category");
     };
 
     const handleClear = () => {

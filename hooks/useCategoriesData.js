@@ -4,7 +4,7 @@ import { addDoc, collection, serverTimestamp, deleteDoc, doc, updateDoc } from '
 import { db } from 'fitra/firebase.config.js';
 
 
-const useCategoryData = create(set => ({
+const useCategoriesData = create(set => ({
     Categories: [],
     setCategories: (data) => set({ Categories: data }),
     addCategory: async (newCategory) => {
@@ -43,4 +43,4 @@ const useCategoryData = create(set => ({
 }));
 
 
-export default useCategorieData;
+export default useCategoriesData;
