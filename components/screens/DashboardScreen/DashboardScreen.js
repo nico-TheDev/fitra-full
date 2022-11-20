@@ -38,7 +38,7 @@ const DashboardScreen = ({ navigation }) => {
 
     const transactionColRef = collection(db, "transactions");
 
-    const transactionQuery = query(transactionColRef);
+    const transactionQuery = query(transactionColRef, orderBy("timestamp", "desc"));
 
     useEffect(() => {
 
@@ -121,6 +121,7 @@ const DashboardScreen = ({ navigation }) => {
                 sliderWidth={SLIDER_WIDTH}
                 itemWidth={ITEM_WIDTH}
                 loop={true}
+                firstItem={0}
             /> : (
                 <DefaultTransactionPanel>
                     <DefaultText>💸 Add a Transaction 💸</DefaultText>

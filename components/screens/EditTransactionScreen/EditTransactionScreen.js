@@ -178,20 +178,20 @@ const EditTransactionScreen = ({ route, navigation }) => {
             </TransactionPanelHolder>
 
             <TransactionFormHolder>
+                <CustomDropdown
+                    dropdownItems={accountItems}
+                    setDropdownItems={setAccountItems}
+                    dropdownProps={{
+                        placeholder: "Choose Account",
+                        zIndex: 3000,
+                        zIndexInverse: 1000,
+                        value: formik.values.targetAccount,
+                        onChangeValue:
+                            formik.handleChange("targetAccount"),
+                    }}
+                    width="100%"
+                />
                 <ScrollContainer>
-                    <CustomDropdown
-                        dropdownItems={accountItems}
-                        setDropdownItems={setAccountItems}
-                        dropdownProps={{
-                            placeholder: "Choose Account",
-                            zIndex: 3000,
-                            zIndexInverse: 1000,
-                            value: formik.values.targetAccount,
-                            onChangeValue:
-                                formik.handleChange("targetAccount"),
-                        }}
-                        width="100%"
-                    />
                     <TransactionCategoryHolder>
                         <IconSelector
                             iconData={categoryList}
