@@ -74,6 +74,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
 
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
+        formik.setFieldValue("categoryName", icon.label);
         formik.setFieldValue("transactionIcon", icon);
     };
 
@@ -97,15 +98,16 @@ const EditTransactionScreen = ({ route, navigation }) => {
         // Updates the img refs if there's a selected image or the current ref
         let updatedImgRef = imgFile ? imgFile.imgRef : currentTransaction.comment_img_ref;
         let updatedImg = imgFile ? imgFile.imgUri : currentTransaction.comment_img;
-
+        const transactionIcon = values.icon === currentTransaction.transaction_icon ? currentTransaction.transaction_icon : selectedIcon.currentIcon;
+        const categoryName = values.categoryName === currentTransaction.category_name ? currentTransaction.category_name : selectedIcon.label;
         const newTransaction = {
             amount: Number(values.amount),
-            category_name: values.categoryName,
+            category_name: categoryName,
             comment_img_ref: updatedImgRef,
             comment_img: updatedImg,
             comments: values.comments,
             target_account: values.targetAccount,
-            transaction_icon: values.transactionIcon,
+            transaction_icon: transactionIcon,
             transaction_color: values.transactionColor,
             user_id: uuid.v4(), // TODO: Replace with actual user_id once auth is implemented
             type: values.type,
