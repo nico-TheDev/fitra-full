@@ -100,6 +100,8 @@ const EditTransactionScreen = ({ route, navigation }) => {
         let updatedImg = imgFile ? imgFile.imgUri : currentTransaction.comment_img;
         const transactionIcon = values.icon === currentTransaction.transaction_icon ? currentTransaction.transaction_icon : selectedIcon.currentIcon;
         const categoryName = values.categoryName === currentTransaction.category_name ? currentTransaction.category_name : selectedIcon.label;
+        const targetAccount = values.categoryName === currentTransaction.category_name ? currentTransaction.category_name : selectedIcon.label;
+
         const newTransaction = {
             amount: Number(values.amount),
             category_name: categoryName,
@@ -186,8 +188,13 @@ const EditTransactionScreen = ({ route, navigation }) => {
                         zIndex: 3000,
                         zIndexInverse: 1000,
                         value: formik.values.targetAccount,
-                        onChangeValue:
-                            formik.handleChange("targetAccount"),
+                        onChangeValue: (value) => {
+                            console.log(value);
+                        },
+                        onSelectItem: (item) => {
+                            formik.setFieldValue("targetAccount", item.value);
+                        }
+
                     }}
                     width="100%"
                 />

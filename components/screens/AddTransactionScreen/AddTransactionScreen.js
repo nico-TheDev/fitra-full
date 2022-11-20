@@ -101,6 +101,8 @@ const AddTransactionScreen = ({ navigation }) => {
         setDate(selectedDate);
     };
 
+    let isSubmitDisabled = Number(formik.values.amount) <= 0 || !formik.values.targetAccount || !formik.values.categoryName;
+
     return (
         <AddTransactionScreenContainer>
             <ScreenHeader title="Add Transaction" />
@@ -167,7 +169,7 @@ const AddTransactionScreen = ({ navigation }) => {
                             rounded={"10px"}
                             onPress={formik.handleSubmit}
                             buttonProps={{
-                                disabled: !formik.values.amount && !formik.values.targetAccount && !formik.values.categoryName,
+                                disabled: isSubmitDisabled,
                             }}
                         />
                     </ButtonHolder>
