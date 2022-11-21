@@ -9,7 +9,7 @@ export const AddTransactionScreenContainer = styled(Container)`
     padding-bottom: 20px;
 `;
 
-export const TrasactionFormHolder = styled.View`
+export const TransactionFormHolder = styled.View`
     padding-top: 40px;
     width: 90%;
     align-items: center;
@@ -65,5 +65,5 @@ export const ButtonHolder = styled.View`
 export const ScrollContainer = styled.ScrollView`
     width: 100%;
     flex-grow: 0;
-    height: 35%;
+    height: 65%;
 `;

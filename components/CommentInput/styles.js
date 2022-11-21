@@ -39,3 +39,9 @@ export const ImgButton = styled.TouchableOpacity`
     justify-content: center;
     background-color: ${colors.primary.colorFive};
 `;
+
+
+export const CustomImage = styled.Image`
+    width:100%;
+    height:100%
+`;
