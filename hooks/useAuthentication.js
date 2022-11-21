@@ -11,10 +11,14 @@ const useAuthentication = create(set => ({
             console.log(newUser);
             const res = await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);   //creates user
             await setDoc(doc(db, "users", res.user.uid), {      //sets document of user
-                uid: res.user.uid,                  //generate unique id
+                uid: res.user.uid,
+                user_id: newUser.user_id,                  //generate unique id
                 first_Name: newUser.firstName,      //fetched data from firstName (RegisterScreen) will be stored here
                 last_Name: newUser.lastName,        //fetched data from lastName (RegisterScreen) will be stored here
-                email: newUser.email});             //fetched data from email (RegisterScreen) will be stored here
+                email: newUser.email,
+                profile_img_ref: newUser.profile_img_ref,
+                profile_img: newUser.profile_img
+            });             //fetched data from email (RegisterScreen) will be stored here
             console.log("A NEW USER CREATED");
         }
         catch (err) {

@@ -1,12 +1,17 @@
 import { Text } from "react-native";
 import React from "react";
-import { Formik, useFormik } from "formik";
+import { useFormik } from "formik";
+import uuid from 'react-native-uuid';
 
 // LOCAL IMPORTS
 import Button from "components/Button";
 import colors from "assets/themes/colors";
+import { ICON_NAMES } from "constants/constant";
+
 import CircleBigBg from "assets/illustrations/Cirle-Big-Bg.svg";
 import RegisterScreenLogo from "assets/illustrations/Colored-Profile-Logo.svg";
+import ButtonIcon from "components/ButtonIcon";
+
 import {
     GreetingsHolder,
     RegisterScreenBg,
@@ -19,11 +24,17 @@ import {
     InputHolder,
     Input,
 } from "./styles";
-import useAuthentication from 'hooks/useAuthentication';
 
-const RegisterScreen = () => {
+import useAuthentication from 'hooks/useAuthentication';
+import useUploadImage from "hooks/useUploadImage";
+
+const RegisterScreen = ({ navigation }) => {
+    let photoId = uuid.v4();
+    
     const circleBigBgSize = 400;
     const registerScreenLogoSize = 100;
+
+    const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "users/");
 
     const addUser = useAuthentication(state => state.addUser);
 
@@ -34,14 +45,22 @@ const RegisterScreen = () => {
         password: "",
     };
 
-    const handleFormikSubmit = async (values) => {
+    const handleFormikSubmit = async (values, { resetForm }) => {
         console.log(values);
+        let imgFile;
+        if (image) {
+            imgFile = await uploadImage();
+        }
         addUser({
+            user_id: uuid.v4(),
             firstName: values.firstName,
             lastName: values.lastName,
             email: values.email,
-            password: values.password
-        })
+            password: values.password,
+            profile_img_ref: imgFile ? imgFile.imgRef : "",
+            profile_img: imgFile ? imgFile.imgUri : "",
+        });
+        resetForm();
     };
 
     const formik = useFormik({
@@ -61,9 +80,13 @@ const RegisterScreen = () => {
                         Start your financial journey !
                     </RegisterWelcomeText2>
                 </RegisterWelcomeTextHolder>
-                <RegisterScreenLogo
-                    width={registerScreenLogoSize}
-                    height={registerScreenLogoSize}
+                <ButtonIcon
+                    name={ICON_NAMES.ADD_PHOTO_V1}
+                    iconColor={colors.primary.colorFive}
+                    type={'filled'}
+                    imageUri={image}
+                    onPress={chooseImage}
+                    filename={filename}
                 />
             </GreetingsHolder>
             <RegisterForm>
