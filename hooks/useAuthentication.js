@@ -15,10 +15,10 @@ const useAuthentication = create(set => ({
                 user_id: newUser.user_id,                  //generate unique id
                 first_Name: newUser.firstName,      //fetched data from firstName (RegisterScreen) will be stored here
                 last_Name: newUser.lastName,        //fetched data from lastName (RegisterScreen) will be stored here
-                email: newUser.email,
+                email: newUser.email,               //fetched data from email (RegisterScreen) will be stored here
                 profile_img_ref: newUser.profile_img_ref,
                 profile_img: newUser.profile_img
-            });             //fetched data from email (RegisterScreen) will be stored here
+            });             
             console.log("A NEW USER CREATED");
         }
         catch (err) {
@@ -28,9 +28,16 @@ const useAuthentication = create(set => ({
     verifyUser: async (currentUser) => {
         try {
             console.log(currentUser);
-            await signInWithEmailAndPassword(auth, currentUser.email, currentUser.password);     //checks if user is registered, email and password correct
-            navigate("/")                           // finds user's data
-            console.log("USER IS PRESENT");
+            const verifiedUser = await signInWithEmailAndPassword(auth, currentUser.email, currentUser.password);     //checks if user is registered, email and password correct
+            console.log(verifiedUser);
+            set({
+                user: {
+                    email: verifiedUser.email,
+                    name: verifiedUser.displayName,
+                    user_id: verifiedUser.localId,
+                    profile_img: verifiedUser.photoURL
+                }, isLoggedIn: true
+            })
         }
         catch (err) {
             console.log(err);

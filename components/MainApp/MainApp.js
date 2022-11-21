@@ -10,12 +10,13 @@ import TabNavigator from "components/navigators/TabNavigator";
 
 // CONTEXTS
 import { useAuth } from "fitra/contexts/AuthContext";
+import useAuthentication from "hooks/useAuthentication";
 
 //  STACK
 const Stack = createNativeStackNavigator();
 
 const MainApp = ({ onLayoutRootView }) => {
-    const { isLoggedIn } = useAuth();
+    let isLoggedIn = useAuthentication(state => state.isLoggedIn);
 
     return (
         <NavigationContainer onReady={onLayoutRootView}>

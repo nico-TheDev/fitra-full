@@ -1,6 +1,7 @@
 import { TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormik ,Formik } from "formik";
+
 
 // LOCAL IMPORTS
 import EllipseBg from "assets/illustrations/Ellipse-Bg.svg";
@@ -24,12 +25,11 @@ import {
 } from "./styles";
 import userProfile from "assets/img/user-1.jpg";
 import Button from "components/Button";
-import { useAuth } from "contexts/AuthContext";
 import useAuthentication  from 'hooks/useAuthentication';
-
+import { auth } from "firebase.config";
+import { GOOGLE_CLIENT_ID } from '@env';
 
 const LoginScreen = ({ navigation }) => {
-    const { isLoggedIn, setIsLoggedIn } = useAuth();
     const verifyUser = useAuthentication(state => state.verifyUser);
     const initialValues = { email: "", password: "" };
 
@@ -39,19 +39,28 @@ const LoginScreen = ({ navigation }) => {
             email: values.email,
             password: values.password
         })
-        setIsLoggedIn(true);
-        navigation.navigate("Dashboard");
     };
 
     const formik = useFormik({
         initialValues: initialValues,
         onSubmit: handleFormikSubmit,
     });
+    
+    useEffect(() => {
+        const response = GOOGLE_CLIENT_ID;
+    });
 
-    const { googleSignIn } = useAuth();
-    const handleGoogleSignIn = async () => {
-        try{ 
-            await googleSignIn();
+    const handleGoogleSignIn = (response) => {
+        try{
+            const idToken = response.credential;
+            const credential = GoogleAuthProvider.credential(idToken);
+            signInWithCredential(auth, credential).catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                const email = error.email;
+                const credential = GoogleAuthProvider.credentialFromError(error);
+                // ...
+            });
         }catch(err){
             console.log(err)
         }
