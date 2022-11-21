@@ -24,6 +24,7 @@ export const DetailsHolder = styled.View`
 export const Comment = styled.Text`
     font-family: ${FONTS.REGULAR};
     font-size: 16px;
+    width:50%;
     color: ${colors.darkgray};
 `;
 
