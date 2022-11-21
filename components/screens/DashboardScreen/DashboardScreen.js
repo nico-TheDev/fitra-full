@@ -1,8 +1,8 @@
 // LIBRARY IMPORTS
 import React, { useState, useRef, useEffect } from "react";
-import { Dimensions } from "react-native";
+import { Dimensions, Text } from "react-native";
 import Carousel, { Pagination } from "react-native-snap-carousel";
-import { onSnapshot, collection } from 'firebase/firestore'
+import { onSnapshot, collection, orderBy, query } from 'firebase/firestore';
 
 
 // LOCAL IMPORTS
@@ -14,8 +14,9 @@ import DashboardRecentPanel from "components/DashboardRecentPanel";
 import CircleBG from "components/common/CircleBG";
 
 import colors from "assets/themes/colors";
-import { DashboardContainer, DashboardDate } from "./styles";
+import { DashboardContainer, DashboardDate, DefaultText, DefaultTransactionPanel } from "./styles";
 import { db } from "fitra/firebase.config";
+import useTransactionData from "hooks/useTransactionData";
 
 
 const dotStyle = {
@@ -30,17 +31,22 @@ const DashboardScreen = ({ navigation }) => {
     const SLIDER_WIDTH = Dimensions.get("window").width;
     const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9);
     const [pageIndex, setPageIndex] = useState(0);
-    const [transactions, setTransactions] = useState([]);
+    const transactions = useTransactionData(state => state.transactions);
+    const setTransactions = useTransactionData(state => state.setTransactions);
     const isCarousel = useRef(null);
 
 
     const transactionColRef = collection(db, "transactions");
 
+    const transactionQuery = query(transactionColRef, orderBy("timestamp", "desc"));
+
     useEffect(() => {
 
-        const unsubscribe = onSnapshot(transactionColRef, (snapshotData) => {
-            const transactionData = snapshotData.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-            setTransactions(transactionData);
+        const unsubscribe = onSnapshot(transactionQuery, (snapshotData) => {
+            const data = [];
+            snapshotData.forEach(doc => data.push({ ...doc.data(), id: doc.id }));
+            setTransactions(data);
+            // console.log("data", data);
             console.log("FIREBASE WORKING");
         });
 
@@ -49,9 +55,13 @@ const DashboardScreen = ({ navigation }) => {
         // GET ALL THE RECENT TRANSACTIONS
     }, []);
 
-    const handleNavigation = () =>
+    const handleNavigation = (id) =>
         navigation.navigate("Dashboard", {
             screen: "TransactionDetails",
+            params: {
+                transactionID: id
+            }
+
         });
 
     const dashboardChartRenderItem = ({ item, index }) => {
@@ -68,8 +78,8 @@ const DashboardScreen = ({ navigation }) => {
         return (
             <DashboardRecentPanel
                 data={item}
-                key={item._id}
-                onPress={handleNavigation}
+                key={item.id}
+                onPress={() => handleNavigation(item.id)}
             />
         );
     };
@@ -105,13 +115,17 @@ const DashboardScreen = ({ navigation }) => {
                 inactiveDotScale={0.8}
             />
 
-            <Carousel
-                data={transactions}
+            {transactions.length ? <Carousel
+                data={transactions.slice(0, 5)}
                 renderItem={recentPanelRenderItem}
                 sliderWidth={SLIDER_WIDTH}
                 itemWidth={ITEM_WIDTH}
                 loop={true}
-            />
+                firstItem={0}
+            /> : (
+                <DefaultTransactionPanel>
+                    <DefaultText>💸 Add a Transaction 💸</DefaultText>
+                </DefaultTransactionPanel>)}
         </DashboardContainer>
     );
 };
