@@ -10,6 +10,7 @@ import { ICON_NAMES } from "constants/constant";
 import CircleBigBg from "assets/illustrations/Cirle-Big-Bg.svg";
 import RegisterScreenLogo from "assets/illustrations/Colored-Profile-Logo.svg";
 import ButtonIcon from "components/ButtonIcon";
+import uuid from 'react-native-uuid';
 
 import {
     GreetingsHolder,

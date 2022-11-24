@@ -9,13 +9,13 @@ const useAuthentication = create(set => ({
     addUser: async (newUser) => {
         try {
             console.log(newUser);
-            const res = await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);   //creates user
+            const createdUser = await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);   //creates user
             await updateProfile(auth.currentUser, {
                 displayName: newUser.firstName + " " + newUser.lastName,    //updates displayName
                 photoURL:  newUser.profile_img,                             //updates photoURL
             })
-            await setDoc(doc(db, "users", res.user.uid), {      //sets document of user
-                uid: res.user.uid,                              //generated uid
+            await setDoc(doc(db, "users", createdUser.user.uid), {      //sets document of user
+                uid: createdUser.user.uid,                              //generated uid
                 first_Name: newUser.firstName,                  //fetched data from firstName (RegisterScreen) will be stored here
                 last_Name: newUser.lastName,                    //fetched data from lastName (RegisterScreen) will be stored here
                 email: newUser.email,                           //fetched data from email (RegisterScreen) will be stored here
@@ -23,6 +23,15 @@ const useAuthentication = create(set => ({
                 profile_img: newUser.profile_img                //fetched data from profile_img (RegisterScreen) will be stored here
             });             
             console.log("A NEW USER CREATED");
+            console.log(createdUser);
+            set({
+                user: {     //sets user credentials
+                    email: createdUser.email,
+                    name: createdUser.displayName,
+                    user_id: createdUser.uid,
+                    profile_img: createdUser.photoURL
+                }, isLoggedIn: true
+            })
         }
         catch (err) {
             console.log(err);
