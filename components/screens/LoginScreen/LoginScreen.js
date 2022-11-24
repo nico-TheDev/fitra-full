@@ -26,8 +26,6 @@ import {
 import userProfile from "assets/img/user-1.jpg";
 import Button from "components/Button";
 import useAuthentication  from 'hooks/useAuthentication';
-import { auth } from "firebase.config";
-import { GOOGLE_CLIENT_ID } from '@env';
 
 const LoginScreen = ({ navigation }) => {
     const verifyUser = useAuthentication(state => state.verifyUser);
@@ -46,25 +44,25 @@ const LoginScreen = ({ navigation }) => {
         onSubmit: handleFormikSubmit,
     });
     
-    useEffect(() => {
-        const response = GOOGLE_CLIENT_ID;
-    });
+    // useEffect(() => {
+    //     const response = GOOGLE_CLIENT_ID;
+    // });
 
-    const handleGoogleSignIn = (response) => {
-        try{
-            const idToken = response.credential;
-            const credential = GoogleAuthProvider.credential(idToken);
-            signInWithCredential(auth, credential).catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                const email = error.email;
-                const credential = GoogleAuthProvider.credentialFromError(error);
-                // ...
-            });
-        }catch(err){
-            console.log(err)
-        }
-    }
+    // const handleGoogleSignIn = (response) => {
+    //     try{
+    //         const idToken = response.credential;
+    //         const credential = GoogleAuthProvider.credential(idToken);
+    //         signInWithCredential(auth, credential).catch((error) => {
+    //             const errorCode = error.code;
+    //             const errorMessage = error.message;
+    //             const email = error.email;
+    //             const credential = GoogleAuthProvider.credentialFromError(error);
+    //             // ...
+    //         });
+    //     }catch(err){
+    //         console.log(err)
+    //     }
+    // }
 
     return (
         <LoginScreenContainer>
@@ -109,7 +107,7 @@ const LoginScreen = ({ navigation }) => {
                             title={"SIGN IN WITH GOOGLE"}
                             rounded={"10px"}
                             noBorder={false}
-                            onPress={handleGoogleSignIn}
+                            // onPress={handleGoogleSignIn}
                         />
                     </LoginFormButtonsHolder>
                 </LoginForm>

@@ -1,7 +1,6 @@
 import { Text } from "react-native";
 import React from "react";
 import { useFormik } from "formik";
-import uuid from 'react-native-uuid';
 
 // LOCAL IMPORTS
 import Button from "components/Button";
@@ -52,7 +51,6 @@ const RegisterScreen = ({ navigation }) => {
             imgFile = await uploadImage();
         }
         addUser({
-            user_id: uuid.v4(),
             firstName: values.firstName,
             lastName: values.lastName,
             email: values.email,
