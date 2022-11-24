@@ -32,6 +32,7 @@ const useAuthentication = create(set => ({
         try {
             console.log(login_user);
             const verifiedUser = await signInWithEmailAndPassword(auth, login_user.email, login_user.password);     //checks if user is registered, email and password correct
+            console.log(verifiedUser);
             set({
                 user: {     //sets user credentials
                     email: verifiedUser.email,
