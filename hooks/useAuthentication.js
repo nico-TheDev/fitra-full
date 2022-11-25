@@ -1,7 +1,8 @@
 import create from 'zustand';
 import { doc, setDoc } from 'firebase/firestore';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "firebase/auth";
 import { auth, db } from '../firebase.config';
+import { Alert } from 'react-native';
 
 const useAuthentication = create(set => ({
     user:{},
@@ -22,7 +23,7 @@ const useAuthentication = create(set => ({
                 profile_img_ref: newUser.profile_img_ref,       //fetched data from profile_img (RegisterScreen) will be stored here
                 profile_img: newUser.profile_img                //fetched data from profile_img (RegisterScreen) will be stored here
             });             
-            console.log("A NEW USER CREATED");
+            Alert.alert('Status', 'User created. Sign in success.');
             console.log(createdUser);
             set({
                 user: {     //sets user credentials
@@ -34,6 +35,7 @@ const useAuthentication = create(set => ({
             })
         }
         catch (err) {
+            Alert.alert('Status', 'Failed to create user. Sign in failed.');
             console.log(err);
         }
     },
@@ -41,6 +43,7 @@ const useAuthentication = create(set => ({
         try {
             console.log(login_user);
             const verifiedUser = await signInWithEmailAndPassword(auth, login_user.email, login_user.password);     //checks if user is registered, email and password correct
+            Alert.alert('Status', 'Email and password correct. Login success.');
             console.log(verifiedUser);
             set({
                 user: {     //sets user credentials
@@ -52,9 +55,28 @@ const useAuthentication = create(set => ({
             })
         }
         catch (err) {
+            Alert.alert('Status', 'Email and password incorrect. Login failed.');
             console.log(err);
         }
     },
+    logoutUser: async () => {
+        try{
+            await signOut(auth);    // signs out current user
+            Alert.alert('Status', 'User is logged out.');
+            set({
+                user: {       //sets credentials to empty string
+                    email: '',
+                    name: '',
+                    user_id: '',
+                    profile_img: ''
+                }, isLoggedIn: false
+            })
+        }
+        catch(err){
+            Alert.alert('Status', 'Failed to log out.');
+            console.log(err);
+        }
+    }
 }));
 
 export default useAuthentication;

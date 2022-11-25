@@ -15,7 +15,8 @@ import userProfile from "assets/img/user-1.jpg";
 import { ICON_NAMES } from "constants/constant";
 import Button from "components/Button";
 import colors from "assets/themes/colors";
-import { useAuth } from "contexts/AuthContext";
+
+import useAuthentication  from 'hooks/useAuthentication';
 
 const BUTTONDATA = [
     {
@@ -30,13 +31,18 @@ const BUTTONDATA = [
     },
 ];
 
-const MoreScreen = () => {
-    const { setIsLoggedIn } = useAuth();
+const MoreScreen = ({navigation}) => {
+    // const { setIsLoggedIn } = useAuth();
+    const logoutUser = useAuthentication(state => state.logoutUser);
     const username = "Username";
     const email = "Email@gamail.com";
 
     const circleWidth = 1000;
     const circleHeight = 275;
+
+    const handleLogOut = () => {
+        logoutUser()
+    };
 
     const renderItem = ({ item }) => (
         <Button
@@ -50,7 +56,7 @@ const MoreScreen = () => {
                 backgroundColor: "transparent",
             }}
             buttonLabelStyle={{ marginLeft: 20 }}
-            onPress={() => setIsLoggedIn(false)}
+            onPress={handleLogOut}
         />
     );
 
