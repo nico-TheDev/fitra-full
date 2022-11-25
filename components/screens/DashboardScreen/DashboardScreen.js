@@ -17,6 +17,7 @@ import colors from "assets/themes/colors";
 import { DashboardContainer, DashboardDate, DefaultText, DefaultTransactionPanel } from "./styles";
 import { db } from "fitra/firebase.config";
 import useTransactionData from "hooks/useTransactionData";
+import getCurrentDate from "util/getCurrentDate";
 
 
 const dotStyle = {
@@ -31,6 +32,7 @@ const DashboardScreen = ({ navigation }) => {
     const SLIDER_WIDTH = Dimensions.get("window").width;
     const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9);
     const [pageIndex, setPageIndex] = useState(0);
+    const [chartData, setCharData] = useState([]);
     const transactions = useTransactionData(state => state.transactions);
     const setTransactions = useTransactionData(state => state.setTransactions);
     const isCarousel = useRef(null);
@@ -43,9 +45,52 @@ const DashboardScreen = ({ navigation }) => {
     useEffect(() => {
 
         const unsubscribe = onSnapshot(transactionQuery, (snapshotData) => {
-            const data = [];
-            snapshotData.forEach(doc => data.push({ ...doc.data(), id: doc.id }));
-            setTransactions(data);
+            const dataList = [];
+            snapshotData.forEach(doc => dataList.push({ ...doc.data(), id: doc.id }));
+
+            const expenseTotal = dataList.reduce((acc, currentTransaction) => {
+                if (currentTransaction.type === "expense") {
+                    acc += currentTransaction.amount;
+                }
+                return acc;
+            }, 0);
+            const incomeTotal = dataList.reduce((acc, currentTransaction) => {
+                if (currentTransaction.type === "income") {
+                    acc += currentTransaction.amount;
+                }
+                return acc;
+            }, 0);
+
+            const generalData = [{
+                user_id: "1",
+                amount: expenseTotal,
+                type: "expense",
+                target_account: "gcash",
+                category_name: "Expense",
+                transaction_icon: "food-icon",
+                color: "#2ecc71",
+                transaction_color: "#2ecc71"
+            }, {
+                user_id: "2",
+                amount: incomeTotal,
+                type: "income",
+                target_account: "gcash",
+                category_name: "Income",
+                transaction_icon: "food-icon",
+                color: "#3498db",
+                transaction_color: "#3498db"
+            }];
+
+
+            const expenseData = dataList.filter(transaction => transaction.type === "expense");
+            const incomeData = dataList.filter(transaction => transaction.type === "income");
+
+            const graphChartData = [{
+                name: "General",
+                data: generalData
+            },];
+            setCharData(graphChartData);
+            setTransactions(dataList);
             // console.log("data", data);
             console.log("FIREBASE WORKING");
         });
@@ -84,17 +129,18 @@ const DashboardScreen = ({ navigation }) => {
         );
     };
 
+
     return (
         <DashboardContainer>
             {/* BACKGROUND */}
             <CircleBG circleSize={250} />
             {/* START OF THE SCREEN */}
             <DashboardHead />
-            <DashboardDate>June 12, 2022</DashboardDate>
+            <DashboardDate>{getCurrentDate()}</DashboardDate>
 
             <Carousel
                 ref={isCarousel}
-                data={chartDataMulti}
+                data={chartData}
                 renderItem={dashboardChartRenderItem}
                 sliderWidth={SLIDER_WIDTH}
                 itemWidth={ITEM_WIDTH}
@@ -103,7 +149,7 @@ const DashboardScreen = ({ navigation }) => {
             />
 
             <Pagination
-                dotsLength={chartDataMulti.length}
+                dotsLength={chartData.length}
                 activeDotIndex={pageIndex}
                 carouselRef={isCarousel}
                 dotStyle={dotStyle}
