@@ -69,7 +69,7 @@ const useAuthentication = create(set => ({
                     name: '',
                     user_id: '',
                     profile_img: ''
-                }, isLoggedIn: false
+                }, isLoggedIn: false, isOnboardRead: true
             })
         }
         catch(err){
