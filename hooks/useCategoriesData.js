@@ -2,24 +2,25 @@ import create from 'zustand';
 import { addDoc, collection, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 
 import { db } from 'fitra/firebase.config.js';
+import { categories } from 'fitra/data/categories.js';
 
 
 const useCategoriesData = create(set => ({
-    Categories: [],
-    setCategories: (data) => set({ Categories: data }),
+    categories: categories,
+
+    setCategories: (data) => set({ categories: data }),
     addCategory: async (newCategory) => {
         try {
-            // console.log(newCategorie);
-            await addDoc(collection(db, "Categories"), { ...newCategory, timestamp: serverTimestamp() });
+            await addDoc(collection(db, "categories"), { ...newCategory, timestamp: serverTimestamp() });
             console.log("NEW DOCUMENT CREATED");
         }
         catch (err) {
             console.log("addCategoryError:", err);
         }
     },
-    deleteCategorie: async (documentId, fileReference) => {
+    deleteCategory: async (documentId) => {
         // CREATE A REFERENCE FOR THE DOCUMENT AND THE FILE
-        const docRef = doc(db, "Categories", documentId);
+        const docRef = doc(db, "categories", documentId);
         try {
             // DELETE THE DOCUMENT AND OBJECT 
             await deleteDoc(docRef);
@@ -29,11 +30,11 @@ const useCategoriesData = create(set => ({
         }
 
     },
-    updateCategorie: async (documentId, updatedCategory) => {
+    updateCategory: async (documentId, updatedCategory) => {
         try {
             let docRef;
             // CREATE A REFERENCE TO THE DOCUMENT AND THE FILE
-            docRef = doc(db, "Categories", documentId);
+            docRef = doc(db, "categories", documentId);
             await updateDoc(docRef, updatedCategory);
         } catch (err) {
             console.log("updateCategoryError:", err);

@@ -27,6 +27,7 @@ import { colorCollection } from "fitra/SampleData";
 import { categories } from "fitra/SampleData";
 import Icon from "components/common/Icon";
 import { ICON_NAMES } from "constants/constant";
+import { FieldValue } from "firebase/firestore";
 
 const CategoriesCreateScreen = () => {
     const addCategory = useCategoriesData((state) => state.addCategory)
@@ -34,11 +35,16 @@ const CategoriesCreateScreen = () => {
     const [selectedIcon, setSelectedIcon] = useState("");
     const [selectedColor, setSelectedColor] = useState("");
     const [showColorWheel, setShowColorWheel] = useState(false);
+    const [date, setDate] = useState(new Date());
 
     const initialValues = {
         categoryName: "",
         categoryIcon: "",
         categoryColor: "",
+        userID: "",
+        type: "",
+        createdAt: "",
+        updatedAt: ""
     };
 
     const handleIconPress = (icon) => {
@@ -60,7 +66,9 @@ const CategoriesCreateScreen = () => {
             category_color: values.categoryColor,
             category_icon: values.categoryIcon,
             category_type: values.type,
-            // created_at: date
+            created_at: date,
+            update_at: "",
+            user_id: 1
         });
         resetForm();
         Alert.alert("Success", "Created a New Category");
