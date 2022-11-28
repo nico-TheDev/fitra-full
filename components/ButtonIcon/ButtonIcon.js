@@ -1,19 +1,21 @@
 import React, { memo } from "react";
 import PropTypes from "prop-types";
-import { ButtonContainer, ButtonLabel, ButtonIconContainer } from "./styles";
+import { ButtonContainer, ButtonLabel, ButtonIconContainer, CustomImage } from "./styles";
 
 import Icon from "components/common/Icon";
 import colors from "assets/themes/colors";
 
-const ButtonIcon = ({ onPress, label, name, type, iconColor = colors.primary.colorFive, iconSize = 30, styles }) => {
+const ButtonIcon = ({ onPress, label, name, type, iconColor = colors.primary.colorFive, iconSize = 30, styles, imageUri, filename }) => {
     return (
         <ButtonContainer style={styles}>
             <ButtonIconContainer onPress={onPress} type={type} color={iconColor}>
-                <Icon
-                    name={name}
-                    color={type === "filled" ? colors.white : iconColor}
-                    size={iconSize}
-                />
+                {!imageUri?.uri ? 
+                    <Icon
+                        name={name}
+                        color={type === "filled" ? colors.white : iconColor}
+                        size={iconSize}
+                    /> 
+                    : <CustomImage source={{ uri: imageUri.uri }} />}
             </ButtonIconContainer>
             {label && (
                 <ButtonLabel type={type} color={iconColor}>
@@ -31,6 +33,8 @@ ButtonIcon.propTypes = {
     iconColor: PropTypes.string,
     iconSize: PropTypes.number,
     styles: PropTypes.object,
+    imageUri: PropTypes.object,
+    filename: PropTypes.string
 };
 
 export default memo(ButtonIcon);

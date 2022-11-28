@@ -3,10 +3,10 @@ import { useState, useEffect, useCallback } from "react";
 // FONT IMPORTS
 import { loadAsync } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-
 // LOCAL IMPORTS
 // COMPONENTS
 import MainApp from "components/MainApp";
+import RegisterScreen from "components/screens/RegisterScreen";
 // CONTEXTS
 import { ThemeProvider } from "fitra/contexts/ThemeContext";
 import { AuthProvider } from "fitra/contexts/AuthContext";
