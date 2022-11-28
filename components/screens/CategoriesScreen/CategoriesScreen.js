@@ -17,17 +17,18 @@ import { db } from "fitra/firebase.config";
 import useCategoriesData from "hooks/useCategoriesData";
 import convertTimestamp from "util/convertTimestamp";
 import { Category } from "components/DashboardCategoryItem/styles";
+import useType from "hooks/useType";
 
 const CategoriesScreen = () => {
     const [selectedIcon, setSelectedIcon] = useState({
         iconName: "",
         iconLabel: "",
     });
-    const [isExpense, setIsExpense] = useState(false);
     let [categoryData, setCategoryData] = useState([]);
     const setCategories = useCategoriesData((state) => (state.setCategories));
     const resetCategories = useCategoriesData((state) => (state.reset));
     const categories = useCategoriesData((state) => (state.categories));
+    const [isExpense, setIsExpense, categoriesData] = useType(categories);
 
     const categoryColRef = collection(db, "categories");
     const categoryQuery = query(categoryColRef);
@@ -36,8 +37,8 @@ const CategoriesScreen = () => {
     useEffect(() => {
         //TODO render all categories including those in the database
         const data = categories;
+        console.log(data)
         const unsubscribe = onSnapshot(categoryQuery, (snapshotData) => {
-            console.log(categories)
             snapshotData.forEach(doc => {
                 if (!data.some(item => item.id === doc.id)) {
                     data.push({
@@ -51,15 +52,17 @@ const CategoriesScreen = () => {
                 }
                 setCategories(data);
             });
+            console.log(isExpense)
+            console.log(data)
+            if (isExpense) {
+                setCategoryData(data.filter((item) => item.type === "income"));
+                console.log("this is expense")
+            }
+            if (!isExpense) {
+                setCategoryData(data.filter((item) => item.type === "expense"));
+                console.log("this is income")
+            }
         });
-        // INCOME TYPE
-        if (!isExpense) {
-            setCategoryData(data.filter((item) => item.type === "expense"));
-        }
-        // EXPENSE TYPE
-        else {
-            setCategoryData(data.filter((item) => item.type === "income"));
-        }
         return unsubscribe;
     }, [isExpense]);
 

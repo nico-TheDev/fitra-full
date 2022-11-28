@@ -59,8 +59,8 @@ const CategoriesCreateScreen = () => {
     };
 
     const handleFormikSubmit = async (values, { resetForm }) => {
-        console.log(values);
-        values.type = isExpense ? "expense" : "income";
+        values.type = isExpense ? "income" : "expense";
+        console.log(values.type);
         addCategory({
             category_name: values.categoryName,
             category_color: values.categoryColor,

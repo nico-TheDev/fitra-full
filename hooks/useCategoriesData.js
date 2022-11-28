@@ -11,7 +11,7 @@ const useCategoriesData = create(set => ({
     setCategories: (data) => set({ categories: data }),
     addCategory: async (newCategory) => {
         try {
-            await addDoc(collection(db, "categories"), { ...newCategory, timestamp: serverTimestamp() });
+            await addDoc(collection(db, "categories"), { ...newCategory, created_at: serverTimestamp() });
             console.log("NEW DOCUMENT CREATED");
         }
         catch (err) {
@@ -35,7 +35,7 @@ const useCategoriesData = create(set => ({
             let docRef;
             // CREATE A REFERENCE TO THE DOCUMENT AND THE FILE
             docRef = doc(db, "categories", documentId);
-            await updateDoc(docRef, updatedCategory);
+            await updateDoc(docRef, { updatedCategory, updated_at: serverTimestamp() });
         } catch (err) {
             console.log("updateCategoryError:", err);
         }

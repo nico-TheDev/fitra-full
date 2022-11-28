@@ -36,8 +36,6 @@ const CategoriesEditScreen = ({ route, navigation }) => {
         return categoriesData.find(category => category.id === categoryID);
     });
     const [data, setData] = useState([]);
-
-    const [date, setDate] = useState(new Date());
     const [isExpense, setIsExpense] = useType(categoriesData, currentCategory.type === "expense");
     const [selectedIcon, setSelectedIcon] = useState({
         label: "",
@@ -68,11 +66,8 @@ const CategoriesEditScreen = ({ route, navigation }) => {
             let data = [];
             snapshotData.docs.forEach((doc) => {
                 data.push({ ...doc.data(), id: doc.id })
-                console.log("this is the data")
             });
             setData(data)
-            console.log(data);
-            console.log(data.length)
         })
         console.log("this is edit")
         setSelectedIcon({
@@ -96,18 +91,13 @@ const CategoriesEditScreen = ({ route, navigation }) => {
     //Todo redo update data
     const handleFormikSubmit = async (values) => {
         values.type = isExpense ? "expense" : "income";
-        const categoryIcon = values.icon === currentCategory.categoryIcon ? currentCategory.categoryIcon : selectedIcon.currentIcon;
-        const categoryName = values.categoryName === currentCategory.categoryName ? currentCategory.categoryName : selectedIcon.label;
-        const categoryColor = values.categoryColor === currentCategory.categoryColor ? currentCategory.categoryColor : selectedColor.color;
         console.log(values.type)
         const newCategory = {
             user_id: "1", //to be replaced by actual user_id,
-            type: values.type,
-            category_name: categoryName,
-            category_icon: categoryIcon,
-            category_color: categoryColor,
-            created_at: convertTimestamp(values.createdAt),
-            updated_at: date,
+            category_type: values.type,
+            category_name: values.categoryName,
+            category_icon: values.categoryIcon,
+            category_color: values.categoryColor,
         }
         console.log(data.length)
         console.log(newCategory)
@@ -117,12 +107,10 @@ const CategoriesEditScreen = ({ route, navigation }) => {
         if (data.length === 0) {
             addCategory({
                 user_id: "1", //to be replaced by actual user_id,
-                type: values.type,
-                category_name: categoryName,
-                category_icon: categoryIcon,
-                category_color: categoryColor,
-                created_at: date,
-                updated_at: "",
+                category_type: values.type,
+                category_name: values.categoryName,
+                category_icon: values.categoryIcon,
+                category_color: values.categoryColor,
             });
         }
         formik.resetForm();
