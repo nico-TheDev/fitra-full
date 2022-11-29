@@ -40,26 +40,29 @@ const CategoriesScreen = () => {
         console.log(data)
         const unsubscribe = onSnapshot(categoryQuery, (snapshotData) => {
             snapshotData.forEach(doc => {
-                if (!data.some(item => item.id === doc.id)) {
-                    data.push({
-                        categoryColor: doc.data().category_color,
-                        categoryIcon: doc.data().category_icon,
-                        categoryName: doc.data().category_name,
-                        userID: 1,
-                        type: doc.data().category_type,
-                        id: doc.id
-                    })
+                //check if doc is already in the array
+                if (data.some(item => item.id === doc.id)) {
+                    const objIndex = data.findIndex((item) => item.id === doc.id)
+                    data.splice(objIndex, 1)
                 }
+                data.push({
+                    categoryColor: doc.data().category_color,
+                    categoryIcon: doc.data().category_icon,
+                    categoryName: doc.data().category_name,
+                    userID: 1,
+                    type: doc.data().category_type,
+                    id: doc.id
+                })
                 setCategories(data);
             });
             console.log(isExpense)
             console.log(data)
             if (isExpense) {
-                setCategoryData(data.filter((item) => item.type === "income"));
+                setCategoryData(categories.filter((item) => item.type === "income"));
                 console.log("this is expense")
             }
             if (!isExpense) {
-                setCategoryData(data.filter((item) => item.type === "expense"));
+                setCategoryData(categories.filter((item) => item.type === "expense"));
                 console.log("this is income")
             }
         });
@@ -83,6 +86,7 @@ const CategoriesScreen = () => {
             />
             <CategoryPanel>
                 <SwitchCategory
+                    onChange={() => { resetCategories(); console.log("this is reset categories") }}
                     isEnabled={isExpense}
                     setIsEnabled={setIsExpense}
                 />

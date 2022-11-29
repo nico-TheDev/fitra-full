@@ -28,6 +28,8 @@ import { db } from "fitra/firebase.config";
 
 const CategoriesEditScreen = ({ route, navigation }) => {
     const { categoryID } = route.params;
+    const resetCategories = useCategoriesData(state => state.reset)
+    const setCategories = useCategoriesData(state => state.setCategories)
     const categoriesData = useCategoriesData(state => state.categories);
     const deleteCategory = useCategoriesData(state => state.deleteCategory);
     const addCategory = useCategoriesData(state => state.addCategory);
@@ -35,6 +37,7 @@ const CategoriesEditScreen = ({ route, navigation }) => {
     const [currentCategory, setCurrentCategory] = useState(() => {
         return categoriesData.find(category => category.id === categoryID);
     });
+    let [categoryData, setCategoryData] = useState([]);
     const [data, setData] = useState([]);
     const [isExpense, setIsExpense] = useType(categoriesData, currentCategory.type === "expense");
     const [selectedIcon, setSelectedIcon] = useState({
@@ -50,7 +53,6 @@ const CategoriesEditScreen = ({ route, navigation }) => {
         icon: currentCategory.categoryIcon,
         categoryName: currentCategory.categoryName
     }
-    console.log(currentCategory)
 
     const categoryColRef = collection(db, "categories");
     const categoryQuery = query(categoryColRef, where("__name__", "==", currentCategory.id));
@@ -59,23 +61,26 @@ const CategoriesEditScreen = ({ route, navigation }) => {
     // MANAGE THE STATE AFTER FIRST MOUNT
     //possible for update error
     useEffect(() => {
+        console.log("reset categ before edit")
+        console.log(categoriesData)
         const targetCategory = categoriesData.find(category => category.id === categoryID);
         // console.log(targetTransaction);
         setCurrentCategory(targetCategory);
-        onSnapshot(categoryQuery, (snapshotData) => {
+        const unsubscribe = onSnapshot(categoryQuery, (snapshotData) => {
             let data = [];
             snapshotData.docs.forEach((doc) => {
-                data.push({ ...doc.data(), id: doc.id })
+                data.push({ id: doc.id })
             });
             setData(data)
         })
+        //set this category data array to data categories
         console.log("this is edit")
         setSelectedIcon({
             label: currentCategory.category_name,
             icon: currentCategory.category_icon,
             color: currentCategory.category_color,
             currentIcon: currentCategory.category_icon
-        });
+        }); return unsubscribe;
     }, [categoryID]);
 
     const handleIconPress = (icon) => {
@@ -88,21 +93,23 @@ const CategoriesEditScreen = ({ route, navigation }) => {
         formik.setFieldValue("categoryColor", color);
     };
 
-    //Todo redo update data
     const handleFormikSubmit = async (values) => {
-        values.type = isExpense ? "expense" : "income";
-        console.log(values.type)
+        setCategories([{}])
+        values.type = isExpense ? "income" : "expense";
         const newCategory = {
             user_id: "1", //to be replaced by actual user_id,
             category_type: values.type,
             category_name: values.categoryName,
             category_icon: values.categoryIcon,
             category_color: values.categoryColor,
+            id: categoryID
         }
         console.log(data.length)
         console.log(newCategory)
         if (data.length != 0) {
             updateCategory(categoryID, newCategory);
+            console.log("this is the categories data")
+            console.log(categoriesData)
         }
         if (data.length === 0) {
             addCategory({
@@ -115,6 +122,7 @@ const CategoriesEditScreen = ({ route, navigation }) => {
         }
         formik.resetForm();
         Alert.alert("SUCCESS", "Document Updated");
+        navigation.navigate("Categories", { screen: "CategoriesMain" })
     };
 
     const showDeletePrompt = () => {
@@ -131,9 +139,10 @@ const CategoriesEditScreen = ({ route, navigation }) => {
     };
 
     const handleDelete = () => {
+        const objIndex = categoriesData.findIndex((item) => item.id === categoryID)         //delete data from the array
+        categoriesData.splice(objIndex, 1)
         deleteCategory(categoryID);
-        Alert.alert("Successfully Deleted");
-        navigation.navigate("Categories", { screen: "CategoriesMain" });
+        navigation.navigate("Categories", { screen: "CategoriesMain" })
     };
 
     const formik = useFormik({
@@ -172,7 +181,7 @@ const CategoriesEditScreen = ({ route, navigation }) => {
                 onColorPress={handleColorPress}
                 selectedColor={selectedColor}
                 setSelectedColor={setSelectedColor}
-                onAddPress={() => setShowColorWheel(true)}
+                onAddPress={() => console.log(categoriesData)}
             />
             <ButtonContainer>
                 <Button

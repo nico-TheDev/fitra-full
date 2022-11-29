@@ -8,6 +8,7 @@ import { categories } from 'fitra/data/categories.js';
 const useCategoriesData = create(set => ({
     categories: categories,
 
+    reset: () => set({ categories: categories }),
     setCategories: (data) => set({ categories: data }),
     addCategory: async (newCategory) => {
         try {
@@ -35,7 +36,7 @@ const useCategoriesData = create(set => ({
             let docRef;
             // CREATE A REFERENCE TO THE DOCUMENT AND THE FILE
             docRef = doc(db, "categories", documentId);
-            await updateDoc(docRef, { updatedCategory, updated_at: serverTimestamp() });
+            await updateDoc(docRef, updatedCategory);
         } catch (err) {
             console.log("updateCategoryError:", err);
         }
