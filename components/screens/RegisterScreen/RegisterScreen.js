@@ -1,12 +1,17 @@
 import { Text } from "react-native";
 import React from "react";
-import { Formik } from "formik";
+import { useFormik } from "formik";
 
 // LOCAL IMPORTS
 import Button from "components/Button";
 import colors from "assets/themes/colors";
+import { ICON_NAMES } from "constants/constant";
+
 import CircleBigBg from "assets/illustrations/Cirle-Big-Bg.svg";
 import RegisterScreenLogo from "assets/illustrations/Colored-Profile-Logo.svg";
+import ButtonIcon from "components/ButtonIcon";
+import uuid from 'react-native-uuid';
+
 import {
     GreetingsHolder,
     RegisterScreenBg,
@@ -20,9 +25,18 @@ import {
     Input,
 } from "./styles";
 
-const RegisterScreen = () => {
+import useAuthentication from 'hooks/useAuthentication';
+import useUploadImage from "hooks/useUploadImage";
+
+const RegisterScreen = ({ navigation }) => {
+    let photoId = uuid.v4();
+    
     const circleBigBgSize = 400;
     const registerScreenLogoSize = 100;
+
+    const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "users/");
+
+    const addUser = useAuthentication(state => state.addUser);
 
     const initialValues = {
         firstName: "",
@@ -31,7 +45,27 @@ const RegisterScreen = () => {
         password: "",
     };
 
-    const handleFormikSubmit = (values) => console.log(values);
+    const handleFormikSubmit = async (values, { resetForm }) => {
+        console.log(values);
+        let imgFile;
+        if (image) {
+            imgFile = await uploadImage();
+        }
+        addUser({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password: values.password,
+            profile_img_ref: imgFile ? imgFile.imgRef : "",
+            profile_img: imgFile ? imgFile.imgUri : "",
+        });
+        resetForm();
+    };
+
+    const formik = useFormik({
+        initialValues: initialValues,
+        onSubmit: handleFormikSubmit,
+    });
 
     return (
         <RegisterScreenContainer>
@@ -40,67 +74,62 @@ const RegisterScreen = () => {
             </RegisterScreenBg>
             <GreetingsHolder>
                 <RegisterWelcomeTextHolder>
-                    <RegisterWelcomeText1>Create Acount</RegisterWelcomeText1>
+                    <RegisterWelcomeText1>Create Account</RegisterWelcomeText1>
                     <RegisterWelcomeText2>
                         Start your financial journey !
                     </RegisterWelcomeText2>
                 </RegisterWelcomeTextHolder>
-                <RegisterScreenLogo
-                    width={registerScreenLogoSize}
-                    height={registerScreenLogoSize}
+                <ButtonIcon
+                    name={ICON_NAMES.ADD_PHOTO_V1}
+                    iconColor={colors.primary.colorFive}
+                    type={'filled'}
+                    imageUri={image}
+                    onPress={chooseImage}
+                    filename={filename}
                 />
             </GreetingsHolder>
             <RegisterForm>
-                <Formik
-                    initialValues={initialValues}
-                    onSubmit={handleFormikSubmit}
-                >
-                    {({ values, handleChange }) => (
-                        <>
-                            <InputHolder>
-                                <Input
-                                    onChangeText={handleChange("FirstName")}
-                                    value={values.firstName}
-                                    placeholder="First Name"
-                                    placeholderTextColor={
-                                        colors.primary.colorFive
-                                    }
-                                />
-                            </InputHolder>
-                            <InputHolder>
-                                <Input
-                                    onChangeText={handleChange("lastName")}
-                                    value={values.lastName}
-                                    placeholder="Last Name"
-                                    placeholderTextColor={
-                                        colors.primary.colorFive
-                                    }
-                                />
-                            </InputHolder>
-                            <InputHolder>
-                                <Input
-                                    onChangeText={handleChange("email")}
-                                    value={values.email}
-                                    placeholder="Email"
-                                    placeholderTextColor={
-                                        colors.primary.colorFive
-                                    }
-                                />
-                            </InputHolder>
-                            <InputHolder>
-                                <Input
-                                    onChangeText={handleChange("password")}
-                                    value={values.password}
-                                    placeholder="Password"
-                                    secureTextEntry={true}
-                                    placeholderTextColor={
-                                        colors.primary.colorFive
-                                    }
-                                />
-                            </InputHolder>
-                        </>
-                    )}
-                </Formik>
+                <InputHolder>
+                    <Input
+                        onChangeText={formik.handleChange("firstName")}
+                        value={formik.values.firstName}
+                        placeholder="First Name"
+                        placeholderTextColor={
+                        colors.primary.colorFive
+                        }
+                    />
+                </InputHolder>
+                <InputHolder>
+                    <Input
+                        onChangeText={formik.handleChange("lastName")}
+                        value={formik.values.lastName}
+                        placeholder="Last Name"
+                        placeholderTextColor={
+                        colors.primary.colorFive
+                        }
+                    />
+                </InputHolder>
+                <InputHolder>
+                    <Input
+                        onChangeText={formik.handleChange("email")}
+                        value={formik.values.email}
+                        placeholder="Email"
+                        placeholderTextColor={
+                        colors.primary.colorFive
+                        }
+                    />
+                </InputHolder>
+                <InputHolder>
+                    <Input
+                        onChangeText={formik.handleChange("password")}
+                        value={formik.values.password}
+                        placeholder="Password"
+                        secureTextEntry={true}
+                        placeholderTextColor={
+                        colors.primary.colorFive
+                        }
+                    />
+                </InputHolder>
 
                 <RegisterFormButtonsHolder>
                     <Button
@@ -108,6 +137,7 @@ const RegisterScreen = () => {
                         rounded={"10px"}
                         type={"filled"}
                         width={"100%"}
+                        onPress={formik.handleSubmit}
                     />
                     <Text style={{ color: colors.primary.colorFive }}>
                         Lorem Ipsum Dolor amet

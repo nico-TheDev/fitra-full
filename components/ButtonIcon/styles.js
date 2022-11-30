@@ -31,3 +31,8 @@ export const ButtonLabel = styled.Text`
     margin-top: 5px;
     color: ${(props) => props.color};
 `;
+
+export const CustomImage = styled.Image`
+    width:100%;
+    height:100%
+`;
