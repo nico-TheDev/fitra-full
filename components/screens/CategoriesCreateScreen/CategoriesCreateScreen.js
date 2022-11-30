@@ -1,6 +1,6 @@
 //LIBRARY IMPORTS
 import React, { useState } from "react";
-import { Text } from "react-native";
+import { Alert, Text } from "react-native";
 import { useFormik } from "formik";
 import { TriangleColorPicker } from "react-native-color-picker";
 
@@ -22,21 +22,29 @@ import {
     CloseBtn,
 } from "./styles";
 
+import useCategoriesData from "hooks/useCategoriesData"
 import { colorCollection } from "fitra/SampleData";
 import { categories } from "fitra/SampleData";
 import Icon from "components/common/Icon";
 import { ICON_NAMES } from "constants/constant";
+import { FieldValue } from "firebase/firestore";
 
-const CategoriesCreateScreen = () => {
+const CategoriesCreateScreen = ({ navigation }) => {
+    const addCategory = useCategoriesData((state) => state.addCategory)
     const [isExpense, setIsExpense] = useState(false);
     const [selectedIcon, setSelectedIcon] = useState("");
     const [selectedColor, setSelectedColor] = useState("");
     const [showColorWheel, setShowColorWheel] = useState(false);
+    const [date, setDate] = useState(new Date());
 
     const initialValues = {
         categoryName: "",
         categoryIcon: "",
         categoryColor: "",
+        userID: "",
+        type: "",
+        createdAt: "",
+        updatedAt: ""
     };
 
     const handleIconPress = (icon) => {
@@ -50,8 +58,21 @@ const CategoriesCreateScreen = () => {
         setShowColorWheel(false);
     };
 
-    const handleFormikSubmit = (values) => {
-        console.log(values);
+    const handleFormikSubmit = async (values, { resetForm }) => {
+        values.type = isExpense ? "income" : "expense";
+        console.log(values.type);
+        addCategory({
+            category_name: values.categoryName,
+            category_color: values.categoryColor,
+            category_icon: values.categoryIcon,
+            category_type: values.type,
+            created_at: date,
+            update_at: "",
+            user_id: 1
+        });
+        resetForm();
+        Alert.alert("Success", "Created a New Category");
+        navigation.navigate("Categories", { screen: "CategoriesMain" })
     };
 
     const handleClear = () => {
