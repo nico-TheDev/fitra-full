@@ -1,5 +1,5 @@
 // LIBRARY IMPORTS
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import uuid from 'react-native-uuid';
 
@@ -28,9 +28,11 @@ import useTransactionData from "hooks/useTransactionData";
 import useUploadImage from "hooks/useUploadImage";
 import useType from "hooks/useType";
 import { Alert } from "react-native";
+import useAuthStore from "hooks/useAuthStore";
 
 const AddTransactionScreen = ({ navigation }) => {
     let photoId = uuid.v4(); // unique id for the photo file name in storage
+    const user = useAuthStore(state => state.user);
     const addTransaction = useTransactionData(state => state.addTransaction);
     // Upload Hook 
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transaction/");
@@ -72,7 +74,7 @@ const AddTransactionScreen = ({ navigation }) => {
             target_account: values.targetAccount,
             transaction_icon: values.transactionIcon,
             transaction_color: values.transactionColor,
-            user_id: uuid.v4(),
+            user_id: user.user_id,
             type: values.type,
             created_at: date
         });

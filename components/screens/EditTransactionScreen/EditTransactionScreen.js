@@ -33,6 +33,7 @@ import useTransactionData from "hooks/useTransactionData";
 import convertTimestamp from "util/convertTimestamp";
 import useUploadImage from "hooks/useUploadImage";
 import useType from "hooks/useType";
+import useAuthStore from "hooks/useAuthStore";
 
 const EditTransactionScreen = ({ route, navigation }) => {
     // Transaction State 
@@ -44,6 +45,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
         return transactionList.find(transaction => transaction.id === transactionID);
     });
 
+    const user = useAuthStore(state => state.user);
     const photoId = uuid.v4(); // unique id for new image
     const [date, setDate] = useState(convertTimestamp(currentTransaction.created_at));
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transaction/");
@@ -111,7 +113,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
             target_account: values.targetAccount,
             transaction_icon: transactionIcon,
             transaction_color: values.transactionColor,
-            user_id: uuid.v4(), // TODO: Replace with actual user_id once auth is implemented
+            user_id: user.user_id,
             type: values.type,
             created_at: date
         };
