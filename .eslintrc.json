@@ -1,28 +1,35 @@
 {
-    "extends": [
-        "airbnb",
-        "prettier",
-        "prettier/react",
-        "plugin:prettier/recommended",
-        "eslint-config-prettier"
+  "extends": [
+    "airbnb",
+    "prettier",
+    "plugin:prettier/recommended",
+    "eslint-config-prettier",
+    "airbnb/hooks",
+    "react",
+    "react-native"
+  ],
+  "parser": "babel-eslint",
+  "rules": {
+    "import/no-unresolved": "off",
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [".js", ".jsx"]
+      }
     ],
-    "parser": "babel-eslint",
-    "rules": {
-        "import/no-unresolved": "off",
-        "react/jsx-filename-extension": [
-            1,
-            {
-                "extensions": [".js", ".jsx"]
-            }
-        ],
-        "prettier/prettier": [
-            "error",
-            {
-                "trailingComma": "es5",
-                "singleQuote": true,
-                "printWidth": 100
-            }
-        ]
-    },
-    "plugins": ["prettier"]
+    "prettier/prettier": [
+      "error",
+      {
+        "trailingComma": "es5",
+        "singleQuote": true,
+        "printWidth": 100
+      }
+    ]
+  },
+  "plugins": ["prettier"],
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "react-native/react-native": true
+  }
 }
