@@ -29,7 +29,7 @@ import Icon from "components/common/Icon";
 import { ICON_NAMES } from "constants/constant";
 import { FieldValue } from "firebase/firestore";
 
-const CategoriesCreateScreen = () => {
+const CategoriesCreateScreen = ({ navigation }) => {
     const addCategory = useCategoriesData((state) => state.addCategory)
     const [isExpense, setIsExpense] = useState(false);
     const [selectedIcon, setSelectedIcon] = useState("");
@@ -72,6 +72,7 @@ const CategoriesCreateScreen = () => {
         });
         resetForm();
         Alert.alert("Success", "Created a New Category");
+        navigation.navigate("Categories", { screen: "CategoriesMain" })
     };
 
     const handleClear = () => {
