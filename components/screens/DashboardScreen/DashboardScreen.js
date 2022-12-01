@@ -15,7 +15,7 @@ import CircleBG from "components/common/CircleBG";
 import colors from "assets/themes/colors";
 import { DashboardContainer, DashboardDate, DefaultText, DefaultTransactionPanel } from "./styles";
 import { db } from "fitra/firebase.config";
-import useTransactionData from "hooks/useTransactionData";
+import useTransactionStore from "hooks/useTransactionStore";
 import getCurrentDate from "util/getCurrentDate";
 import useAuthStore from "hooks/useAuthStore";
 import useUserTransaction from "hooks/useUserTransaction";
@@ -34,7 +34,7 @@ const DashboardScreen = ({ navigation }) => {
     const SLIDER_WIDTH = Dimensions.get("window").width;
     const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9);
     const [pageIndex, setPageIndex] = useState(0);
-    const transactions = useTransactionData(state => state.transactions);
+    const transactions = useTransactionStore(state => state.transactions);
     const user = useAuthStore(state => state.user);
     const isCarousel = useRef(null);
     const [chartData] = useUserTransaction(user.user_id);

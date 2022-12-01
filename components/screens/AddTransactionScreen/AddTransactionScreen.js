@@ -22,25 +22,27 @@ import {
     ButtonHolder,
     ScrollContainer,
 } from "./styles";
-import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
-import useTransactionData from "hooks/useTransactionData";
+import useTransactionStore from "hooks/useTransactionStore";
 import useUploadImage from "hooks/useUploadImage";
 import useType from "hooks/useType";
 import { Alert } from "react-native";
 import useAuthStore from "hooks/useAuthStore";
+import useCategoriesListener from "hooks/useCategoriesListener";
 
 const AddTransactionScreen = ({ navigation }) => {
     let photoId = uuid.v4(); // unique id for the photo file name in storage
     const user = useAuthStore(state => state.user);
-    const addTransaction = useTransactionData(state => state.addTransaction);
+    const [isExpense, setIsExpense] = useType();
+    const [categories] = useCategoriesListener(user.user_id, isExpense);
+    const addTransaction = useTransactionStore(state => state.addTransaction);
     // Upload Hook 
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transaction/");
-    const [isExpense, setIsExpense, categoryList] = useType(categories);
     const [selectedIcon, setSelectedIcon] = useState({
         label: "",
         icon: "",
         currentIcon: "",
+        id: ""
     });
     const [date, setDate] = useState(new Date()); // Initial state will always be today 
     // TODO: To be replaced with actual data
@@ -53,8 +55,8 @@ const AddTransactionScreen = ({ navigation }) => {
 
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
-        formik.setFieldValue("transactionIcon", icon.currentIcon);
         formik.setFieldValue("categoryName", icon.label);
+        formik.setFieldValue("transactionIcon", icon.currentIcon);
         formik.setFieldValue("transactionColor", icon.color);
     };
 
@@ -74,6 +76,7 @@ const AddTransactionScreen = ({ navigation }) => {
             target_account: values.targetAccount,
             transaction_icon: values.transactionIcon,
             transaction_color: values.transactionColor,
+            category_id: selectedIcon.id,
             user_id: user.user_id,
             type: values.type,
             created_at: date
@@ -142,9 +145,10 @@ const AddTransactionScreen = ({ navigation }) => {
                 <ScrollContainer>
                     <TransactionCategoryHolder>
                         <IconSelector
-                            iconData={categoryList}
+                            iconData={categories}
                             handlePress={handleIconPress}
                             selectedIcon={selectedIcon}
+
                         />
                     </TransactionCategoryHolder>
                     <CustomDatePicker

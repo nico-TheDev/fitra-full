@@ -61,7 +61,6 @@ const CategoriesCreateScreen = ({ navigation }) => {
             category_color: values.categoryColor,
             category_icon: values.categoryIcon,
             category_type: values.type,
-            category_id: values.categoryIcon.id,
             created_at: new Date(),
             update_at: "",
             user_id: user.user_id
