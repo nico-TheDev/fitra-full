@@ -5,10 +5,9 @@ import { db } from 'fitra/firebase.config.js';
 import { categories } from 'fitra/data/categories.js';
 
 
-const useCategoriesData = create(set => ({
-    categories: categories,
-
-    reset: () => set({ categories: categories }),
+const categoriesStore = set => ({
+    categories,
+    reset: () => set({ categories }),
     setCategories: (data) => set({ categories: data }),
     addCategory: async (newCategory) => {
         try {
@@ -42,7 +41,10 @@ const useCategoriesData = create(set => ({
         }
 
     }
-}));
+});
 
 
-export default useCategoriesData;
+const useCategoriesStore = create(categoriesStore);
+
+
+export default useCategoriesStore;
