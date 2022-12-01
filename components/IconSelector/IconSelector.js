@@ -8,7 +8,6 @@ import { IconSelectorContainer, IconList, Title } from "./styles";
 const IconSelector = ({ iconData, selectedIcon, handlePress }) => {
 
     const renderItem = ({ item, index }) => {
-        // TODO: Change the type checker into ID when firestore gets implemented
         const type = selectedIcon.id === item.id ? "filled" : "";
 
         return (
@@ -20,7 +19,6 @@ const IconSelector = ({ iconData, selectedIcon, handlePress }) => {
                 key={index}
                 type={type}
                 onPress={() =>
-                    // TODO: Change the variable name convention to snake case once connected to firestore
                     handlePress({
                         label: item.category_name,
                         icon: item.transaction_icon,

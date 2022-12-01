@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { onSnapshot, collection, orderBy, query, where } from 'firebase/firestore';
 
 import { db } from 'fitra/firebase.config';
-import useTransactionData from 'hooks/useTransactionData';
+import useTransactionStore from 'hooks/useTransactionStore';
 
 export default function useUserTransaction(userID) {
     const [chartData, setCharData] = useState([]);
-    const setTransactions = useTransactionData(state => state.setTransactions);
+    const setTransactions = useTransactionStore(state => state.setTransactions);
     const transactionColRef = collection(db, "transactions");
     const transactionQuery = query(transactionColRef, where("user_id", "==", userID), orderBy("timestamp", "desc"));
 

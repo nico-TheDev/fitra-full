@@ -5,7 +5,7 @@ import { deleteObject, ref } from 'firebase/storage';
 import { db, storage } from 'fitra/firebase.config.js';
 
 
-const useTransactionData = create(set => ({
+const transactionStore = set => ({
     transactions: [],
     setTransactions: (data) => set({ transactions: data }),
     addTransaction: async (newTransaction) => {
@@ -44,7 +44,10 @@ const useTransactionData = create(set => ({
         }
 
     }
-}));
+});
 
 
-export default useTransactionData;
+const useTransactionStore = create(transactionStore);
+
+
+export default useTransactionStore;
