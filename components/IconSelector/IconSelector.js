@@ -9,23 +9,24 @@ const IconSelector = ({ iconData, selectedIcon, handlePress }) => {
 
     const renderItem = ({ item, index }) => {
         // TODO: Change the type checker into ID when firestore gets implemented
-        const type = selectedIcon.currentIcon === item.categoryIcon ? "filled" : "";
+        const type = selectedIcon.id === item.id ? "filled" : "";
 
         return (
             <ButtonIcon
-                name={item.categoryIcon}
-                iconColor={item.categoryColor}
+                name={item.category_icon}
+                iconColor={item.category_color}
                 iconSize={25}
-                label={item.categoryName}
+                label={item.category_name}
                 key={index}
                 type={type}
                 onPress={() =>
                     // TODO: Change the variable name convention to snake case once connected to firestore
                     handlePress({
-                        label: item.categoryName,
-                        icon: item.transactionIcon,
-                        color: item.categoryColor,
-                        currentIcon: item.categoryIcon,
+                        label: item.category_name,
+                        icon: item.transaction_icon,
+                        color: item.category_color,
+                        currentIcon: item.category_icon,
+                        id: item.id
                     })
                 }
                 styles={{ marginHorizontal: 10 }}

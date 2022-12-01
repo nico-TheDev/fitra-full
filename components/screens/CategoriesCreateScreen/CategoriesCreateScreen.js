@@ -1,8 +1,7 @@
 //LIBRARY IMPORTS
 import React, { useState } from "react";
-import { Alert, Text } from "react-native";
+import { Alert } from "react-native";
 import { useFormik } from "formik";
-import { TriangleColorPicker } from "react-native-color-picker";
 
 //LOCAL IMPORTS
 import CircleBG from "components/common/CircleBG";
@@ -18,24 +17,21 @@ import {
     FunctionContainer,
     ButtonContainer,
     SwitchContainer,
-    ColorPickerContainer,
-    CloseBtn,
 } from "./styles";
 
-import useCategoriesData from "hooks/useCategoriesData"
+import useCategoriesData from "hooks/useCategoriesData";
 import { colorCollection } from "fitra/SampleData";
-import { categories } from "fitra/SampleData";
-import Icon from "components/common/Icon";
 import { ICON_NAMES } from "constants/constant";
-import { FieldValue } from "firebase/firestore";
+import useAuthStore from "hooks/useAuthStore";
+import ColorPicker from "components/common/ColorPicker";
 
 const CategoriesCreateScreen = ({ navigation }) => {
-    const addCategory = useCategoriesData((state) => state.addCategory)
+    const addCategory = useCategoriesData((state) => state.addCategory);
+    const user = useAuthStore(state => state.user);
     const [isExpense, setIsExpense] = useState(false);
     const [selectedIcon, setSelectedIcon] = useState("");
     const [selectedColor, setSelectedColor] = useState("");
     const [showColorWheel, setShowColorWheel] = useState(false);
-    const [date, setDate] = useState(new Date());
 
     const initialValues = {
         categoryName: "",
@@ -60,19 +56,19 @@ const CategoriesCreateScreen = ({ navigation }) => {
 
     const handleFormikSubmit = async (values, { resetForm }) => {
         values.type = isExpense ? "income" : "expense";
-        console.log(values.type);
         addCategory({
             category_name: values.categoryName,
             category_color: values.categoryColor,
             category_icon: values.categoryIcon,
             category_type: values.type,
-            created_at: date,
+            category_id: values.categoryIcon.id,
+            created_at: new Date(),
             update_at: "",
-            user_id: 1
+            user_id: user.user_id
         });
         resetForm();
         Alert.alert("Success", "Created a New Category");
-        navigation.navigate("Categories", { screen: "CategoriesMain" })
+        navigation.navigate("Categories", { screen: "CategoriesMain" });
     };
 
     const handleClear = () => {
@@ -90,33 +86,7 @@ const CategoriesCreateScreen = ({ navigation }) => {
         <CategoriesContainer>
             <CircleBG circleSize={250} />
             <ScreenHeader title="Create Category" />
-            {showColorWheel && (
-                <ColorPickerContainer>
-                    <CloseBtn onPress={() => setShowColorWheel(false)}>
-                        {/* <Icon color="white" name={ICON_NAMES.ADD} size={50} /> */}
-                        <Text
-                            style={{
-                                color: "white",
-                                fontSize: 25,
-                                fontWeight: "bold",
-                            }}
-                        >
-                            X
-                        </Text>
-                    </CloseBtn>
-                    <TriangleColorPicker
-                        onColorSelected={handleColorPress}
-                        style={{
-                            flex: 1,
-                            backgroundColor: "white",
-                            height: "100%",
-                            width: "100%",
-                            padding: 20,
-                        }}
-                    />
-                </ColorPickerContainer>
-            )}
-
+            {showColorWheel && <ColorPicker handleColorPress={handleColorPress} setShowColorWheel={setShowColorWheel} />}
             <FunctionContainer>
                 <CustomTextInput
                     inputProps={{

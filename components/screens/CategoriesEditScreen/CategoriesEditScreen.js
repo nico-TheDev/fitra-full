@@ -1,7 +1,8 @@
 //LIBRARY IMPORTS
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import { Alert } from "react-native";
+import { Alert, Text } from "react-native";
+import { TriangleColorPicker } from "react-native-color-picker";
 
 //LOCAL IMPORTS
 import CircleBG from "components/common/CircleBG";
@@ -16,113 +17,84 @@ import {
     FunctionContainer,
     ButtonContainer,
     SwitchContainer,
+    ColorPickerContainer,
+    CloseBtn
 } from "./styles";
 
 import { colorCollection } from "fitra/SampleData";
 import useCategoriesData from "hooks/useCategoriesData";
 import useType from "hooks/useType";
-import convertTimestamp from "util/convertTimestamp";
 import { ICON_NAMES } from "constants/constant";
-import { collection, query, onSnapshot, where } from "firebase/firestore";
-import { db } from "fitra/firebase.config";
+import useAuthStore from "hooks/useAuthStore";
+import ColorPicker from "components/common/ColorPicker";
 
 const CategoriesEditScreen = ({ route, navigation }) => {
     const { categoryID } = route.params;
-    const resetCategories = useCategoriesData(state => state.reset)
-    const setCategories = useCategoriesData(state => state.setCategories)
-    const categoriesData = useCategoriesData(state => state.categories);
+    // GLOBAL STATES
+    const user = useAuthStore(state => state.user);
+    const allCategories = useCategoriesData(state => state.categories);
     const deleteCategory = useCategoriesData(state => state.deleteCategory);
     const addCategory = useCategoriesData(state => state.addCategory);
     const updateCategory = useCategoriesData(state => state.updateCategory);
-    const [currentCategory, setCurrentCategory] = useState(() => {
-        return categoriesData.find(category => category.id === categoryID);
-    });
-    let [categoryData, setCategoryData] = useState([]);
-    const [data, setData] = useState([]);
-    const [isExpense, setIsExpense] = useType(categoriesData, currentCategory.type === "expense");
-    const [selectedIcon, setSelectedIcon] = useState({
-        label: "",
-        icon: "",
-        currentIcon: "",
-    });
-    const [selectedColor, setSelectedColor] = useState("");
+
+    // COMPONENT STATE
+    const [currentCategory, setCurrentCategory] = useState(() => allCategories.find(category => category.id === categoryID));
+    const [isExpense, setIsExpense] = useType(currentCategory.type !== "expense");
+    const [selectedIcon, setSelectedIcon] = useState(currentCategory.category_icon);
+    const [selectedColor, setSelectedColor] = useState(currentCategory.category_color);
     const [showColorWheel, setShowColorWheel] = useState(false);
 
     const initialValues = {
         type: currentCategory.type,
-        icon: currentCategory.categoryIcon,
-        categoryName: currentCategory.categoryName
-    }
-
-    const categoryColRef = collection(db, "categories");
-    const categoryQuery = query(categoryColRef, where("__name__", "==", currentCategory.id));
-
+        category_icon: currentCategory.category_icon,
+        category_name: currentCategory.category_name,
+        category_color: currentCategory.category_color
+    };
 
     // MANAGE THE STATE AFTER FIRST MOUNT
-    //possible for update error
     useEffect(() => {
-        console.log("reset categ before edit")
-        console.log(categoriesData)
-        const targetCategory = categoriesData.find(category => category.id === categoryID);
+        const targetCategory = allCategories.find(category => category.id === categoryID);
         // console.log(targetTransaction);
         setCurrentCategory(targetCategory);
-        const unsubscribe = onSnapshot(categoryQuery, (snapshotData) => {
-            let data = [];
-            snapshotData.docs.forEach((doc) => {
-                data.push({ id: doc.id })
-            });
-            setData(data)
-        })
-        //set this category data array to data categories
-        console.log("this is edit")
-        setSelectedIcon({
-            label: currentCategory.category_name,
-            icon: currentCategory.category_icon,
-            color: currentCategory.category_color,
-            currentIcon: currentCategory.category_icon
-        }); return unsubscribe;
+        setSelectedIcon(targetCategory.category_icon);
     }, [categoryID]);
 
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
-        formik.setFieldValue("categoryIcon", icon);
+        formik.setFieldValue("category_icon", icon);
     };
 
     const handleColorPress = (color) => {
         setSelectedColor(color);
-        formik.setFieldValue("categoryColor", color);
+        formik.setFieldValue("category_color", color);
+        setShowColorWheel(false);
     };
 
     const handleFormikSubmit = async (values) => {
-        setCategories([{}])
         values.type = isExpense ? "income" : "expense";
         const newCategory = {
-            user_id: "1", //to be replaced by actual user_id,
+            user_id: user.user_id,
             category_type: values.type,
-            category_name: values.categoryName,
-            category_icon: values.categoryIcon,
-            category_color: values.categoryColor,
+            category_name: values.category_name,
+            category_icon: values.category_icon,
+            category_color: values.category_color,
             id: categoryID
-        }
-        console.log(data.length)
-        console.log(newCategory)
-        if (data.length != 0) {
+        };
+        if (allCategories.filter(category => category.user_id === user.user_id).map(category => category.id).includes(categoryID)) {
             updateCategory(categoryID, newCategory);
-            console.log("this is the categories data")
-            console.log(categoriesData)
+            Alert.alert("SUCCESS", "Document Updated");
         }
-        if (data.length === 0) {
+        else {
             addCategory({
-                user_id: "1", //to be replaced by actual user_id,
+                user_id: user.user_id,
                 category_type: values.type,
-                category_name: values.categoryName,
-                category_icon: values.categoryIcon,
-                category_color: values.categoryColor,
+                category_name: values.category_name,
+                category_icon: values.category_icon,
+                category_color: values.category_color,
             });
         }
         formik.resetForm();
-        Alert.alert("SUCCESS", "Document Updated");
-        navigation.navigate("Categories", { screen: "CategoriesMain" })
+        navigation.navigate("Categories", { screen: "CategoriesMain" });
     };
 
     const showDeletePrompt = () => {
@@ -139,10 +111,8 @@ const CategoriesEditScreen = ({ route, navigation }) => {
     };
 
     const handleDelete = () => {
-        const objIndex = categoriesData.findIndex((item) => item.id === categoryID)         //delete data from the array
-        categoriesData.splice(objIndex, 1)
         deleteCategory(categoryID);
-        navigation.navigate("Categories", { screen: "CategoriesMain" })
+        navigation.navigate("Categories", { screen: "CategoriesMain" });
     };
 
     const formik = useFormik({
@@ -155,11 +125,14 @@ const CategoriesEditScreen = ({ route, navigation }) => {
             <CircleBG circleSize={250} />
             <ScreenHeader title="Edit Category" />
 
+            {showColorWheel && <ColorPicker handleColorPress={handleColorPress} setShowColorWheel={setShowColorWheel} />}
+
             <FunctionContainer>
                 <CustomTextInput
                     inputProps={{
-                        placeholder: currentCategory.categoryName,
-                        onChangeText: formik.handleChange("categoryName"),
+                        placeholder: "Category Name",
+                        onChangeText: formik.handleChange("category_name"),
+                        value: formik.values.category_name
                     }}
                     customLabel="Category Name:"
                 />
@@ -181,7 +154,7 @@ const CategoriesEditScreen = ({ route, navigation }) => {
                 onColorPress={handleColorPress}
                 selectedColor={selectedColor}
                 setSelectedColor={setSelectedColor}
-                onAddPress={() => console.log(categoriesData)}
+                onAddPress={() => setShowColorWheel(true)}
             />
             <ButtonContainer>
                 <Button

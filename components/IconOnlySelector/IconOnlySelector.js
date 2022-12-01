@@ -3,7 +3,6 @@ import React from "react";
 import ButtonIcon from "components/ButtonIcon";
 import colors from "assets/themes/colors";
 import { IconSelectorContainer, IconList, Title } from "./styles";
-import { render } from "react-dom";
 
 const IconOnlySelector = ({ iconData, selectedIcon, onPress }) => {
     const renderItem = ({ item: iconName, index }) => (
