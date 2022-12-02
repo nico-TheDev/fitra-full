@@ -27,7 +27,9 @@ const chartConfig = {
 
 const DashboardChart = ({ title, chartData }) => {
     const navigation = useNavigation();
-    if (title === "General") console.log(chartData);
+    if (title === "General") {
+        // console.log(chartData)
+    };
     const handleNavigate = () =>
         navigation.navigate("Dashboard", {
             screen: "TransactionHistory",

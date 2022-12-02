@@ -63,7 +63,8 @@ const AddTransactionScreen = ({ navigation }) => {
     const handleFormikSubmit = async (values, { resetForm }) => {
         // console.log(values);
         let imgFile;
-        values.type = isExpense ? "expense" : "income";
+        values.type = !isExpense ? "expense" : "income";
+
         if (image) {
             imgFile = await uploadImage();
         }

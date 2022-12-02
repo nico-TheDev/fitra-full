@@ -37,8 +37,8 @@ const authStore = (set) => ({
                 user_id: createdUserResponse.user.uid,
                 profile_img: createdUserResponse.user.photoURL
             };
-            console.log(createdUserResponse);
-            console.log(createdUser);
+            // console.log(createdUserResponse);
+            // console.log(createdUser);
             set({
                 user: createdUser, isLoggedIn: true
             });
@@ -54,7 +54,7 @@ const authStore = (set) => ({
         try {
             const verifiedResponse = await signInWithEmailAndPassword(auth, login_user.email, login_user.password);     //checks if user is registered, email and password correct
             const verifiedUser = verifiedResponse.user;
-            console.log(verifiedResponse);
+            // console.log(verifiedResponse);
             const userProfile = {
                 user: {     //sets user credentials
                     email: verifiedUser.email,
@@ -63,7 +63,7 @@ const authStore = (set) => ({
                     profile_img: verifiedUser.photoURL
                 },
             };
-            console.log(userProfile);
+            // console.log(userProfile);
             set(userProfile);
             Alert.alert('Status', 'Email and password correct. Login success.');
         }

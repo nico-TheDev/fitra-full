@@ -44,7 +44,7 @@ export default function useUserTransaction(userID) {
                 type: "income",
                 target_account: "gcash",
                 category_name: "Income",
-                transaction_icon: "food-icon",
+                transaction_icon: "charts-icon",
                 color: "#3498db",
                 transaction_color: "#3498db"
             }];

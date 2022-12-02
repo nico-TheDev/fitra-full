@@ -23,13 +23,13 @@ export default function useType(initialIsExpense = false) {
     };
 
     useEffect(() => {
-        // INCOME TYPE
-        if (isExpense) {
-            setCategoryData(categories.filter(filterIncomeCategory));
-        }
         // EXPENSE TYPE
-        else {
+        if (isExpense) {
             setCategoryData(categories.filter(filterExpenseCategory));
+        }
+        // INCOME TYPE
+        else {
+            setCategoryData(categories.filter(filterIncomeCategory));
         }
     }, [isExpense]);
 
