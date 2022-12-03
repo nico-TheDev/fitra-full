@@ -2,12 +2,10 @@ import create from 'zustand';
 import { addDoc, collection, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 
 import { db } from 'fitra/firebase.config.js';
-import { categories } from 'fitra/data/categories.js';
 
-
-const categoriesStore = set => ({
-    categories,
-    reset: () => set({ categories }),
+const categoriesStore = (set, get) => ({
+    categories: [],
+    reset: () => set({ categories: [] }),
     setCategories: (data) => set({ categories: data }),
     addCategory: async (newCategory) => {
         try {
@@ -24,7 +22,6 @@ const categoriesStore = set => ({
         try {
             // DELETE THE DOCUMENT AND OBJECT 
             await deleteDoc(docRef);
-            // ALERT A MESSAGE
         } catch (err) {
             console.log("deleteCategoryError:", err);
         }
@@ -40,7 +37,13 @@ const categoriesStore = set => ({
             console.log("updateCategoryError:", err);
         }
 
-    }
+    },
+    incomeList: (userID) => {
+        return get().categories.filter(category => category.category_type === "income");
+    },
+    expenseList: (userID) => {
+        return get().categories.filter(category => category.category_type === "expense");
+    },
 });
 
 

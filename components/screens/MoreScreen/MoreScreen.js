@@ -17,6 +17,7 @@ import Button from "components/Button";
 import colors from "assets/themes/colors";
 
 import useAuthStore from 'hooks/useAuthStore';
+import useCategoriesStore from "hooks/useCategoriesData";
 
 const BUTTONDATA = [
     {
@@ -32,7 +33,7 @@ const BUTTONDATA = [
 ];
 
 const MoreScreen = ({ navigation }) => {
-    // const { setIsLoggedIn } = useAuth();
+    const resetCategories = useCategoriesStore(state => state.reset);
     const logoutUser = useAuthStore(state => state.logoutUser);
     const user = useAuthStore(state => state.user);
 
@@ -41,6 +42,7 @@ const MoreScreen = ({ navigation }) => {
 
     const handleLogOut = () => {
         logoutUser();
+        resetCategories();
     };
 
     const renderItem = ({ item }) => (
