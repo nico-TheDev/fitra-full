@@ -60,7 +60,7 @@ const DashboardChart = ({ title, chartData }) => {
                 />
             </TitleContainer>
             <FigureContainer>
-                {chartData.length && (<Chart>
+                {chartData.length ? (<Chart>
                     <PieChart
                         data={chartData}
                         height={160}
@@ -72,7 +72,7 @@ const DashboardChart = ({ title, chartData }) => {
                         hasLegend={false}
                         style={{ width: "100%" }}
                     />
-                </Chart>)}
+                </Chart>) : null}
                 <CategoryListContainer>
                     <CategoryList
                         data={chartData}

@@ -23,25 +23,19 @@ const useCategoriesListener = (userID, isExpense) => {
                 ...category,
                 user_id: userID
             }));
-
             const userList = [];
-
             snapshotData.forEach(doc => {
-
                 // check if doc is already in the array;
                 if (prepCategories.some(item => item.id === doc.id)) {
                     const objIndex = prepCategories.findIndex((item) => item.id === doc.id);
                     prepCategories.splice(objIndex, 1);
                 }
-
                 userList.push({
                     ...doc.data(),
                     type: doc.data().category_type,
                     id: doc.id
                 });
-
                 // console.log("CATEGORY PUSHED", doc.id);
-
             });
             setCategories([...prepCategories, ...userList]);
             // setCategoryData([...prepCategories, ...userList]);
