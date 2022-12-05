@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { PieChart } from "react-native-chart-kit";
 import { useNavigation } from "@react-navigation/native";
+import { Text } from "react-native";
 
 import { Panel } from "components/common/styles/commonStyles";
 import DashboardCategoryItem from "components/DashboardCategoryItem";
@@ -12,6 +13,7 @@ import {
     CategoryList,
     CategoryListContainer,
     TitleContainer,
+    DefaultText
 } from "./styles";
 
 const chartConfig = {
@@ -72,7 +74,8 @@ const DashboardChart = ({ title, chartData }) => {
                         hasLegend={false}
                         style={{ width: "100%" }}
                     />
-                </Chart>) : null}
+                </Chart>) :
+                    <DefaultText>😊 Add Transactions</DefaultText>}
                 <CategoryListContainer>
                     <CategoryList
                         data={chartData}

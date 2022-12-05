@@ -62,6 +62,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
         { label: "GCASH", value: "gcash" },
         { label: "UnionBank", value: "unionbank" },
     ]);
+
     // MANAGE THE STATE AFTER FIRST MOUNT
     useEffect(() => {
         const targetTransaction = transactionList.find(transaction => transaction.id === transactionID);
