@@ -1,5 +1,6 @@
 //LIBRARY IMPORTS
 import React, { useState } from "react";
+import { Alert } from "react-native";
 import { useFormik } from "formik";
 
 //LOCAL IMPORTS
@@ -7,8 +8,9 @@ import CircleBG from "components/common/CircleBG";
 import CustomTextInput from "components/CustomTextInput";
 import ColorPickerPanel from "components/ColorPickerPanel";
 import Button from "components/Button";
-import IconSelector from "components/IconSelector";
+import IconOnlySelector from "components/IconOnlySelector";
 import ScreenHeader from "components/ScreenHeader";
+import ColorPicker from "components/common/ColorPicker";
 
 import {
     AccountsContainer,
@@ -17,11 +19,16 @@ import {
 } from "./styles";
 
 import { colorCollection } from "fitra/SampleData";
-import { categories } from "fitra/SampleData";
+import { ICON_NAMES } from "constants/constant";
+import useAccountStore from "hooks/useAccountStore";
+import useAuthStore from "hooks/useAuthStore";
 
-const AccountsCreateAccountScreen = () => {
+const AccountsCreateAccountScreen = ({navigation}) => {
+    const addAccount = useAccountStore((state) => state.addAccount);
+    const user = useAuthStore(state => state.user);
     const [selectedColor, setSelectedColor] = useState("");
     const [selectedIcon, setSelectedIcon] = useState("");
+    const [showColorWheel, setShowColorWheel] = useState(false);
 
     const initialValues = {
         accountName: "",
@@ -37,15 +44,34 @@ const AccountsCreateAccountScreen = () => {
 
     const handleColorPress = (color) => {
         setSelectedColor(color);
-        formik.setFieldValue("accountColor", color);
+        formik.setFieldValue("categoryColor", color);
+        setShowColorWheel(false);
     };
 
-    const handleFormikSubmit = (values) => {
+    const handleFormikSubmit = async (values, { resetForm }) => {
         console.log(values);
+        addAccount({
+            account_name: values.accountName,
+            account_amount: values.accountAmount,
+            account_color: values.accountColor,
+            account_icon: values.accountIcon,
+            created_at: new Date(),
+            update_at: "",
+            user_id: user.user_id
+        });
+        resetForm();
+        Alert.alert("Success", "Created a New Account");
+        navigation.navigate("Accounts", { screen: "AccountsMain" });
+    };
+
+    const handleClear = () => {
+        setSelectedColor("");
+        setSelectedIcon("");
+        formik.resetForm();
     };
 
     const formik = useFormik({
-        initialValues: initialValues,
+        initialValues,
         onSubmit: handleFormikSubmit,
     });
 
@@ -53,7 +79,7 @@ const AccountsCreateAccountScreen = () => {
         <AccountsContainer>
             <CircleBG circleSize={250} />
             <ScreenHeader title="Create Account" />
-
+            {showColorWheel && <ColorPicker handleColorPress={handleColorPress} setShowColorWheel={setShowColorWheel} />}
             <FunctionContainer>
                 <CustomTextInput
                     inputProps={{
@@ -70,8 +96,8 @@ const AccountsCreateAccountScreen = () => {
                     customLabel="Amount:"
                 />
             </FunctionContainer>
-            <IconSelector
-                iconData={categories}
+            <IconOnlySelector
+                iconData={Object.values(ICON_NAMES)}
                 onPress={handleIconPress}
                 selectedIcon={selectedIcon}
                 setSelectedIcon={setSelectedIcon}
@@ -81,6 +107,7 @@ const AccountsCreateAccountScreen = () => {
                 onColorPress={handleColorPress}
                 selectedColor={selectedColor}
                 setSelectedColor={setSelectedColor}
+                onAddPress={() => setShowColorWheel(true)}
             />
             <ButtonContainer>
                 <Button
@@ -99,7 +126,7 @@ const AccountsCreateAccountScreen = () => {
                     rounded="8px"
                     textSize={14}
                     noBorder={false}
-                    onPress={() => { console.log("delete") }}
+                    onPress={handleClear}
                 />
             </ButtonContainer>
         </AccountsContainer>
