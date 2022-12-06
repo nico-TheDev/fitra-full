@@ -93,7 +93,7 @@ const DashboardScreen = ({ navigation }) => {
                 <Button title="Add Transaction" type="filled" onPress={handleAddTransaction} styles={{ marginTop: 30 }} />
             </DefaultTransactionPanel>}
 
-            <Pagination
+            {transactions.length ? <Pagination
                 dotsLength={chartData.length}
                 activeDotIndex={pageIndex}
                 carouselRef={isCarousel}
@@ -104,7 +104,7 @@ const DashboardScreen = ({ navigation }) => {
                 }}
                 inactiveDotOpacity={0.4}
                 inactiveDotScale={0.8}
-            />
+            /> : null}
 
             {transactions.length ? <Carousel
                 data={transactions.slice(0, 5)}
