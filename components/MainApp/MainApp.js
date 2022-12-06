@@ -10,14 +10,14 @@ import TabNavigator from "components/navigators/TabNavigator";
 
 // CONTEXTS
 import { useAuth } from "fitra/contexts/AuthContext";
-import useAuthentication from "hooks/useAuthentication";
+import useAuthStore from "hooks/useAuthStore";
 
 //  STACK
 const Stack = createNativeStackNavigator();
 
 const MainApp = ({ onLayoutRootView }) => {
-    let isLoggedIn = useAuthentication(state => state.isLoggedIn);
-    let isOnboardRead = useAuthentication(state => state.isOnboardRead);
+    let isLoggedIn = useAuthStore(state => state.user.user_id);
+    let isOnboardRead = useAuthStore(state => state.isOnboardRead);
 
     return (
         <NavigationContainer onReady={onLayoutRootView}>
@@ -33,9 +33,9 @@ const MainApp = ({ onLayoutRootView }) => {
                             component={TabNavigator}
                         />
                     </>
-                ) : 
-                    <> 
-                        { !isOnboardRead && <Stack.Screen name="GetStarted" component={GetStartedScreen} />}
+                ) :
+                    <>
+                        {!isOnboardRead && <Stack.Screen name="GetStarted" component={GetStartedScreen} />}
                         <Stack.Screen name="Login" component={LoginScreen} />
                         <Stack.Screen
                             name="Register"

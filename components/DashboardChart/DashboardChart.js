@@ -1,6 +1,7 @@
-import React from "react";
+import React, { memo } from "react";
 import { PieChart } from "react-native-chart-kit";
 import { useNavigation } from "@react-navigation/native";
+import { Text } from "react-native";
 
 import { Panel } from "components/common/styles/commonStyles";
 import DashboardCategoryItem from "components/DashboardCategoryItem";
@@ -12,6 +13,7 @@ import {
     CategoryList,
     CategoryListContainer,
     TitleContainer,
+    DefaultText
 } from "./styles";
 
 const chartConfig = {
@@ -27,7 +29,9 @@ const chartConfig = {
 
 const DashboardChart = ({ title, chartData }) => {
     const navigation = useNavigation();
-
+    if (title === "General") {
+        // console.log(chartData)
+    };
     const handleNavigate = () =>
         navigation.navigate("Dashboard", {
             screen: "TransactionHistory",
@@ -35,11 +39,11 @@ const DashboardChart = ({ title, chartData }) => {
 
     const CategoryRenderItem = ({ item }) => (
         <DashboardCategoryItem
-            iconName={item.transactionIcon}
-            categoryName={item.categoryName}
+            iconName={item.transaction_icon}
+            categoryName={item.category_name}
             total={item.amount}
-            key={item.userID}
-            iconColor={item.color}
+            key={item.user_id}
+            iconColor={item.transaction_color}
             onPress={handleNavigate}
         />
     );
@@ -58,19 +62,20 @@ const DashboardChart = ({ title, chartData }) => {
                 />
             </TitleContainer>
             <FigureContainer>
-                <Chart>
+                {chartData.length ? (<Chart>
                     <PieChart
-                        data={chartData || []}
+                        data={chartData}
                         height={160}
                         chartConfig={chartConfig}
-                        accessor={"amount"}
-                        backgroundColor={"none"}
+                        accessor="amount"
+                        backgroundColor={"transparent"}
                         center={[80, 0]}
                         absolute
                         hasLegend={false}
                         style={{ width: "100%" }}
                     />
-                </Chart>
+                </Chart>) :
+                    <DefaultText>😊 Add Transactions</DefaultText>}
                 <CategoryListContainer>
                     <CategoryList
                         data={chartData}

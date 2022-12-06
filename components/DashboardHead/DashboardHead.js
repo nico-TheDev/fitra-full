@@ -4,17 +4,20 @@ import { useNavigation } from "@react-navigation/native";
 import PropTypes from "prop-types";
 import { HeadContainer, TextContainer, UserImg } from "./styles";
 import { HeadingThree } from "components/common/styles/commonStyles";
-import sampleImg from "assets/img/user-1.jpg";
+import profileImgPlaceholder from "assets/img/user-placeholder.png";
+import useAuthStore from "hooks/useAuthStore";
 
 const DashboardHead = () => {
     const navigation = useNavigation();
+
+    const user = useAuthStore(state => state.user);
     return (
         <HeadContainer>
             <TouchableOpacity onPress={() =>
-                    navigation.navigate("Dashboard", {
-                        screen: "More",
-                    })}>
-                <UserImg source={sampleImg} />
+                navigation.navigate("Dashboard", {
+                    screen: "More",
+                })}>
+                <UserImg source={user.profile_img ? { uri: user.profile_img } : profileImgPlaceholder} />
             </TouchableOpacity>
             <TextContainer>
                 <HeadingThree>Good Afternoon !</HeadingThree>

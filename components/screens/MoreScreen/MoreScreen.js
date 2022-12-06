@@ -11,12 +11,13 @@ import {
     MoreButtonList,
 } from "./styles";
 import CircleBigBg from "assets/illustrations/Cirle-Big-Bg.svg";
-import userProfile from "assets/img/user-1.jpg";
+import profileImgPlaceholder from "assets/img/user-placeholder.png";
 import { ICON_NAMES } from "constants/constant";
 import Button from "components/Button";
 import colors from "assets/themes/colors";
 
-import useAuthentication  from 'hooks/useAuthentication';
+import useAuthStore from 'hooks/useAuthStore';
+import useCategoriesStore from "hooks/useCategoriesData";
 
 const BUTTONDATA = [
     {
@@ -31,17 +32,17 @@ const BUTTONDATA = [
     },
 ];
 
-const MoreScreen = ({navigation}) => {
-    // const { setIsLoggedIn } = useAuth();
-    const logoutUser = useAuthentication(state => state.logoutUser);
-    const username = "Username";
-    const email = "Email@gamail.com";
+const MoreScreen = ({ navigation }) => {
+    const resetCategories = useCategoriesStore(state => state.reset);
+    const logoutUser = useAuthStore(state => state.logoutUser);
+    const user = useAuthStore(state => state.user);
 
     const circleWidth = 1000;
     const circleHeight = 275;
 
     const handleLogOut = () => {
-        logoutUser()
+        logoutUser();
+        resetCategories();
     };
 
     const renderItem = ({ item }) => (
@@ -68,9 +69,9 @@ const MoreScreen = ({navigation}) => {
             </MorescreenBG>
             {/*USER*/}
             <UserContainer>
-                <UserProfile source={userProfile} />
-                <Username>{username}</Username>
-                <Email>{email}</Email>
+                <UserProfile source={user.profile_img ? { uri: user.profile_img } : profileImgPlaceholder} />
+                <Username>{user.name || "No Name"}</Username>
+                <Email>{user.email || "No Email"}</Email>
             </UserContainer>
             {/*SCROLLVIEW*/}
             <MoreButtonList

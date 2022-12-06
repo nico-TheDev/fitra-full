@@ -33,3 +33,9 @@ export const TitleContainer = styled.View`
     padding-right: 20px;
     margin-bottom: 10px;
 `;
+
+export const DefaultText = styled.Text`
+    text-align: center;
+    font-size:20px;
+    width:100%;
+`;
