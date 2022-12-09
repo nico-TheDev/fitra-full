@@ -1,5 +1,7 @@
 //LIBRARY IMPORTS
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useFormik } from "formik";
+import { Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 // LOCAL IMPORTS
 import CircleBG from "components/common/CircleBG";
@@ -106,7 +108,7 @@ const AccountsDetailsScreen = ({ route }) => {
     };
 
     const handleDelete = () => {
-        deleteCategory(categoryID);
+        deleteAccount(accountID);
         navigation.navigate("Accounts", { screen: "AccountsMain" });
     };
 

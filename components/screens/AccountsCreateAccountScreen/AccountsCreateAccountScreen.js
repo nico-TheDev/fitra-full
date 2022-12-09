@@ -44,7 +44,7 @@ const AccountsCreateAccountScreen = ({navigation}) => {
 
     const handleColorPress = (color) => {
         setSelectedColor(color);
-        formik.setFieldValue("categoryColor", color);
+        formik.setFieldValue("accountColor", color);
         setShowColorWheel(false);
     };
 

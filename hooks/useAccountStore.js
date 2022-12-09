@@ -28,16 +28,14 @@ const accountStore = set => ({
             console.log("updateAccountError:", err);
         }
     },
-    deleteAccount: async (documentId, fileReference) => {
+    deleteAccount: async (documentId) => {
         //DELETES AN ACCOUNT
         // CREATE A REFERENCE FOR THE DOCUMENT AND THE FILE
         const docRef = doc(db, "accounts", documentId);
-        const fileRef = ref(storage, fileReference);
         try {
 
             // DELETE THE DOCUMENT AND OBJECT 
             await deleteDoc(docRef);
-            await deleteObject(fileRef);
             // ALERT A MESSAGE
         } catch (err) {
             console.log("deleteAccountError:", err);
