@@ -77,7 +77,7 @@ const AccountsDetailsScreen = ({ route }) => {
             account_color: values.account_color,
             id: accountID
         };
-        if (allAccounts.filter(account=> account.user_id === user.user_id).map(account => account.id).includes(accountID)) {
+        if (allAccounts.filter(account => account.user_id === user.user_id).map(account => account.id).includes(accountID)) {
             updateAccount(accountID, newAccount);
             Alert.alert("SUCCESS", "Document Updated");
         }
@@ -152,7 +152,8 @@ const AccountsDetailsScreen = ({ route }) => {
                     inputProps={{
                         placeholder: "Account Name",
                         onChangeText: formik.handleChange("account_name"),
-                        value: formik.values.account_name
+                        value: formik.values.account_name,
+                        editable: mode === "edit"
                     }}
                     customLabel="Account Name:"
                 />
@@ -160,15 +161,16 @@ const AccountsDetailsScreen = ({ route }) => {
                     inputProps={{
                         placeholder: "Account Amount",
                         onChangeText: formik.handleChange("account_amount"),
-                        value: formik.values.account_amount
+                        value: formik.values.account_amount,
+                        editable: mode === "edit"
                     }}
                     customLabel="Amount:"
                 />
                 <IconOnlySelector
-                iconData={Object.values(ICON_NAMES)}
-                onPress={handleIconPress}
-                selectedIcon={selectedIcon}
-                setSelectedIcon={setSelectedIcon}
+                    iconData={Object.values(ICON_NAMES)}
+                    onPress={handleIconPress}
+                    selectedIcon={selectedIcon}
+                    setSelectedIcon={setSelectedIcon}
                 />
                 <ColorPickerPanel
                     colorList={colorCollection}

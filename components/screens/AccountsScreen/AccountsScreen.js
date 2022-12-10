@@ -18,11 +18,13 @@ import CategoryPanelItem from "components/CategoryPanelItem";
 
 import useAccountsListener from "hooks/useAccountsListener";
 import useAuthStore from "hooks/useAuthStore";
+import useAccountStore from "hooks/useAccountStore";
 
 const AccountsScreen = () => {
     const navigation = useNavigation();
     const user = useAuthStore(state => state.user);
-    const [accountData, totalBalance] = useAccountsListener(user.user_id);
+    const accounts = useAccountStore(state => state.accounts);
+    const [totalBalance] = useAccountsListener(user.user_id);
 
     const handleNavigation = (id) =>
         navigation.navigate("Accounts", {
@@ -30,12 +32,12 @@ const AccountsScreen = () => {
             params: {
                 accountID: id
             }
-    });
+        });
 
     const renderCategoryPanelItem = ({ item }) => {
-        return(
+        return (
             <CategoryPanelItem
-                onPress={() => { handleNavigation(item.id);}}
+                onPress={() => { handleNavigation(item.id); }}
                 iconName={item.account_icon}
                 iconColor={item.account_color}
                 title={item.account_name}
@@ -43,7 +45,7 @@ const AccountsScreen = () => {
             />
         );
     };
-    
+
     return (
         <AccountsContainer>
             <ScreenHeader
@@ -57,26 +59,23 @@ const AccountsScreen = () => {
             />
             <TotalBalanceContainer>
                 <TotalBalanceLabel>Total Balance:</TotalBalanceLabel>
-            <TotalAmountBalanceLabel>
-                <NumericFormat
-                    value={totalBalance}
-                    displayType={'text'}
-                    thousandSeparator={true}
-                    prefix={'₱'}
-                    decimalScale={2}
-                    renderText={value => <Text>{value}</Text>}
-                /> 
-            </TotalAmountBalanceLabel>
+                <TotalAmountBalanceLabel>
+                    <NumericFormat
+                        value={totalBalance}
+                        displayType={'text'}
+                        thousandSeparator={true}
+                        prefix={'₱'}
+                        decimalScale={2}
+                        renderText={value => <Text>{value}</Text>}
+                    />
+                </TotalAmountBalanceLabel>
             </TotalBalanceContainer>
             <AccountsFunctionHolder />
             <HolderContainer>
                 <FlatList
-                    data={accountData}
+                    data={accounts}
                     renderItem={renderCategoryPanelItem}
                     keyExtractor={(item) => item.id}
-                    extraData={{
-                        accountData: accountData.length
-                    }}
                 />
             </HolderContainer>
         </AccountsContainer>

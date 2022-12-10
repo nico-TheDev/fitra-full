@@ -23,12 +23,13 @@ import { ICON_NAMES } from "constants/constant";
 import useAccountStore from "hooks/useAccountStore";
 import useAuthStore from "hooks/useAuthStore";
 
-const AccountsCreateAccountScreen = ({navigation}) => {
+const AccountsCreateAccountScreen = ({ navigation }) => {
     const addAccount = useAccountStore((state) => state.addAccount);
     const user = useAuthStore(state => state.user);
     const [selectedColor, setSelectedColor] = useState("");
     const [selectedIcon, setSelectedIcon] = useState("");
     const [showColorWheel, setShowColorWheel] = useState(false);
+    const accounts = useAccountStore(state => state.accounts);
 
     const initialValues = {
         accountName: "",
@@ -49,19 +50,25 @@ const AccountsCreateAccountScreen = ({navigation}) => {
     };
 
     const handleFormikSubmit = async (values, { resetForm }) => {
-        console.log(values);
-        addAccount({
-            account_name: values.accountName,
-            account_amount: values.accountAmount,
-            account_color: values.accountColor,
-            account_icon: values.accountIcon,
-            created_at: new Date(),
-            update_at: "",
-            user_id: user.user_id
-        });
-        resetForm();
-        Alert.alert("Success", "Created a New Account");
-        navigation.navigate("Accounts", { screen: "AccountsMain" });
+        const existingAccounts = accounts.map(item => (item.account_name.toLowerCase()));
+        if (existingAccounts.includes(values.accountName.toLowerCase())) {
+            Alert.alert("Error", "The account name already exist.");
+
+        } else {
+            addAccount({
+                account_name: values.accountName,
+                account_amount: values.accountAmount,
+                account_color: values.accountColor,
+                account_icon: values.accountIcon,
+                created_at: new Date(),
+                update_at: "",
+                user_id: user.user_id
+            });
+            resetForm();
+            Alert.alert("Success", "Created a New Account");
+            navigation.navigate("Accounts", { screen: "AccountsMain" });
+        }
+
     };
 
     const handleClear = () => {
