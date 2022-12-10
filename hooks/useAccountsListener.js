@@ -10,8 +10,10 @@ const useAccountsListener = (userID) => {
     let [totalBalance, setTotalBalance] = useState('');
     const accountColRef = collection(db, "accounts");
     const accounts = useAccountStore((state) => (state.accounts));
+    const resetAccounts = useAccountStore((state) => (state.reset));
     const setAccounts = useAccountStore((state) => (state.setAccounts));
-    const accountQuery = query(accountColRef);
+    const getAccountList = useAccountStore(state => state.accountList);
+    const accountQuery = query(accountColRef, where("user_id", "==", userID));
 
     useEffect(() => {
         //render all accounts including those in the database
@@ -26,16 +28,12 @@ const useAccountsListener = (userID) => {
                     data.splice(objIndex, 1);
                 }
                 data.push({
-                    account_color: doc.data().account_color,
-                    account_icon: doc.data().account_icon,
-                    account_name: doc.data().account_name,
-                    account_amount: doc.data().account_amount,
-                    user_id: userID || "1",
+                    ...doc.data(),
                     id: doc.id
                 });
                 setAccounts(data);
             });
-            setAccountData(accounts);
+            setAccountData(getAccountList());
             
             snapshotData.forEach(doc => dataList.push({ ...doc.data(), id: doc.id }));
             const accountsTotal = dataList.reduce((acc, currentAccount) => {
@@ -48,6 +46,9 @@ const useAccountsListener = (userID) => {
         return unsubscribe;
     }, []);
 
+    useEffect(() => {
+        resetAccounts();
+    }, [userID]);
 
     return [accountData, totalBalance];
 };

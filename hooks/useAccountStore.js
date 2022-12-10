@@ -3,8 +3,9 @@ import create from 'zustand';
 import { addDoc, collection, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db, storage } from 'fitra/firebase.config.js';
 
-const accountStore = set => ({
+const accountStore = (set, get) => ({
     accounts: [],
+    reset: () => set({ accounts: [] }),
     setAccounts: (data) => set({ accounts: data }),
     addAccount: async (newAccount) => {
         //ADDS A NEW ACCOUNT
@@ -40,6 +41,9 @@ const accountStore = set => ({
         } catch (err) {
             console.log("deleteAccountError:", err);
         }
+    },
+    accountList: (userID) => {
+        return get().accounts;
     },
 });
 
