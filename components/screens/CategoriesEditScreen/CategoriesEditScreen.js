@@ -112,6 +112,7 @@ const CategoriesEditScreen = ({ route, navigation }) => {
 
     const handleDelete = () => {
         deleteCategory(categoryID);
+        Alert.alert("Successfully Deleted Category");
         navigation.navigate("Categories", { screen: "CategoriesMain" });
     };
 

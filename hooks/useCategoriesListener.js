@@ -1,51 +1,61 @@
 import { useEffect, useState } from "react";
-import { onSnapshot, collection, query } from 'firebase/firestore';
+import { onSnapshot, collection, query, orderBy, where } from 'firebase/firestore';
 
 import { db } from "fitra/firebase.config";
 import useCategoriesData from "./useCategoriesData";
-
+import premadeCategories from 'fitra/data/categories.js';
 
 const useCategoriesListener = (userID, isExpense) => {
-    let [categoryData, setCategoryData] = useState([]);
+    const [categoryData, setCategoryData] = useState([]);
     const categoryColRef = collection(db, "categories");
-    const categories = useCategoriesData((state) => (state.categories));
+    const allCategories = useCategoriesData((state) => (state.categories));
+    const resetCategories = useCategoriesData((state) => (state.reset));
     const setCategories = useCategoriesData((state) => (state.setCategories));
-    const categoryQuery = query(categoryColRef);
+    const getIncomeList = useCategoriesData(state => state.incomeList);
+    const getExpenseList = useCategoriesData(state => state.expenseList);
+    const categoryQuery = query(categoryColRef, where("user_id", "==", userID), orderBy("created_at", "desc"));
 
     useEffect(() => {
         //render all categories including those in the database
-        const data = categories;
-        // console.log(data)
         const unsubscribe = onSnapshot(categoryQuery, (snapshotData) => {
+            // console.log("FETCH CATEGORIES");
+            const prepCategories = premadeCategories.map(category => ({
+                ...category,
+                user_id: userID
+            }));
+            const userList = [];
             snapshotData.forEach(doc => {
-                //check if doc is already in the array
-                if (data.some(item => item.id === doc.id)) {
-                    const objIndex = data.findIndex((item) => item.id === doc.id);
-                    data.splice(objIndex, 1);
+                // check if doc is already in the array;
+                if (prepCategories.some(item => item.id === doc.id)) {
+                    const objIndex = prepCategories.findIndex((item) => item.id === doc.id);
+                    prepCategories.splice(objIndex, 1);
                 }
-                data.push({
-                    category_color: doc.data().category_color,
-                    category_icon: doc.data().category_icon,
-                    category_name: doc.data().category_name,
-                    user_id: userID || "1",
+                userList.push({
+                    ...doc.data(),
                     type: doc.data().category_type,
                     id: doc.id
                 });
-                setCategories(data);
+                // console.log("CATEGORY PUSHED", doc.id);
             });
-            // console.log(isExpense)
-            // console.log(data)
-            if (isExpense) {
-                setCategoryData(categories.filter((item) => item.type === "income"));
+            setCategories([...prepCategories, ...userList]);
+            // setCategoryData([...prepCategories, ...userList]);
+            // EXPENSE TYPE
+            if (!isExpense) {
+                setCategoryData(getExpenseList());
             }
+            // INCOME TYPE
             else {
-                setCategoryData(categories.filter((item) => item.type === "expense"));
+                setCategoryData(getIncomeList());
             }
-
         });
+
         return unsubscribe;
     }, [isExpense]);
 
+
+    useEffect(() => {
+        resetCategories();
+    }, [userID]);
 
     return [categoryData];
 };

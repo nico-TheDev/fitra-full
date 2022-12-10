@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
@@ -17,12 +17,15 @@ import useType from "hooks/useType";
 import useCategoriesListener from "hooks/useCategoriesListener";
 import useAuthStore from "hooks/useAuthStore";
 
+import useCategoriesStore from "hooks/useCategoriesData";
+
+
 const CategoriesScreen = () => {
     const user = useAuthStore(state => state.user);
     const [isExpense, setIsExpense] = useType();
     const [categoryData] = useCategoriesListener(user.user_id, isExpense);
-
     const navigation = useNavigation();
+
 
     const handleNavigation = (id) =>
         navigation.navigate("Categories", {
@@ -69,6 +72,7 @@ const CategoriesScreen = () => {
                 }}
                 extraData={{
                     isExpense,
+                    categoryData: categoryData.length
                 }}
             />
         </CategoriesScreenContainer>

@@ -1,10 +1,10 @@
 import { ICON_NAMES } from "constants/constant";
 import colors from "assets/themes/colors";
 
-export const categories = [
+const premadeCategories = [
     {
         user_id: "1",
-        type: "income",
+        category_type: "income",
         category_name: "Business",
         category_icon: ICON_NAMES.CHARTS,
         category_color: colors.secondary.chartColorFour,
@@ -14,7 +14,7 @@ export const categories = [
     },
     {
         user_id: "1",
-        type: "income",
+        category_type: "income",
         category_name: "remittance",
         category_icon: ICON_NAMES.BANK,
         category_color: colors.secondary.chartColorEleven,
@@ -24,7 +24,7 @@ export const categories = [
     },
     {
         user_id: "1",
-        type: "income",
+        category_type: "income",
         category_name: "Bills",
         category_icon: ICON_NAMES.ENERGY,
         category_color: colors.secondary.chartColorNineteen,
@@ -34,7 +34,7 @@ export const categories = [
     },
     {
         user_id: "1",
-        type: "income",
+        category_type: "income",
         category_name: "Fulltime",
         category_icon: ICON_NAMES.EDUCATION,
         category_color: colors.secondary.chartColorFourteen,
@@ -44,7 +44,7 @@ export const categories = [
     },
     {
         user_id: "1",
-        type: "income",
+        category_type: "income",
         category_name: "Freelance",
         category_icon: ICON_NAMES.ADD_PHOTO_V1,
         category_color: colors.secondary.chartColorSix,
@@ -55,7 +55,7 @@ export const categories = [
     //expenses
     {
         user_id: "1",
-        type: "expense",
+        category_type: "expense",
         category_name: "Food",
         category_icon: ICON_NAMES.FOOD,
         category_color: colors.secondary.chartColorOne,
@@ -65,7 +65,7 @@ export const categories = [
     },
     {
         user_id: "1",
-        type: "expense",
+        category_type: "expense",
         category_name: "Water",
         category_icon: ICON_NAMES.WATER,
         category_color: colors.secondary.chartColorTen,
@@ -75,7 +75,7 @@ export const categories = [
     },
     {
         user_id: "1",
-        type: "expense",
+        category_type: "expense",
         category_name: "Electricity",
         category_icon: ICON_NAMES.ENERGY,
         category_color: colors.primary.colorFive,
@@ -85,7 +85,7 @@ export const categories = [
     },
     {
         user_id: "1",
-        type: "expense",
+        category_type: "expense",
         category_name: "Education",
         category_icon: ICON_NAMES.EDUCATION,
         category_color: colors.secondary.chartColorEight,
@@ -95,7 +95,7 @@ export const categories = [
     },
     {
         user_id: "1",
-        type: "expense",
+        category_type: "expense",
         category_name: "Health",
         category_icon: ICON_NAMES.FITNESS,
         category_color: colors.secondary.chartColorThirtyOne,
@@ -103,3 +103,6 @@ export const categories = [
         updatedAt: "",
         id: "1",
     }];
+
+
+export default premadeCategories;
