@@ -1,6 +1,7 @@
-import { FlatList } from "react-native";
+import { FlatList, Text } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { NumericFormat } from 'react-number-format';
 
 // LOCAL IMPORTS
 import {
@@ -19,10 +20,9 @@ import useAccountsListener from "hooks/useAccountsListener";
 import useAuthStore from "hooks/useAuthStore";
 
 const AccountsScreen = () => {
+    const navigation = useNavigation();
     const user = useAuthStore(state => state.user);
     const [accountData, totalBalance] = useAccountsListener(user.user_id);
-
-    const navigation = useNavigation();
 
     const handleNavigation = (id) =>
         navigation.navigate("Accounts", {
@@ -57,7 +57,16 @@ const AccountsScreen = () => {
             />
             <TotalBalanceContainer>
                 <TotalBalanceLabel>Total Balance:</TotalBalanceLabel>
-            <TotalAmountBalanceLabel>PHP {totalBalance}.00</TotalAmountBalanceLabel>
+            <TotalAmountBalanceLabel>
+                <NumericFormat
+                    value={totalBalance}
+                    displayType={'text'}
+                    thousandSeparator={true}
+                    prefix={'₱'}
+                    decimalScale={2}
+                    renderText={value => <Text>{value}</Text>}
+                /> 
+            </TotalAmountBalanceLabel>
             </TotalBalanceContainer>
             <AccountsFunctionHolder />
             <HolderContainer>
