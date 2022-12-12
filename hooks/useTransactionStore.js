@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { addDoc, collection, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, deleteDoc, doc, updateDoc, getDoc, } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 
 import { db, storage } from 'fitra/firebase.config.js';
@@ -12,6 +12,22 @@ const transactionStore = set => ({
         try {
             // console.log(newTransaction);
             await addDoc(collection(db, "transactions"), { ...newTransaction, timestamp: serverTimestamp() });
+            const accountRef = doc(db, "accounts", newTransaction.target_account);
+
+            const currentAccount = await getDoc(accountRef);
+            // console.log(currentAccount.data());
+            // SUBTRACT
+            if (newTransaction.type === "expense") {
+                await updateDoc(accountRef, {
+                    account_amount: currentAccount.data().account_amount - newTransaction.amount
+                });
+            } else {
+                // INCOME
+                await updateDoc(accountRef, {
+                    account_amount: currentAccount.data().account_amount + newTransaction.amount
+                });
+            }
+
             console.log("NEW DOCUMENT CREATED");
         }
         catch (err) {
@@ -23,10 +39,27 @@ const transactionStore = set => ({
         const docRef = doc(db, "transactions", documentId);
         const fileRef = ref(storage, fileReference);
         try {
+            const currentTransaction = await (await getDoc(docRef)).data();
+            const accountRef = doc(db, "accounts", currentTransaction.target_account);
 
+            const currentAccount = await getDoc(accountRef);
+            console.log(currentAccount.data());
+            // RETURN THE SUBTRACTED AMOUNT
+            if (currentTransaction.type === "expense") {
+                await updateDoc(accountRef, {
+                    account_amount: currentAccount.data().account_amount + currentTransaction.amount
+                });
+            } else {
+                // INCOME
+                await updateDoc(accountRef, {
+                    account_amount: currentAccount.data().account_amount - currentTransaction.amount
+                });
+            }
             // DELETE THE DOCUMENT AND OBJECT 
             await deleteDoc(docRef);
-            await deleteObject(fileRef);
+            if (fileReference) {
+                await deleteObject(fileRef);
+            }
             // ALERT A MESSAGE
         } catch (err) {
             console.log("deleteTransactionError:", err);

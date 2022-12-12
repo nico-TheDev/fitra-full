@@ -16,14 +16,14 @@ const CategoryPanelItem = ({ onPress, title, price, iconColor, iconName, comment
             </LeftContainer>
             <PriceContainer>
                 <PriceLabel color={iconColor}>
-                <NumericFormat
-                    value={price}
-                    displayType={'text'}
-                    thousandSeparator={true}
-                    prefix={'₱'}
-                    decimalScale={2}
-                    renderText={value => <Text>{value}</Text>}
-                /> 
+                    <NumericFormat
+                        value={price}
+                        displayType={'text'}
+                        thousandSeparator={true}
+                        prefix={'₱'}
+                        decimalScale={2}
+                        renderText={value => <Text>{value}</Text>}
+                    />
                 </PriceLabel>
                 {priceSub && <Subhead color={iconColor}>{priceSub}</Subhead>}
             </PriceContainer>

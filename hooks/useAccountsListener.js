@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { onSnapshot, collection, query, where } from 'firebase/firestore';
+import { onSnapshot, collection, query, where, orderBy } from 'firebase/firestore';
 
 import { db } from "fitra/firebase.config";
 import useAccountStore from "./useAccountStore";
@@ -12,7 +12,7 @@ const useAccountsListener = (userID) => {
     const accounts = useAccountStore((state) => (state.accounts));
     const resetAccounts = useAccountStore((state) => (state.reset));
     const setAccounts = useAccountStore((state) => (state.setAccounts));
-    const accountQuery = query(accountColRef, where("user_id", "==", userID));
+    const accountQuery = query(accountColRef, where("user_id", "==", userID), orderBy("created_at", "asc"));
 
     const data = [...accounts];
 

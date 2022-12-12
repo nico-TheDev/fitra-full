@@ -41,7 +41,7 @@ const AccountsScreen = () => {
                 iconName={item.account_icon}
                 iconColor={item.account_color}
                 title={item.account_name}
-                price={item.account_amount}
+                price={String(item.account_amount)}
             />
         );
     };

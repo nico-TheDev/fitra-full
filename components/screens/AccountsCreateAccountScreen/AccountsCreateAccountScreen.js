@@ -57,7 +57,7 @@ const AccountsCreateAccountScreen = ({ navigation }) => {
         } else {
             addAccount({
                 account_name: values.accountName,
-                account_amount: values.accountAmount,
+                account_amount: Number(values.accountAmount),
                 account_color: values.accountColor,
                 account_icon: values.accountIcon,
                 created_at: new Date(),
