@@ -1,5 +1,7 @@
 import React from "react";
+import { Text } from "react-native";
 import PropTypes from "prop-types";
+import { NumericFormat } from 'react-number-format';
 
 import Icon from "components/common/Icon";
 import { ICON_NAMES } from "constants/constant";
@@ -29,7 +31,16 @@ const CategoryPanelItem = ({ onPress, sender, receiver, price }) => {
                 </TitleContainer>
             </LeftContainer>
             <PriceContainer>
-                <PriceLabel color={mainColor}>{price}</PriceLabel>
+                <PriceLabel color={mainColor}>
+                    <NumericFormat
+                        value={price}
+                        displayType={'text'}
+                        thousandSeparator={true}
+                        prefix={'₱'}
+                        decimalScale={2}
+                        renderText={value => <Text>{value}</Text>}
+                    />
+                    </PriceLabel>
             </PriceContainer>
         </ItemContainer>
     );

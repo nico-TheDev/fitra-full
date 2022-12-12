@@ -24,7 +24,7 @@ import useTransferStore from "hooks/useTransferStore";
 const AccountsCreateTransferScreen = ({ navigation }) => {
     let photoId = uuid.v4();
     const user = useAuthStore(state => state.user);
-    const accounts = useAccountStore(state => state.accounts);
+    const transfers = useTransferStore(state => state.transfers);
     const addTransfer = useTransferStore((state) => state.addTransfer);
     
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transfer/");
@@ -53,7 +53,7 @@ const AccountsCreateTransferScreen = ({ navigation }) => {
         addTransfer({
             from_account: values.fromAccount,
             to_account: values.toAccount,
-            transfer_amount: Number(values.transeferAmount),
+            transfer_amount: Number(values.transferAmount),
             comment_img_ref: imgFile ? imgFile.imgRef : "",
             comment_img: imgFile ? imgFile.imgUri : "",
             comments: values.comments,
@@ -118,8 +118,7 @@ const AccountsCreateTransferScreen = ({ navigation }) => {
                     inputProps={{
                         placeholder: "Enter Amount",
                         onChangeText: formik.handleChange("transferAmount"),
-                        keyboardType: "numeric",
-                        }}
+                    }}
                     iconName={ICON_NAMES.SENDMONEY}
                     customLabel="Transfer Amount"
                 />
@@ -148,9 +147,6 @@ const AccountsCreateTransferScreen = ({ navigation }) => {
                     textSize={14}
                     noBorder={false}
                     onPress={formik.handleSubmit}
-                    buttonProps={{
-                        disabled: isSubmitDisabled,
-                    }}
                 />
             </ScrollContainer>
         </AccountsContainer>

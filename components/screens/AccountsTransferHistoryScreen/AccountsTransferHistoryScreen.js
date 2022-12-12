@@ -13,6 +13,9 @@ import {
     TransferSectionList,
 } from "./styles";
 
+import useTransferStore from "hooks/useTransferStore";
+import useAuthStore from "hooks/useAuthStore";
+
 const AccountsTransferHistoryScreen = ({ navigation }) => {
     const [items, setItems] = useState([
         { label: "Show Per Day", value: "day" },
@@ -21,18 +24,24 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
         { label: "Show Per Year", value: "year" },
     ]);
 
-    const handleNavigate = () =>
+    const user = useAuthStore(state => state.user);
+    const transfers = useTransferStore(state => state.transfers);
+
+    const handleNavigate = (id) =>
         navigation.navigate("Accounts", {
             screen: "AccountsEditTransferScreen",
+            params: {
+                accountID: id
+            }
         });
 
-    const AcountPanelRenderItem = ({ item }) => (
+    const AccountPanelRenderItem = ({ item }) => (
         <AccountPanelItem
             iconName={ICON_NAMES.TRANSFER}
             iconColor={colors.primary.colorFive}
-            price={`₱${item.amount}`}
-            sender={item.senderName}
-            receiver={item.receiverName}
+            price={item.transfer_amount}
+            sender={item.from_amount}
+            receiver={item.to_amount}
             onPress={handleNavigate}
         />
     );
@@ -48,7 +57,7 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
             <TransferSectionList
                 sections={transferHistoryLogData}
                 keyExtractor={(item, index) => item + index}
-                renderItem={AcountPanelRenderItem}
+                renderItem={AccountPanelRenderItem}
                 renderSectionHeader={sectionHeaderRender}
             />
         </TransferHistoryContainer>
