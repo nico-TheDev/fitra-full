@@ -122,7 +122,8 @@ const EditTransactionScreen = ({ route, navigation }) => {
             transaction_color: values.transactionColor,
             user_id: user.user_id,
             type: values.type,
-            created_at: date
+            created_at: date,
+            account_name: values.accountName
         };
         updateTransaction(transactionID, newTransaction);
         Alert.alert("SUCCESS", "Document Updated");
@@ -162,6 +163,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
         categoryId: currentTransaction.category_id,
         categoryName: currentTransaction.category_name,
         comments: currentTransaction.comments,
+        accountName: currentTransaction.account_name
     };
 
     const formik = useFormik({
@@ -203,8 +205,10 @@ const EditTransactionScreen = ({ route, navigation }) => {
                         },
                         onSelectItem: (item) => {
                             formik.setFieldValue("targetAccount", item.value);
+                            const targetAccount = accountItems.find(account => account.value === item.value);
+                            // console.log(targetAccount);
+                            formik.setFieldValue("accountName", targetAccount.label);
                         }
-
                     }}
                     width="100%"
                 />

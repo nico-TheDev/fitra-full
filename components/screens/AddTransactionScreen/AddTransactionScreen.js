@@ -143,10 +143,10 @@ const AddTransactionScreen = ({ navigation }) => {
                         zIndex: 3000,
                         zIndexInverse: 1000,
                         onChangeValue: (value) => {
-                            console.log("dropdown:", value);
+                            // console.log("dropdown:", value);
                             formik.setFieldValue("targetAccount", value);
                             const targetAccount = accountItems.find(item => item.value === value);
-                            console.log(targetAccount);
+                            // console.log(targetAccount);
                             formik.setFieldValue("accountName", targetAccount.label);
 
                         }
