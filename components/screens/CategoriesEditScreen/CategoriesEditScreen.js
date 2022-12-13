@@ -71,8 +71,8 @@ const CategoriesEditScreen = () => {
                     setIsEnabled={setIsExpense}
                 />
             </SwitchContainer>
-            <IconSelector
-                iconData={categories}
+            <IconOnlySelector
+                iconData={Object.values(ICON_NAMES.CATEGORIES_ICONS)}
                 onPress={handleIconPress}
                 selectedIcon={selectedIcon}
                 setSelectedIcon={setSelectedIcon}
