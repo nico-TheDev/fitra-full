@@ -12,6 +12,9 @@ export const LoginScreenContainer = styled(Container)`
 export const UserImg = styled.Image`
     position: relative;
     border-radius: 100;
+`;
+
+export const UserImgContainer = styled.View`
     margin-top: 50px;
 `;
 

@@ -6,14 +6,14 @@ import ScreenHeader from "components/ScreenHeader";
 import CustomTextInput from "components/CustomTextInput";
 import CommentInput from "components/CommentInput";
 import Button from "components/Button";
-import useTransactionData from "hooks/useTransactionData";
+import useTransactionStore from "hooks/useTransactionStore";
 import formatDate from "fitra/util/formatDate";
 import convertTimestamp from "util/convertTimestamp";
 
 const TransactionDetailsScreen = ({ route, navigation }) => {
     const { transactionID } = route.params;
     const [currentTransaction, setCurrentTransaction] = useState({});
-    const transactionList = useTransactionData(state => state.transactions);
+    const transactionList = useTransactionStore(state => state.transactions);
 
     useEffect(() => {
         const targetTransaction = transactionList.find(transaction => transaction.id === transactionID);

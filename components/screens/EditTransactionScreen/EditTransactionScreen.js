@@ -29,25 +29,29 @@ import {
 } from "./styles";
 import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
-import useTransactionData from "hooks/useTransactionData";
+import useTransactionStore from "hooks/useTransactionStore";
 import convertTimestamp from "util/convertTimestamp";
 import useUploadImage from "hooks/useUploadImage";
 import useType from "hooks/useType";
+import useAuthStore from "hooks/useAuthStore";
+import useCategoriesListener from "hooks/useCategoriesListener";
 
 const EditTransactionScreen = ({ route, navigation }) => {
     // Transaction State 
     const { transactionID } = route.params;
-    const transactionList = useTransactionData(state => state.transactions);
-    const deleteTransaction = useTransactionData(state => state.deleteTransaction);
-    const updateTransaction = useTransactionData(state => state.updateTransaction);
+    const transactionList = useTransactionStore(state => state.transactions);
+    const deleteTransaction = useTransactionStore(state => state.deleteTransaction);
+    const updateTransaction = useTransactionStore(state => state.updateTransaction);
     const [currentTransaction, setCurrentTransaction] = useState(() => {
         return transactionList.find(transaction => transaction.id === transactionID);
     });
 
+    const user = useAuthStore(state => state.user);
     const photoId = uuid.v4(); // unique id for new image
     const [date, setDate] = useState(convertTimestamp(currentTransaction.created_at));
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transaction/");
-    const [isExpense, setIsExpense, categoryList] = useType(categories, currentTransaction.type === "expense");
+    const [categories] = useCategoriesListener(user.user_id, isExpense);
+    const [isExpense, setIsExpense] = useType(currentTransaction.type === "expense");
     const [selectedIcon, setSelectedIcon] = useState({
         label: "",
         icon: "",
@@ -58,6 +62,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
         { label: "GCASH", value: "gcash" },
         { label: "UnionBank", value: "unionbank" },
     ]);
+
     // MANAGE THE STATE AFTER FIRST MOUNT
     useEffect(() => {
         const targetTransaction = transactionList.find(transaction => transaction.id === transactionID);
@@ -67,7 +72,8 @@ const EditTransactionScreen = ({ route, navigation }) => {
             label: currentTransaction.category_name,
             icon: currentTransaction.transaction_icon,
             color: currentTransaction.transaction_color,
-            currentIcon: currentTransaction.transaction_icon
+            currentIcon: currentTransaction.transaction_icon,
+            id: currentTransaction.category_id
         });
     }, [transactionID]);
 
@@ -75,7 +81,9 @@ const EditTransactionScreen = ({ route, navigation }) => {
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
         formik.setFieldValue("categoryName", icon.label);
-        formik.setFieldValue("transactionIcon", icon);
+        formik.setFieldValue("transactionIcon", icon.currentIcon);
+        formik.setFieldValue("transactionColor", icon.color);
+
     };
 
     const handleFormikSubmit = async (values) => {
@@ -111,7 +119,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
             target_account: values.targetAccount,
             transaction_icon: transactionIcon,
             transaction_color: values.transactionColor,
-            user_id: uuid.v4(), // TODO: Replace with actual user_id once auth is implemented
+            user_id: user.user_id,
             type: values.type,
             created_at: date
         };
@@ -150,6 +158,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
         targetAccount: currentTransaction.target_account,
         transactionIcon: currentTransaction.transaction_icon,
         transactionColor: currentTransaction.transaction_color,
+        categoryId: currentTransaction.category_id,
         categoryName: currentTransaction.category_name,
         comments: currentTransaction.comments,
     };
@@ -201,10 +210,9 @@ const EditTransactionScreen = ({ route, navigation }) => {
                 <ScrollContainer>
                     <TransactionCategoryHolder>
                         <IconSelector
-                            iconData={categoryList}
+                            iconData={categories}
                             handlePress={handleIconPress}
                             selectedIcon={selectedIcon}
-                            setSelectedIcon={setSelectedIcon}
                         />
                     </TransactionCategoryHolder>
                     <CustomDatePicker

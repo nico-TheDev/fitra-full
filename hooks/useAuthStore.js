@@ -1,38 +1,49 @@
 import create from 'zustand';
+import { persist, devtools } from 'zustand/middleware';
 import { doc, setDoc } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "firebase/auth";
-import { auth, db } from '../firebase.config';
 import { Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const useAuthentication = create(set => ({
-    user:{},
-    setUser: (data) => set({user: data}),
+
+import { auth, db } from '../firebase.config';
+
+const authStore = (set) => ({
+    user: {
+        email: "",
+        name: "",
+        user_id: "",
+        profile_img: ""
+    },
+    setUser: (data) => set({ user: data }),
     addUser: async (newUser) => {
         try {
-            console.log(newUser);
-            const createdUser = await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);   //creates user
+            const createdUserResponse = await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);   //creates user
             await updateProfile(auth.currentUser, {
                 displayName: newUser.firstName + " " + newUser.lastName,    //updates displayName
-                photoURL:  newUser.profile_img,                             //updates photoURL
-            })
-            await setDoc(doc(db, "users", createdUser.user.uid), {      //sets document of user
-                uid: createdUser.user.uid,                              //generated uid
+                photoURL: newUser.profile_img,                             //updates photoURL
+            });
+            await setDoc(doc(db, "users", createdUserResponse.user.uid), {      //sets document of user
+                uid: createdUserResponse.user.uid,                              //generated uid
                 first_Name: newUser.firstName,                  //fetched data from firstName (RegisterScreen) will be stored here
                 last_Name: newUser.lastName,                    //fetched data from lastName (RegisterScreen) will be stored here
                 email: newUser.email,                           //fetched data from email (RegisterScreen) will be stored here
                 profile_img_ref: newUser.profile_img_ref,       //fetched data from profile_img (RegisterScreen) will be stored here
                 profile_img: newUser.profile_img                //fetched data from profile_img (RegisterScreen) will be stored here
-            });             
-            Alert.alert('Status', 'User created. Sign in success.');
-            console.log(createdUser);
+            });
+            const createdUser = {     //sets user credentials
+                email: createdUserResponse.user.email,
+                name: createdUserResponse.user.displayName,
+                user_id: createdUserResponse.user.uid,
+                profile_img: createdUserResponse.user.photoURL
+            };
+            // console.log(createdUserResponse);
+            // console.log(createdUser);
             set({
-                user: {     //sets user credentials
-                    email: createdUser.email,
-                    name: createdUser.displayName,
-                    user_id: createdUser.uid,
-                    profile_img: createdUser.photoURL
-                }, isLoggedIn: true
-            })
+                user: createdUser, isLoggedIn: true
+            });
+            Alert.alert('Status', 'User created. Sign in success.');
+
         }
         catch (err) {
             Alert.alert('Status', 'Failed to create user. Sign in failed.');
@@ -41,18 +52,20 @@ const useAuthentication = create(set => ({
     },
     verifyUser: async (login_user) => {
         try {
-            console.log(login_user);
-            const verifiedUser = await signInWithEmailAndPassword(auth, login_user.email, login_user.password);     //checks if user is registered, email and password correct
-            Alert.alert('Status', 'Email and password correct. Login success.');
-            console.log(verifiedUser);
-            set({
+            const verifiedResponse = await signInWithEmailAndPassword(auth, login_user.email, login_user.password);     //checks if user is registered, email and password correct
+            const verifiedUser = verifiedResponse.user;
+            // console.log(verifiedResponse);
+            const userProfile = {
                 user: {     //sets user credentials
                     email: verifiedUser.email,
                     name: verifiedUser.displayName,
                     user_id: verifiedUser.uid,
                     profile_img: verifiedUser.photoURL
-                }, isLoggedIn: true
-            })
+                },
+            };
+            // console.log(userProfile);
+            set(userProfile);
+            Alert.alert('Status', 'Email and password correct. Login success.');
         }
         catch (err) {
             Alert.alert('Status', 'Email and password incorrect. Login failed.');
@@ -60,7 +73,7 @@ const useAuthentication = create(set => ({
         }
     },
     logoutUser: async () => {
-        try{
+        try {
             await signOut(auth);    // signs out current user
             Alert.alert('Status', 'User is logged out.');
             set({
@@ -69,14 +82,28 @@ const useAuthentication = create(set => ({
                     name: '',
                     user_id: '',
                     profile_img: ''
-                }, isLoggedIn: false, isOnboardRead: true
-            })
+                }
+            });
         }
-        catch(err){
+        catch (err) {
             Alert.alert('Status', 'Failed to log out.');
             console.log(err);
         }
     }
-}));
+});
 
-export default useAuthentication;
+const useAuthStore = create(
+    devtools(
+        persist(
+            authStore,
+            {
+                name: "user",
+                getStorage: () => AsyncStorage
+            }
+        )
+    )
+);
+
+export default useAuthStore;
+
+

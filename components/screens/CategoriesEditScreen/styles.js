@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-
+import colors from "assets/themes/colors";
 import { Container } from "components/common/styles/commonStyles";
 
 export const CategoriesContainer = styled(Container)`
@@ -39,3 +39,4 @@ export const ButtonContainer = styled.View`
     width: 90%;
     margin-top: 20px;
 `;
+

@@ -25,18 +25,18 @@ import {
     Input,
 } from "./styles";
 
-import useAuthentication from 'hooks/useAuthentication';
+import useAuthStore from 'hooks/useAuthStore';
 import useUploadImage from "hooks/useUploadImage";
 
 const RegisterScreen = ({ navigation }) => {
     let photoId = uuid.v4();
-    
+
     const circleBigBgSize = 400;
     const registerScreenLogoSize = 100;
 
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "users/");
 
-    const addUser = useAuthentication(state => state.addUser);
+    const addUser = useAuthStore(state => state.addUser);
 
     const initialValues = {
         firstName: "",
@@ -86,6 +86,7 @@ const RegisterScreen = ({ navigation }) => {
                     imageUri={image}
                     onPress={chooseImage}
                     filename={filename}
+                    iconSize={50}
                 />
             </GreetingsHolder>
             <RegisterForm>
@@ -95,7 +96,7 @@ const RegisterScreen = ({ navigation }) => {
                         value={formik.values.firstName}
                         placeholder="First Name"
                         placeholderTextColor={
-                        colors.primary.colorFive
+                            colors.primary.colorFive
                         }
                     />
                 </InputHolder>
@@ -105,7 +106,7 @@ const RegisterScreen = ({ navigation }) => {
                         value={formik.values.lastName}
                         placeholder="Last Name"
                         placeholderTextColor={
-                        colors.primary.colorFive
+                            colors.primary.colorFive
                         }
                     />
                 </InputHolder>
@@ -115,7 +116,7 @@ const RegisterScreen = ({ navigation }) => {
                         value={formik.values.email}
                         placeholder="Email"
                         placeholderTextColor={
-                        colors.primary.colorFive
+                            colors.primary.colorFive
                         }
                     />
                 </InputHolder>
@@ -126,7 +127,7 @@ const RegisterScreen = ({ navigation }) => {
                         placeholder="Password"
                         secureTextEntry={true}
                         placeholderTextColor={
-                        colors.primary.colorFive
+                            colors.primary.colorFive
                         }
                     />
                 </InputHolder>

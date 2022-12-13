@@ -14,21 +14,6 @@ export const FunctionContainer = styled.View`
     width: 90%;
 `;
 
-export const ColorPickerContainer = styled.View`
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    z-index: 999;
-`;
-
-export const ColorPickerBody = styled.View`
-    background-color: white;
-    width: 100%;
-    height: 100%;
-    padding: 20px;
-`;
-
 export const SwitchContainer = styled.View`
     elevation: 10;
     width: 90%;
@@ -56,15 +41,3 @@ export const ButtonContainer = styled.View`
     margin-top: 20px;
 `;
 
-export const CloseBtn = styled.TouchableOpacity`
-    position: absolute;
-    top: 10%;
-    right: 10%;
-    width: 50px;
-    height: 50px;
-    border-radius: 10000px;
-    background: ${colors.primary.colorFive};
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;
-`;

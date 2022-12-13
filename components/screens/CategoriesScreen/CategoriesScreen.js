@@ -1,5 +1,5 @@
-import { View } from "react-native";
-import React, { useState, useEffect } from "react";
+import { Text, View } from "react-native";
+import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
 // LOCAL IMPORTS
@@ -11,37 +11,29 @@ import {
 import ScreenHeader from "components/ScreenHeader";
 import { ICON_NAMES } from "constants/constant";
 import SwitchCategory from "components/SwitchCategory";
-import { categories } from "fitra/SampleData";
 import ButtonIcon from "components/ButtonIcon";
 
-const CategoriesScreen = () => {
-    const [selectedIcon, setSelectedIcon] = useState({
-        iconName: "",
-        iconLabel: "",
-    });
-    const [isExpense, setIsExpense] = useState(false);
-    let [categoryData, setCategoryData] = useState([]);
+import useType from "hooks/useType";
+import useCategoriesListener from "hooks/useCategoriesListener";
+import useAuthStore from "hooks/useAuthStore";
 
+import useCategoriesStore from "hooks/useCategoriesData";
+
+
+const CategoriesScreen = () => {
+    const user = useAuthStore(state => state.user);
+    const [isExpense, setIsExpense] = useType();
+    const [categoryData] = useCategoriesListener(user.user_id, isExpense);
     const navigation = useNavigation();
 
-    useEffect(() => {
-        // INCOME TYPE
-        if (!isExpense) {
-            setCategoryData(
-                categories.filter(
-                    (item) => item.type === "income" && item.userID === "1"
-                )
-            );
-        }
-        // EXPENSE TYPE
-        else {
-            setCategoryData(
-                categories.filter(
-                    (item) => item.type === "expense" && item.userID === "1"
-                )
-            );
-        }
-    }, [isExpense]);
+
+    const handleNavigation = (id) =>
+        navigation.navigate("Categories", {
+            screen: "CategoriesEdit",
+            params: {
+                categoryID: id
+            }
+        });
 
     return (
         <CategoriesScreenContainer>
@@ -58,25 +50,15 @@ const CategoriesScreen = () => {
             </CategoryPanel>
             <CategoryList
                 data={categoryData}
-                renderItem={({ item, index }) => (
+                renderItem={({ item }) => (
                     <ButtonIcon
-                        name={item.categoryIcon}
-                        iconColor={item.categoryColor}
+                        name={item.category_icon}
+                        iconColor={item.category_color}
                         iconSize={25}
-                        label={item.categoryName}
-                        key={index}
-                        type={
-                            selectedIcon.iconLabel === item.categoryName
-                                ? "filled"
-                                : ""
-                        }
-                        onPress={() =>
-                            // setSelectedIcon({
-                            //     iconName: item.categoryIcon,
-                            //     iconLabel: item.categoryName,
-                            // })
-                            navigation.push("CategoriesEdit")
-                        }
+                        label={item.category_name}
+                        key={item.id}
+                        type=""
+                        onPress={() => { handleNavigation(item.id); }}
                         styles={{ marginHorizontal: 10 }}
                     />
                 )}
@@ -89,8 +71,8 @@ const CategoriesScreen = () => {
                     justifyContent: "flex-start",
                 }}
                 extraData={{
-                    icon: selectedIcon.iconLabel,
                     isExpense,
+                    categoryData: categoryData.length
                 }}
             />
         </CategoriesScreenContainer>
