@@ -24,38 +24,47 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
         { label: "Show Per Year", value: "year" },
     ]);
 
+    const DATA = [
+        {
+            title: "Transfers",
+            data: transferLog
+        },
+    ];
+
     const user = useAuthStore(state => state.user);
-    const transfers = useTransferStore(state => state.transfers);
+    const transferLog = useTransferStore(state => state.transfers);
 
     const handleNavigate = (id) =>
         navigation.navigate("Accounts", {
             screen: "AccountsEditTransferScreen",
             params: {
-                accountID: id
+                transferID: id
             }
         });
 
-    const AccountPanelRenderItem = ({ item }) => (
-        <AccountPanelItem
+    const AccountPanelRenderItem = ({ item }) => {
+        return(
+            <AccountPanelItem
             iconName={ICON_NAMES.TRANSFER}
             iconColor={colors.primary.colorFive}
             price={item.transfer_amount}
-            sender={item.from_amount}
-            receiver={item.to_amount}
-            onPress={handleNavigate}
-        />
-    );
+            sender={item.from_account}
+            receiver={item.to_account}
+            onPress={() => {handleNavigate(item.id);}}
+            />
+        );
+    };
 
-    const sectionHeaderRender = ({ section: { title } }) => (
-        <SectionHeader>{title}</SectionHeader>
-    );
+    const sectionHeaderRender = ({ section }) => {
+        <SectionHeader>{section.title}</SectionHeader>
+    };
 
     return (
         <TransferHistoryContainer>
             <ScreenHeader title="Transfer History" />
             <FilterInput items={items} setItems={setItems} />
             <TransferSectionList
-                sections={transferHistoryLogData}
+                sections={DATA}
                 keyExtractor={(item, index) => item + index}
                 renderItem={AccountPanelRenderItem}
                 renderSectionHeader={sectionHeaderRender}

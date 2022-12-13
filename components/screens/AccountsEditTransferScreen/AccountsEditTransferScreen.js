@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { Alert } from "react-native";
+import uuid from 'react-native-uuid';
 import { useNavigation } from "@react-navigation/native";
-import { deleteObject, ref } from "firebase/storage";
 
 // firebase
 import { storage } from "fitra/firebase.config";
+import { deleteObject, ref } from "firebase/storage";
 
 // LOCAL IMPORTS
 import CustomTextInput from "components/CustomTextInput";
@@ -45,7 +46,7 @@ const AccountsEditTransferScreen = ({ route }) => {
     });
 
     const photoId = uuid.v4(); // unique id for new image
-    const [date, setDate] = useState(convertTimestamp(currentTransfer.created_at));
+    // const [date, setDate] = useState(convertTimestamp(currentTransfer.created_at));
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transfer/");
 
     // TODO: To be replaced with actual data

@@ -8,10 +8,10 @@ import useTransferStore from "./useTransferStore";
 const useTransferListener = (userID) => {
     // let [accountData, setAccountData] = useState([]);
     // let [totalBalance, setTotalBalance] = useState('');
-    const transferColRef = collection(db, "transfer");
+    const transferColRef = collection(db, "transfers");
     const transfers = useTransferStore((state) => (state.transfers));
     const resetTransfers = useTransferStore((state) => (state.reset));
-    const setAccounts = useTransferStore((state) => (state.setTransfers));
+    const setTransfers = useTransferStore((state) => (state.setTransfers));
     const transferQuery = query(transferColRef, where("user_id", "==", userID));
 
     const data = [...transfers];
@@ -21,14 +21,14 @@ const useTransferListener = (userID) => {
         // const existingAccounts = accounts.length ? accounts.map(item => item.account_name) : [];
         // console.log(data)
         const unsubscribe = onSnapshot(transferQuery, (snapshotData) => {
-            const userAccounts = [];
+            const userTransfers = [];
             snapshotData.forEach(doc => {
                 // check if doc is already in the array
                 // if (data.some(item => item.id === doc.id)) {
                 //     const objIndex = data.findIndex((item) => item.id === doc.id);
                 //     data.splice(objIndex, 1);
                 // }
-                userAccounts.push({
+                userTransfers.push({
                     transfer_amount: doc.data().transfer_amount,
                     from_account: doc.data().from_account,
                     to_account: doc.data().to_account,
@@ -43,7 +43,7 @@ const useTransferListener = (userID) => {
             // }, 0);
 
             // setTotalBalance(accountsTotal);
-            setAccounts(userAccounts);
+            setTransfers(userTransfers);
         });
         return unsubscribe;
     }, []);
