@@ -87,7 +87,7 @@ const AccountsCreateTransferScreen = () => {
                                     value: formikProps.values.transferAmount,
                                     keyboardType: "numeric",
                                 }}
-                                iconName={ICON_NAMES.SENDMONEY}
+                                iconName={ICON_NAMES.CATEGORIES_ICONS.SENDMONEY}
                                 customLabel="Transfer Amount"
                             />
                             <CustomDatePicker

@@ -21,7 +21,7 @@ const ColorPickerPanel = ({ colorList = [], selectedColor, onColorPress, onAddPr
             <ListContainer>
                 <AddColorBtn onPress={onAddPress}>
                     <Icon
-                        name={ICON_NAMES.ADD}
+                        name={ICON_NAMES.SYSTEM_ICONS.ADD}
                         color={selectedColor || colors.primary.colorFive}
                         size={50}
                     />

@@ -63,7 +63,7 @@ const AccountsDetailsScreen = ({ route }) => {
                     inputProps={{
                         placeholder: "June 29, 2022",
                     }}
-                    iconName={ICON_NAMES.CALENDAR}
+                    iconName={ICON_NAMES.SYSTEM_ICONS.CALENDAR}
                     customLabel="Date:"
                 />
             </FunctionContainer>
