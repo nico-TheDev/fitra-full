@@ -37,9 +37,10 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
         />
     );
 
-    const sectionHeaderRender = ({ section: { title } }) => (
-        <SectionHeader>{title}</SectionHeader>
-    );
+    const sectionHeaderRender = ({ section }) => {
+        return <SectionHeader>{section.title}</SectionHeader>;
+    };
+
 
     return (
         <TransferHistoryContainer>
