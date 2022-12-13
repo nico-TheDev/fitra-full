@@ -76,6 +76,7 @@ const AddTransactionScreen = ({ navigation }) => {
             comment_img_ref: imgFile ? imgFile.imgRef : "",
             comment_img: imgFile ? imgFile.imgUri : "",
             comments: values.comments,
+            account_name: values.accountName,
             target_account: values.targetAccount,
             transaction_icon: values.transactionIcon,
             transaction_color: values.transactionColor,
@@ -97,7 +98,8 @@ const AddTransactionScreen = ({ navigation }) => {
         transactionColor: "",
         categoryName: "",
         comments: "",
-        targetAccountId: ""
+        targetAccountId: "",
+        accountName: ""
     };
 
     const formik = useFormik({
@@ -140,8 +142,14 @@ const AddTransactionScreen = ({ navigation }) => {
                         placeholder: "Choose Account",
                         zIndex: 3000,
                         zIndexInverse: 1000,
-                        onChangeValue:
-                            formik.handleChange("targetAccount"),
+                        onChangeValue: (value) => {
+                            console.log("dropdown:", value);
+                            formik.setFieldValue("targetAccount", value);
+                            const targetAccount = accountItems.find(item => item.value === value);
+                            console.log(targetAccount);
+                            formik.setFieldValue("accountName", targetAccount.label);
+
+                        }
                     }}
                     width="100%"
                 />

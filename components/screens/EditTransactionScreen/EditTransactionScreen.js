@@ -27,7 +27,6 @@ import {
     ButtonHolder,
     ScrollContainer,
 } from "./styles";
-import { categories } from "fitra/SampleData";
 import colors from "assets/themes/colors";
 import useTransactionStore from "hooks/useTransactionStore";
 import convertTimestamp from "util/convertTimestamp";
@@ -35,6 +34,8 @@ import useUploadImage from "hooks/useUploadImage";
 import useType from "hooks/useType";
 import useAuthStore from "hooks/useAuthStore";
 import useCategoriesListener from "hooks/useCategoriesListener";
+import useAccountStore from "hooks/useAccountStore";
+import capitalize from "util/capitalize";
 
 const EditTransactionScreen = ({ route, navigation }) => {
     // Transaction State 
@@ -47,21 +48,21 @@ const EditTransactionScreen = ({ route, navigation }) => {
     });
 
     const user = useAuthStore(state => state.user);
+    const userAccounts = useAccountStore(state => state.accounts);
     const photoId = uuid.v4(); // unique id for new image
     const [date, setDate] = useState(convertTimestamp(currentTransaction.created_at));
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transaction/");
+    const [isExpense, setIsExpense] = useType(currentTransaction.type !== "expense");
     const [categories] = useCategoriesListener(user.user_id, isExpense);
-    const [isExpense, setIsExpense] = useType(currentTransaction.type === "expense");
     const [selectedIcon, setSelectedIcon] = useState({
         label: "",
         icon: "",
         currentIcon: "",
     });
-    const [accountItems, setAccountItems] = useState([
-        { label: "Wallet", value: "wallet" },
-        { label: "GCASH", value: "gcash" },
-        { label: "UnionBank", value: "unionbank" },
-    ]);
+    const [accountItems, setAccountItems] = useState(() => {
+        const accounts = userAccounts.map(account => ({ label: capitalize(account.account_name), value: account.id }));
+        return accounts;
+    });
 
     // MANAGE THE STATE AFTER FIRST MOUNT
     useEffect(() => {
