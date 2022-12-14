@@ -23,12 +23,12 @@ const BUTTONDATA = [
     {
         id: 1,
         title: "Settings",
-        iconName: ICON_NAMES.SETTINGS,
+        iconName: ICON_NAMES.SYSTEM_ICONS.SETTINGS,
     },
     {
         id: 2,
         title: "Logout",
-        iconName: ICON_NAMES.LOGOUT,
+        iconName: ICON_NAMES.SYSTEM_ICONS.LOGOUT,
     },
 ];
 
