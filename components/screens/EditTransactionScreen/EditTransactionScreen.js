@@ -63,6 +63,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
         const accounts = userAccounts.map(account => ({ label: capitalize(account.account_name), value: account.id }));
         return accounts;
     });
+    const [selectedAccount, setSelectedAccount] = useState(currentTransaction.target_account);
 
     // MANAGE THE STATE AFTER FIRST MOUNT
     useEffect(() => {
@@ -211,6 +212,8 @@ const EditTransactionScreen = ({ route, navigation }) => {
                         }
                     }}
                     width="100%"
+                    setValue={setSelectedAccount}
+                    value={selectedAccount}
                 />
                 <ScrollContainer>
                     <TransactionCategoryHolder>

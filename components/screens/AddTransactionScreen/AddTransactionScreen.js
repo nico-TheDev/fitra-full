@@ -53,6 +53,7 @@ const AddTransactionScreen = ({ navigation }) => {
         return accounts;
     }
     );
+    const [selectedAccount, setSelectedAccount] = useState("");
 
 
     const handleIconPress = (icon) => {
@@ -152,6 +153,8 @@ const AddTransactionScreen = ({ navigation }) => {
                         }
                     }}
                     width="100%"
+                    setValue={setSelectedAccount}
+                    value={selectedAccount}
                 />
 
                 <ScrollContainer>
