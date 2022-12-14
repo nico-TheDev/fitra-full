@@ -41,7 +41,7 @@ const TransactionDetailsScreen = ({ route, navigation }) => {
                 <CustomTextInput
                     customLabel="Account: "
                     inputProps={{
-                        value: currentTransaction.target_account,
+                        value: currentTransaction.account_name,
                         editable: false,
                     }}
                     iconName="account-icon"

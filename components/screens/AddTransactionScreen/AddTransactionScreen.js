@@ -29,6 +29,8 @@ import useType from "hooks/useType";
 import { Alert } from "react-native";
 import useAuthStore from "hooks/useAuthStore";
 import useCategoriesListener from "hooks/useCategoriesListener";
+import useAccountStore from "hooks/useAccountStore";
+import capitalize from "util/capitalize";
 
 const AddTransactionScreen = ({ navigation }) => {
     let photoId = uuid.v4(); // unique id for the photo file name in storage
@@ -36,6 +38,7 @@ const AddTransactionScreen = ({ navigation }) => {
     const [isExpense, setIsExpense] = useType();
     const [categories] = useCategoriesListener(user.user_id, isExpense);
     const addTransaction = useTransactionStore(state => state.addTransaction);
+    const userAccounts = useAccountStore(state => state.accounts);
     // Upload Hook 
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transaction/");
     const [selectedIcon, setSelectedIcon] = useState({
@@ -45,12 +48,12 @@ const AddTransactionScreen = ({ navigation }) => {
         id: ""
     });
     const [date, setDate] = useState(new Date()); // Initial state will always be today 
-    // TODO: To be replaced with actual data
-    const [accountItems, setAccountItems] = useState([
-        { label: "Wallet", value: "wallet" },
-        { label: "GCASH", value: "gcash" },
-        { label: "UnionBank", value: "unionbank" },
-    ]);
+    const [accountItems, setAccountItems] = useState(() => {
+        const accounts = userAccounts.map(account => ({ label: capitalize(account.account_name), value: account.id }));
+        return accounts;
+    }
+    );
+    const [selectedAccount, setSelectedAccount] = useState("");
 
 
     const handleIconPress = (icon) => {
@@ -74,6 +77,7 @@ const AddTransactionScreen = ({ navigation }) => {
             comment_img_ref: imgFile ? imgFile.imgRef : "",
             comment_img: imgFile ? imgFile.imgUri : "",
             comments: values.comments,
+            account_name: values.accountName,
             target_account: values.targetAccount,
             transaction_icon: values.transactionIcon,
             transaction_color: values.transactionColor,
@@ -95,6 +99,8 @@ const AddTransactionScreen = ({ navigation }) => {
         transactionColor: "",
         categoryName: "",
         comments: "",
+        targetAccountId: "",
+        accountName: ""
     };
 
     const formik = useFormik({
@@ -137,10 +143,18 @@ const AddTransactionScreen = ({ navigation }) => {
                         placeholder: "Choose Account",
                         zIndex: 3000,
                         zIndexInverse: 1000,
-                        onChangeValue:
-                            formik.handleChange("targetAccount"),
+                        onChangeValue: (value) => {
+                            // console.log("dropdown:", value);
+                            formik.setFieldValue("targetAccount", value);
+                            const targetAccount = accountItems.find(item => item.value === value);
+                            // console.log(targetAccount);
+                            formik.setFieldValue("accountName", targetAccount.label);
+
+                        }
                     }}
                     width="100%"
+                    setValue={setSelectedAccount}
+                    value={selectedAccount}
                 />
 
                 <ScrollContainer>
