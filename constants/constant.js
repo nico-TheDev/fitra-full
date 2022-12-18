@@ -145,4 +145,4 @@ export const ICON_NAMES = {
         WASHING_MACHINE: "washing-machine-icon",
     },
 
-}
+};
