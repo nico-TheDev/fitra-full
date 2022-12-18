@@ -30,6 +30,7 @@ import convertTimestamp from "util/convertTimestamp";
 
 import useAuthStore from "hooks/useAuthStore";
 import useTransferStore from "hooks/useTransferStore";
+import useUploadImage from "hooks/useUploadImage";
 
 const AccountsEditTransferScreen = ({ route }) => {
     const { transferID } = route.params;
@@ -48,6 +49,7 @@ const AccountsEditTransferScreen = ({ route }) => {
     const photoId = uuid.v4(); // unique id for new image
     // const [date, setDate] = useState(convertTimestamp(currentTransfer.created_at));
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transfer/");
+    const [date, setDate] = useState(convertTimestamp(currentTransfer.created_at));
 
     // TODO: To be replaced with actual data
     const [senderItems, setSenderItems] = useState([
@@ -63,7 +65,7 @@ const AccountsEditTransferScreen = ({ route }) => {
 
     // MANAGE THE STATE AFTER FIRST MOUNT
     useEffect(() => {
-        const targetTransfer = tranferList.find(transfer => transfer.id === transferID);
+        const targetTransfer = transferList.find(transfer => transfer.id === transferID);
         // console.log(targetTransaction);
         setCurrentTransfer(targetTransfer);
     }, [transferID]);
@@ -88,7 +90,7 @@ const AccountsEditTransferScreen = ({ route }) => {
         let updatedImg = imgFile ? imgFile.imgUri : currentTransfer.comment_img;
 
         const newTransfer = {
-            transfer_amount: Number(values.transeferAmount),
+            transfer_amount: Number(values.transferAmount),
             from_account: values.fromAccount,
             to_account: values.toAccount,
             comment_img_ref: updatedImgRef,
@@ -231,8 +233,8 @@ const AccountsEditTransferScreen = ({ route }) => {
                 <CommentInput
                     inputProps={{
                         placeholder: "Add Comment... ",
-                        onChangeText: formik.handleChange("comment"),
-                        value: formik.values.comment,
+                        onChangeText: formik.handleChange("comments"),
+                        value: formik.values.comments,
                         editable: mode !== "edit" ? false : true,
                     }}
                     customLabel="Comment"

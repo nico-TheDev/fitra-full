@@ -4,10 +4,8 @@ import { onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from "fitra/firebase.config";
 import useTransferStore from "./useTransferStore";
 
-
 const useTransferListener = (userID) => {
-    // let [accountData, setAccountData] = useState([]);
-    // let [totalBalance, setTotalBalance] = useState('');
+    let [transferLog, setTransferLog] = useState([]);
     const transferColRef = collection(db, "transfers");
     const transfers = useTransferStore((state) => (state.transfers));
     const resetTransfers = useTransferStore((state) => (state.reset));
@@ -17,33 +15,25 @@ const useTransferListener = (userID) => {
     const data = [...transfers];
 
     useEffect(() => {
-        //render all accounts including those in the database
-        // const existingAccounts = accounts.length ? accounts.map(item => item.account_name) : [];
-        // console.log(data)
         const unsubscribe = onSnapshot(transferQuery, (snapshotData) => {
+            console.log(userID);
             const userTransfers = [];
             snapshotData.forEach(doc => {
-                // check if doc is already in the array
-                // if (data.some(item => item.id === doc.id)) {
-                //     const objIndex = data.findIndex((item) => item.id === doc.id);
-                //     data.splice(objIndex, 1);
-                // }
                 userTransfers.push({
-                    transfer_amount: doc.data().transfer_amount,
                     from_account: doc.data().from_account,
                     to_account: doc.data().to_account,
+                    transfer_amount: doc.data().transfer_amount,
+                    // comments: doc.data().comments,
+                    // comment_img_ref: doc.data().comment_img_ref,
+                    // comment_img: doc.data().comment_img,
+                    // created_at: doc.data().created_at,
                     user_id: userID || "1",
                     id: doc.id
                 });
+                console.log("TRANSFER", doc.id);
             });
-
-            // const accountsTotal = userAccounts.reduce((acc, currentAccount) => {
-            //     acc += parseFloat(currentAccount.account_amount);
-            //     return acc;
-            // }, 0);
-
-            // setTotalBalance(accountsTotal);
             setTransfers(userTransfers);
+            setTransferLog(userTransfers)
         });
         return unsubscribe;
     }, []);
@@ -52,7 +42,7 @@ const useTransferListener = (userID) => {
         resetTransfers();
     }, [userID]);
 
-    // return [totalBalance];
+    return [transferLog];
 };
 
 export default useTransferListener;

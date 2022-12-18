@@ -15,6 +15,7 @@ import {
 
 import useTransferStore from "hooks/useTransferStore";
 import useAuthStore from "hooks/useAuthStore";
+import useTransferListener from "hooks/useTransferListener";
 
 const AccountsTransferHistoryScreen = ({ navigation }) => {
     const [items, setItems] = useState([
@@ -24,15 +25,16 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
         { label: "Show Per Year", value: "year" },
     ]);
 
+    const transferLog = useTransferStore(state => state.transfers);
+    const user = useAuthStore(state => state.user);
+    const [userTransfers] = useTransferListener(user.user_id);
+
     const DATA = [
         {
             title: "Transfers",
-            data: transferLog
+            data: userTransfers
         },
     ];
-
-    const user = useAuthStore(state => state.user);
-    const transferLog = useTransferStore(state => state.transfers);
 
     const handleNavigate = (id) =>
         navigation.navigate("Accounts", {
@@ -42,7 +44,7 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
             }
         });
 
-    const AccountPanelRenderItem = ({ item }) => {
+    const renderAccountPanelItem = ({ item }) => {
         return(
             <AccountPanelItem
             iconName={ICON_NAMES.TRANSFER}
@@ -56,6 +58,7 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
     };
 
     const sectionHeaderRender = ({ section }) => {
+        console.log(section);
         <SectionHeader>{section.title}</SectionHeader>
     };
 
@@ -66,7 +69,7 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
             <TransferSectionList
                 sections={DATA}
                 keyExtractor={(item, index) => item + index}
-                renderItem={AccountPanelRenderItem}
+                renderItem={renderAccountPanelItem}
                 renderSectionHeader={sectionHeaderRender}
             />
         </TransferHistoryContainer>

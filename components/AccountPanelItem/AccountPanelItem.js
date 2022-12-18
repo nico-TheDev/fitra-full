@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Text } from "react-native";
 import PropTypes from "prop-types";
 import { NumericFormat } from 'react-number-format';
@@ -40,7 +40,7 @@ const CategoryPanelItem = ({ onPress, sender, receiver, price }) => {
                         decimalScale={2}
                         renderText={value => <Text>{value}</Text>}
                     />
-                    </PriceLabel>
+                </PriceLabel>
             </PriceContainer>
         </ItemContainer>
     );
@@ -48,9 +48,9 @@ const CategoryPanelItem = ({ onPress, sender, receiver, price }) => {
 
 CategoryPanelItem.propTypes = {
     onPress: PropTypes.func.isRequired,
-    sender: PropTypes.string.isRequired,
-    receiver: PropTypes.string.isRequired,
-    price: PropTypes.string.isRequired,
+    sender: PropTypes.string,
+    receiver: PropTypes.string,
+    price: PropTypes.string,
 };
 
-export default CategoryPanelItem;
+export default memo(CategoryPanelItem);
