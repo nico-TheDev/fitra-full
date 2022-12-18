@@ -14,7 +14,7 @@ const ScreenHeader = ({ title, onPressIcon, iconName, iconSize }) => {
     return (
         <ScreenHeaderContainer>
             <BackBtn onPress={() => navigation.goBack()}>
-                <Icon name={ICON_NAMES.BACK} color={colors.primary.colorFive} />
+                <Icon name={ICON_NAMES.SYSTEM_ICONS.BACK} color={colors.primary.colorFive} />
             </BackBtn>
             <ScreenTitle>{title}</ScreenTitle>
             {iconName && (

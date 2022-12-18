@@ -39,7 +39,7 @@ const CategoriesScreen = () => {
         <CategoriesScreenContainer>
             <ScreenHeader
                 title="Categories"
-                iconName={ICON_NAMES.ADD}
+                iconName={ICON_NAMES.SYSTEM_ICONS.ADD}
                 onPressIcon={() => navigation.push("CategoriesCreate")}
             />
             <CategoryPanel>

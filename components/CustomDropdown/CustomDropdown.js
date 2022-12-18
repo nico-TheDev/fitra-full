@@ -38,14 +38,14 @@ const CustomDropdown = ({
                 disableBorderRadius={true}
                 ArrowDownIconComponent={() => (
                     <Icon
-                        name={ICON_NAMES.DROPDOWN}
+                        name={ICON_NAMES.SYSTEM_ICONS.DROPDOWN}
                         color={colors.primary.colorFive}
                         size={25}
                     />
                 )}
                 ArrowUpIconComponent={() => (
                     <Icon
-                        name={ICON_NAMES.DROPDOWN}
+                        name={ICON_NAMES.SYSTEM_ICONS.DROPDOWN}
                         color={colors.primary.colorFive}
                         size={25}
                     />

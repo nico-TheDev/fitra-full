@@ -75,14 +75,14 @@ const Icon = ({ name, size = 40, color }) => {
     if (name === ICON_NAMES.SYSTEM_ICONS.ADD_PHOTO_V2) return <AddPhotoV2Icon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.APPLIANCE) return <Appliance color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.BANK) return <BankIcon color={color} size={size} />;
-    if (name === ICON_NAMES.CATEGORIES_ICONS.BACK) return <BackIcon color={color} size={size} />;
+    if (name === ICON_NAMES.SYSTEM_ICONS.BACK) return <BackIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.BILLS) return <BillsIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.BLENDER) return <BlenderIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.BONUS_MONEY) return <BonusMoneyIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.BUSINESS) return <BusinessIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.BUS) return <BusIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.CALCULATOR) return <CalculatorIcon color={color} size={size} />;
-    if (name === ICON_NAMES.CATEGORIES_ICONS.CALENDAR) return <CalendarIcon color={color} size={size} />;
+    if (name === ICON_NAMES.SYSTEM_ICONS.CALENDAR) return <CalendarIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.CAR) return <CarIcon color={color} size={size} />;
     if (name === ICON_NAMES.SYSTEM_ICONS.CATEGORIES) return <CategoriesIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.CAR_REPAIR) return <CarRepairIcon color={color} size={size} />;
@@ -90,7 +90,7 @@ const Icon = ({ name, size = 40, color }) => {
     if (name === ICON_NAMES.CATEGORIES_ICONS.CLOTHING) return <ClothingIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.DASHBOARD) return <DashboardIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.DIVIDENDS) return <DividendsIcon color={color} size={size} />;
-    if (name === ICON_NAMES.DROPDOWN) return <DropdownIcon color={color} size={size} />;
+    if (name === ICON_NAMES.SYSTEM_ICONS.DROPDOWN) return <DropdownIcon color={color} size={size} />;
     if (name === ICON_NAMES.SYSTEM_ICONS.EDIT) return <EditIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.EDUCATION) return <EducationIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.ELECTRONICS) return <ElectronicsIcon color={color} size={size} />;

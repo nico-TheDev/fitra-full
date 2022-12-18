@@ -1,6 +1,7 @@
 import React from "react";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import PropTypes from "prop-types";
+
 import Icon from "components/common/Icon";
 import { ICON_NAMES } from "constants/constant";
 import colors from "assets/themes/colors";
@@ -17,13 +18,12 @@ const CustomDatePicker = ({ date, width = "100%", onChange, buttonProps }) => {
             is24Hour: false,
         });
     };
-
     return (
         <CustomInputContainer width={width} onPress={() => showMode("date")} {...buttonProps}>
             <CustomText>Date</CustomText>
             <InputContainer>
                 <Input>{formatDate(date)}</Input>
-                <Icon name={ICON_NAMES.CALENDAR} color={colors.primary.colorFive} size={24} />
+                <Icon name={ICON_NAMES.SYSTEM_ICONS.CALENDAR} color={colors.primary.colorFive} size={24} />
             </InputContainer>
         </CustomInputContainer>
     );

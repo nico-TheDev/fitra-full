@@ -103,7 +103,7 @@ const CategoriesCreateScreen = ({ navigation }) => {
                 />
             </SwitchContainer>
             <IconOnlySelector
-                iconData={Object.values(ICON_NAMES)}
+                iconData={Object.values(ICON_NAMES.CATEGORIES_ICONS)}
                 onPress={handleIconPress}
                 selectedIcon={selectedIcon}
                 setSelectedIcon={setSelectedIcon}
