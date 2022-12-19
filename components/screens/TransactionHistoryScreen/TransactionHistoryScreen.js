@@ -20,6 +20,8 @@ import colors from "assets/themes/colors";
 import useAccountStore from "hooks/useAccountStore";
 import capitalize from "util/capitalize";
 import useTransactionStore from "hooks/useTransactionStore";
+import convertTimestamp from "util/convertTimestamp";
+import formatDate from "util/formatDate";
 
 const TransactionHistoryScreen = ({ navigation, route }) => {
     const currentCategory = route.params.category;
@@ -54,7 +56,47 @@ const TransactionHistoryScreen = ({ navigation, route }) => {
             }
         });
 
-        if (filterValue === "month") {
+        if (filterValue === "day") {
+            const sortedByDate = sortedTransactions.sort((a, b) => a.created_at.seconds > b.created_at.seconds);
+            // CREATE UNIQUE DAYS ARRAY
+            const uniqueDays = [];
+            const finalDayData = [];
+
+            // GET THE AVAILABLE DATES
+            sortedByDate.forEach(item => {
+                const currentDate = formatDate(convertTimestamp(item.created_at));
+                if (!uniqueDays.includes(currentDate)) {
+                    uniqueDays.push(currentDate);
+                }
+            });
+
+            // ADD THE DATES TO THE FINAL DATA
+            uniqueDays.forEach(date => {
+                const textDate = formatDate(new Date(date), true);
+                finalDayData.push({ title: textDate, data: [], date });
+            });
+
+            sortedTransactions.forEach(transaction => {
+                const currentDate = formatDate(convertTimestamp(transaction.created_at));
+                const targetIndex = finalDayData.findIndex(item => item.date === currentDate);
+
+                finalDayData[targetIndex].data.push(transaction);
+            });
+
+            const sum = sortedTransactions.reduce((acc, current) => {
+                if (current.category_name === currentCategory) {
+                    acc += current.amount;
+                }
+
+                return acc;
+            }, 0);
+            setTotal(sum);
+            setHistoryData(finalDayData);
+
+            // console.log(finalDayData);
+        }
+
+        else if (filterValue === "month") {
 
         } else if (filterValue === "year") {
             const sum = sortedTransactions.reduce((acc, current) => {

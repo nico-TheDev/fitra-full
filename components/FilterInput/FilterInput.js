@@ -24,14 +24,14 @@ const FilterInput = ({ items, setItems, style, value, setValue }) => {
             }}
             ArrowDownIconComponent={() => (
                 <Icon
-                    name={ICON_NAMES.FILTER}
+                    name={ICON_NAMES.SYSTEM_ICONS.FILTER}
                     color={colors.primary.colorFive}
                     size={25}
                 />
             )}
             ArrowUpIconComponent={() => (
                 <Icon
-                    name={ICON_NAMES.FILTER}
+                    name={ICON_NAMES.SYSTEM_ICONS.FILTER}
                     color={colors.primary.colorFive}
                     size={25}
                 />
