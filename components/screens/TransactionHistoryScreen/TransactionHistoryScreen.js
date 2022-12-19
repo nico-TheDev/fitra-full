@@ -35,7 +35,6 @@ const TransactionHistoryScreen = ({ navigation, route }) => {
     const [total, setTotal] = useState(0);
     const [filterItems, setFilterItems] = useState([
         { label: "Per Day", value: "day" },
-        { label: "Per Week", value: "week" },
         { label: "Per Month", value: "month" },
         { label: "Per Year", value: "year" },
     ]);
@@ -97,7 +96,44 @@ const TransactionHistoryScreen = ({ navigation, route }) => {
         }
 
         else if (filterValue === "month") {
+            const sortedByDate = sortedTransactions.sort((a, b) => a.created_at.seconds > b.created_at.seconds);
+            const finalMonthData = [];
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const uniqueMonths = [];
 
+            // GET THE AVAILABLE MONTHS
+            sortedByDate.forEach(item => {
+                const currentDate = formatDate(convertTimestamp(item.created_at));
+
+                const currentMonth = Number(currentDate.split("/")[0]) - 1;
+                if (!uniqueMonths.includes(monthNames[currentMonth])) {
+                    uniqueMonths.push(monthNames[currentMonth]);
+                }
+            });
+
+            // ADD THE MONTHS TO THE FINAL DATA
+            uniqueMonths.forEach(month => {
+                finalMonthData.push({ title: month, data: [], });
+            });
+
+            sortedTransactions.forEach(transaction => {
+                const currentDate = formatDate(convertTimestamp(transaction.created_at));
+                const currentMonth = monthNames[currentDate.split("/")[0] - 1];
+                const targetIndex = finalMonthData.findIndex(item => item.title === currentMonth);
+
+                finalMonthData[targetIndex].data.push(transaction);
+            });
+
+
+            const sum = sortedTransactions.reduce((acc, current) => {
+                if (current.category_name === currentCategory) {
+                    acc += current.amount;
+                }
+
+                return acc;
+            }, 0);
+            setTotal(sum);
+            setHistoryData(finalMonthData);
         } else if (filterValue === "year") {
             const sum = sortedTransactions.reduce((acc, current) => {
                 if (current.category_name === currentCategory) {
