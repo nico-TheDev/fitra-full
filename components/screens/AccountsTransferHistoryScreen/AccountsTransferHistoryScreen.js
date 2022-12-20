@@ -44,7 +44,7 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
 
     useEffect(() => {
         if (filterValue === "day") {
-            const sortedByDate = userTransfers.sort((a, b) => a.created_at.seconds > b.created_at.seconds);
+            const sortedByDate = transferLog.sort((a, b) => a.created_at.seconds > b.created_at.seconds);
             // CREATE UNIQUE DAYS ARRAY
             const uniqueDays = [];
             const finalDayData = [];
@@ -63,7 +63,7 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
                 finalDayData.push({ title: textDate, data: [], date });
             });
 
-            userTransfers.forEach(transfers => {
+            transferLog.forEach(transfers => {
                 const currentDate = formatDate(convertTimestamp(transfers.created_at));
                 const targetIndex = finalDayData.findIndex(item => item.date === currentDate);
 
@@ -74,7 +74,7 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
         }
 
         else if (filterValue === "month") {
-            const sortedByDate = userTransfers.sort((a, b) => a.created_at.seconds > b.created_at.seconds);
+            const sortedByDate = transferLog.sort((a, b) => a.created_at.seconds > b.created_at.seconds);
             const finalMonthData = [];
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const uniqueMonths = [];
@@ -94,7 +94,7 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
                 finalMonthData.push({ title: month, data: [], });
             });
 
-            userTransfers.forEach(transfers => {
+            transferLog.forEach(transfers => {
                 const currentDate = formatDate(convertTimestamp(transfers.created_at));
                 const currentMonth = monthNames[currentDate.split("/")[0] - 1];
                 const targetIndex = finalMonthData.findIndex(item => item.title === currentMonth);
@@ -132,20 +132,17 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
         );
     };
 
-    const sectionHeaderRender = ({ section }) => {
-        console.log(section);
-        <SectionHeader>{section.title}</SectionHeader>
-    };
-
     return (
         <TransferHistoryContainer>
             <ScreenHeader title="Transfer History" />
             <FilterInput items={items} setItems={setItems} setValue={setFilterValue} value={filterValue}/>
             <TransferSectionList
-                sections={DATA}
+                sections={historyData}
                 keyExtractor={(item, index) => item + index}
                 renderItem={renderAccountPanelItem}
-                renderSectionHeader={sectionHeaderRender}
+                renderSectionHeader={({ section: { title } }) => (
+                    <SectionHeader>{title}</SectionHeader>
+                )}
             />
         </TransferHistoryContainer>
     );
