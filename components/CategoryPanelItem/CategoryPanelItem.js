@@ -25,7 +25,7 @@ const CategoryPanelItem = ({ onPress, title, price, iconColor, iconName, comment
                         renderText={value => <Text>{value}</Text>}
                     />
                 </PriceLabel>
-                {priceSub && <Subhead color={iconColor}>{priceSub}</Subhead>}
+                {priceSub ? <Subhead color={iconColor}>{priceSub}</Subhead> : null}
             </PriceContainer>
         </ItemContainer>
     );
