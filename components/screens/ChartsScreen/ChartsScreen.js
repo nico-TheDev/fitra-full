@@ -1,5 +1,5 @@
 import { Dimensions } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BarChart } from "react-native-chart-kit";
 // LOCAL IMPORTS
 import {
@@ -16,71 +16,129 @@ import { FONTS, ICON_NAMES } from "constants/constant";
 import colors from "assets/themes/colors";
 import CategoryPanelItem from "components/CategoryPanelItem/CategoryPanelItem";
 import CircleBG from "components/common/CircleBG";
+import useUserTransaction from "hooks/useUserTransaction";
+import useAuthStore from "hooks/useAuthStore";
+import filterByTime from "util/filterByTime";
+import useTransactionStore from "hooks/useTransactionStore";
+import getTransactionSum from "util/getTransactionSum";
 
-const typeData = ["General", "Expenses", "Income"];
+const typeData = ["general", "expense", "income"];
 
 const chartConfig = {
-    backgroundGradientFrom: colors.primary.colorFive,
-    backgroundGradientTo: colors.secondary.chartColorEight,
     backgroundGradientFromOpacity: 0,
     backgroundGradientToOpacity: 0,
     color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     strokeWidth: 5, // optional, default 3
-    barPercentage: 1,
-    useShadowColorFromDataset: false, // optional
+    barPercentage: 0.5,
     decimalPlaces: 0,
-    height: 5000,
-    fillShadowGradient: colors.primary.colorFive,
-    fillShadowGradientOpacity: 1,
     style: {
         fontFamily: FONTS.REGULAR,
-    },
-    propsForBackgroundLines: {
-        strokeWidth: 1,
-        stroke: "transparent",
-        strokeDasharray: "0",
     },
     propsForLabels: {
         fontFamily: FONTS.REGULAR,
     },
+    showBarTops: false
 };
 
-const generalData = {
-    labels: ["INCOME", "EXPENSES"],
-    datasets: [
-        {
-            data: [30, 100],
-        },
-    ],
-};
-
-const sampleData = [
-    {
-        id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-        title: "Income",
-        price: "Php 20,000",
-        iconColor: colors.primary.colorFive,
-        iconName: ICON_NAMES.HOME,
-    },
-    {
-        id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-        title: "Expense",
-        price: "Php 20,000",
-        iconColor: colors.secondary.chartColorEleven,
-        iconName: ICON_NAMES.MORE,
-    },
-];
 
 const ChartsScreen = () => {
     const SLIDER_WIDTH = Dimensions.get("window").width;
-    const [currentTab, setCurrentTab] = useState("General");
+    const [currentTab, setCurrentTab] = useState("general");
+    const user = useAuthStore(state => state.user);
+    const [userChartData] = useUserTransaction(user.user_id);
+    const [activeChartData, setActiveChartData] = useState([]);
+    const [activeData, setActiveData] = useState([]);
+    const allTransactions = useTransactionStore(state => state.transactions);
 
-    const [items, setItems] = useState([
+    const [filterItems, setFilterItems] = useState([
         { label: "Show Per Day", value: "day" },
-        { label: "Show Per Week", value: "week" },
         { label: "Show Per Month", value: "month" },
         { label: "Show Per Year", value: "year" },
     ]);
+    const [selectedFilter, setSelectedFilter] = useState("year");
+
+    // HANDLE FILTER SIDE EFFECT
+
+    useEffect(() => {
+        if (userChartData.length !== 0) {
+            if (currentTab === "general") {
+                // GET THE DATA LIST
+                const generalData = userChartData[0];
+                const generalDataList = generalData?.data;
+
+                if (selectedFilter === "year") {
+                    setActiveData(generalDataList);
+                    setActiveChartData({
+                        labels: ["EXPENSE", "INCOME"],
+                        datasets: [
+                            {
+                                data: generalDataList?.map(item => item.amount),
+                                colors: [(opacity = 1) => generalDataList[0].color, (opacity = 1) => generalDataList[1].color]
+                            },
+                        ],
+
+                    });
+                }
+                else if (selectedFilter === "month") {
+                    const filteredGeneralData = filterByTime(generalDataList, selectedFilter);
+
+                    console.log(filteredGeneralData);
+                }
+
+
+            } else if (currentTab === "expense") {
+                const expenseData = userChartData[1];
+                const expenseDataList = expenseData.data;
+                console.log(expenseDataList);
+
+                setActiveData(expenseDataList);
+                setActiveChartData({
+                    labels: expenseDataList.map(item => item.category_name),
+                    datasets: [
+                        {
+                            data: expenseDataList.map(item => item.amount),
+                            colors: expenseDataList.map(item => {
+                                const color = (opacity = 1) => item.transaction_color;
+
+                                return color;
+                            }),
+
+                        },
+                    ],
+
+                });
+
+            } else if (currentTab === "income") {
+                const incomeData = userChartData[2];
+                const incomeDataList = incomeData.data;
+                console.log(incomeDataList);
+
+                setActiveData(incomeDataList);
+                setActiveChartData({
+                    labels: incomeDataList.map(item => item.category_name),
+                    datasets: [
+                        {
+                            data: incomeDataList.map(item => item.amount),
+                            colors: incomeDataList.map(item => {
+                                const color = (opacity = 1) => item.transaction_color;
+
+                                return color;
+                            }),
+
+                        },
+                    ],
+
+                });
+            }
+        } else {
+            console.log("loading");
+        }
+
+    }, [selectedFilter, currentTab]);
+
+
+
+
 
     const ButtonRenderItem = ({ item }) => {
         return (
@@ -90,18 +148,19 @@ const ChartsScreen = () => {
                 textSize={14}
                 width="30%"
                 type={currentTab === item ? "filled" : "outlined"}
-                onPress={() => setCurrentTab(item)}
+                onPress={() => { console.log(item); setCurrentTab(item); }}
             />
         );
     };
 
     const CategoryPanelRenderItem = ({ item }) => (
         <CategoryPanelItem
-            iconName={item.iconName}
-            iconColor={item.iconColor}
-            title={item.title}
-            price={item.price}
+            iconName={item.transaction_icon}
+            iconColor={item.transaction_color}
+            title={item.category_name}
+            price={String(item.amount)}
             onPress={() => { }}
+            priceSub=""
         />
     );
 
@@ -121,24 +180,28 @@ const ChartsScreen = () => {
                 extraData={{ currentTab }}
             />
 
-            <FilterInput items={items} setItems={setItems} />
+            <FilterInput items={filterItems} setItems={setFilterItems} value={selectedFilter} setValue={setSelectedFilter} />
 
             <ChartPanel>
-                <BarChart
-                    data={generalData}
-                    width={SLIDER_WIDTH * 0.9}
-                    height={260}
-                    yAxisLabel="₱"
-                    chartConfig={chartConfig}
-                    withVerticalLabels={true}
-                    withHorizontalLabels={true}
-                    verticalLabelRotation={0}
-                    showValuesOnTopOfBars={true}
-                />
+                {activeChartData.length !== 0 ? (
+                    <BarChart
+                        data={activeChartData}
+                        width={SLIDER_WIDTH * 0.9}
+                        height={260}
+                        yAxisLabel="₱"
+                        fromZero={true}
+                        chartConfig={chartConfig}
+                        withVerticalLabels={true}
+                        withHorizontalLabels={true}
+                        withCustomBarColorFromData={true}
+                        withInnerLines={false}
+                        showValuesOnTopOfBars={false}
+                        flatColor={true}
+                    />) : null}
             </ChartPanel>
 
             <CategoryContainer
-                data={sampleData}
+                data={activeData}
                 renderItem={CategoryPanelRenderItem}
             />
         </ChartsScreenContainer>
