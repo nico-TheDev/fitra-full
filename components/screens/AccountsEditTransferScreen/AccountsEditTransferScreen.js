@@ -49,7 +49,6 @@ const AccountsEditTransferScreen = ({ route }) => {
     const photoId = uuid.v4(); // unique id for new image
     // const [date, setDate] = useState(convertTimestamp(currentTransfer.created_at));
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transfer/");
-    const [date, setDate] = useState(convertTimestamp(currentTransfer.created_at));
 
     // TODO: To be replaced with actual data
     const [senderItems, setSenderItems] = useState([
@@ -123,7 +122,6 @@ const AccountsEditTransferScreen = ({ route }) => {
     };
 
     const handleSelectDate = (event, selectedDate) => {
-        // console.log(selectedDate);
         setDate(selectedDate);
     };
 

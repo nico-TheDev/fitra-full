@@ -19,14 +19,14 @@ const CategoryPanelItem = ({ onPress, sender, receiver, price }) => {
     const mainColor = colors.primary.colorFive;
     return (
         <ItemContainer color={mainColor} onPress={onPress}>
-            <Icon name={ICON_NAMES.TRANSFER} color={mainColor} size={24} />
+            <Icon name={ICON_NAMES.SYSTEM_ICONS.TRANSFER} color={mainColor} size={24} />
             <LeftContainer>
                 <TitleContainer>
-                    <Icon name={ICON_NAMES.SENDMONEY} color={mainColor} size={16} />
+                    <Icon name={ICON_NAMES.SYSTEM_ICONS.CHARTS} color={mainColor} size={16} />
                     <Title color={mainColor}>{sender}</Title>
                 </TitleContainer>
                 <TitleContainer>
-                    <Icon name={ICON_NAMES.RECEIVEMONEY} color={mainColor} size={16} />
+                    <Icon name={ICON_NAMES.SYSTEM_ICONS.CHARTS} color={mainColor} size={16} />
                     <Title color={mainColor}>{receiver}</Title>
                 </TitleContainer>
             </LeftContainer>

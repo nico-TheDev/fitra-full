@@ -167,11 +167,7 @@ const AccountsDetailsScreen = ({ route }) => {
                     customLabel="Amount:"
                 />
                 <IconOnlySelector
-<<<<<<< HEAD
-                    iconData={Object.values(ICON_NAMES)}
-=======
                     iconData={Object.values(ICON_NAMES.CATEGORIES_ICONS)}
->>>>>>> accd229afad0fe417e2abed488adb73d50bf7ff4
                     onPress={handleIconPress}
                     selectedIcon={selectedIcon}
                     setSelectedIcon={setSelectedIcon}

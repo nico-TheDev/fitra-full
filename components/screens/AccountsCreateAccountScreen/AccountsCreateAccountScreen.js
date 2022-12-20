@@ -57,11 +57,7 @@ const AccountsCreateAccountScreen = ({ navigation }) => {
         } else {
             addAccount({
                 account_name: values.accountName,
-<<<<<<< HEAD
-                account_amount: values.accountAmount,
-=======
                 account_amount: Number(values.accountAmount),
->>>>>>> accd229afad0fe417e2abed488adb73d50bf7ff4
                 account_color: values.accountColor,
                 account_icon: values.accountIcon,
                 created_at: new Date(),
@@ -108,11 +104,7 @@ const AccountsCreateAccountScreen = ({ navigation }) => {
                 />
             </FunctionContainer>
             <IconOnlySelector
-<<<<<<< HEAD
-                iconData={Object.values(ICON_NAMES)}
-=======
                 iconData={Object.values(ICON_NAMES.CATEGORIES_ICONS)}
->>>>>>> accd229afad0fe417e2abed488adb73d50bf7ff4
                 onPress={handleIconPress}
                 selectedIcon={selectedIcon}
                 setSelectedIcon={setSelectedIcon}
