@@ -32,9 +32,12 @@ const DashboardChart = ({ title, chartData }) => {
     if (title === "General") {
         // console.log(chartData)
     };
-    const handleNavigate = () =>
+    const handleNavigate = (category) =>
         navigation.navigate("Dashboard", {
             screen: "TransactionHistory",
+            params: {
+                category
+            }
         });
 
     const CategoryRenderItem = ({ item }) => (
@@ -44,7 +47,7 @@ const DashboardChart = ({ title, chartData }) => {
             total={item.amount}
             key={item.user_id}
             iconColor={item.transaction_color}
-            onPress={handleNavigate}
+            onPress={() => handleNavigate(item.category_name)}
         />
     );
 

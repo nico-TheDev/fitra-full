@@ -41,7 +41,11 @@ const AccountsScreen = () => {
                 iconName={item.account_icon}
                 iconColor={item.account_color}
                 title={item.account_name}
+<<<<<<< HEAD
                 price={item.account_amount}
+=======
+                price={String(item.account_amount)}
+>>>>>>> accd229afad0fe417e2abed488adb73d50bf7ff4
             />
         );
     };

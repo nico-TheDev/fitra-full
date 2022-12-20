@@ -73,7 +73,7 @@ const LoginScreen = ({ navigation }) => {
             <WelcomeTextContainer>
                 <WelcomeText1>Welcome user !</WelcomeText1>
                 <WelcomeText2>start monitoring your spending</WelcomeText2>
-                <UserImgContainer>{user.user_id ? <UserImg source={user.profile_img} /> : <Icon name={ICON_NAMES.USERPROFILE} size={70} color={colors.black} />}</UserImgContainer>
+                <UserImgContainer>{user.user_id ? <UserImg source={{ uri: user.profile_img }} /> : <Icon name={ICON_NAMES.SYSTEM_ICONS.USERPROFILE} size={70} color={colors.black} />}</UserImgContainer>
             </WelcomeTextContainer>
             <LoginForm>
                 <InputHolder>

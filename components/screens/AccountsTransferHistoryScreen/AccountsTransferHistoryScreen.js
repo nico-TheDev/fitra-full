@@ -124,13 +124,16 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
             <AccountPanelItem
             iconName={ICON_NAMES.TRANSFER}
             iconColor={colors.primary.colorFive}
-            price={item.transfer_amount}
-            sender={item.from_account}
-            receiver={item.to_account}
-            onPress={() => {handleNavigate(item.id);}}
-            />
-        );
-    };
+            price={`₱${item.amount}`}
+            sender={item.senderName}
+            receiver={item.receiverName}
+            onPress={handleNavigate}
+        />
+    );
+
+    const sectionHeaderRender = ({ section: { title } }) => (
+        <SectionHeader>{title}</SectionHeader>
+    );
 
     return (
         <TransferHistoryContainer>

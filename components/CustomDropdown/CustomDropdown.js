@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
+import PropTypes from 'prop-types';
 
 import { CustomText, DropdownContainer } from "./styles";
 import { ICON_NAMES, FONTS } from "constants/constant";
@@ -13,9 +14,10 @@ const CustomDropdown = ({
     customLabel,
     width = "100%",
     style,
+    setValue,
+    value
 }) => {
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(null);
 
     return (
         <DropdownContainer width={width}>
@@ -36,14 +38,14 @@ const CustomDropdown = ({
                 disableBorderRadius={true}
                 ArrowDownIconComponent={() => (
                     <Icon
-                        name={ICON_NAMES.DROPDOWN}
+                        name={ICON_NAMES.SYSTEM_ICONS.DROPDOWN}
                         color={colors.primary.colorFive}
                         size={25}
                     />
                 )}
                 ArrowUpIconComponent={() => (
                     <Icon
-                        name={ICON_NAMES.DROPDOWN}
+                        name={ICON_NAMES.SYSTEM_ICONS.DROPDOWN}
                         color={colors.primary.colorFive}
                         size={25}
                     />
@@ -65,6 +67,17 @@ const CustomDropdown = ({
             />
         </DropdownContainer>
     );
+};
+
+CustomDropdown.propTypes = {
+    dropdownItems: PropTypes.array.isRequired,
+    setDropdownItems: PropTypes.func.isRequired,
+    dropdownProps: PropTypes.object,
+    customLabel: PropTypes.string,
+    width: PropTypes.string,
+    style: PropTypes.object,
+    setValue: PropTypes.func.isRequired,
+    value: PropTypes.string.isRequired
 };
 
 export default CustomDropdown;

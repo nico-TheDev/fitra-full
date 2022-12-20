@@ -20,7 +20,7 @@ const AccountsFunctionHolder = () => {
         <FunctionHolderContainer>
             <Button
                 type="filled"
-                iconName={ICON_NAMES.TRANSFER}
+                iconName={ICON_NAMES.SYSTEM_ICONS.TRANSFER}
                 width="160px"
                 iconSize={20}
                 title="Transfer"
@@ -30,7 +30,7 @@ const AccountsFunctionHolder = () => {
             />
             <Button
                 type="outlined"
-                iconName={ICON_NAMES.ADD}
+                iconName={ICON_NAMES.SYSTEM_ICONS.ADD}
                 iconColor={colors.primary.colorFive}
                 width="160px"
                 iconSize={20}
