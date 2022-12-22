@@ -42,12 +42,10 @@ const AccountsEditTransferScreen = ({ route }) => {
     const transferList = useTransferStore(state => state.transfers);
     const deleteTransfer = useTransferStore(state => state.deleteTransfer);
     const updateTransfer = useTransferStore(state => state.updateTransfer);
-    const [currentTransfer, setCurrentTransfer] = useState(() => {
-        return transferList.find(transfer => transfer.id === transferID);
-    });
+    const [currentTransfer, setCurrentTransfer] = useState(() => transferList.find(transfer => transfer.id === transferID));
 
     const photoId = uuid.v4(); // unique id for new image
-    // const [date, setDate] = useState(convertTimestamp(currentTransfer.created_at));
+    const [date, setDate] = useState(convertTimestamp(currentTransfer.created_at));
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transfer/");
 
     // TODO: To be replaced with actual data
@@ -89,9 +87,9 @@ const AccountsEditTransferScreen = ({ route }) => {
         let updatedImg = imgFile ? imgFile.imgUri : currentTransfer.comment_img;
 
         const newTransfer = {
-            transfer_amount: Number(values.transferAmount),
-            from_account: values.fromAccount,
-            to_account: values.toAccount,
+            transfer_amount: Number(values.transfer_amount),
+            from_account: values.from_account,
+            to_account: values.to_account,
             comment_img_ref: updatedImgRef,
             comment_img: updatedImg,
             comments: values.comments,
@@ -216,11 +214,10 @@ const AccountsEditTransferScreen = ({ route }) => {
                         placeholder: "Enter Amount",
                         onChangeText:
                         formik.handleChange("transferAmount"),
-                        value: formik.values.transfer_amount,
+                        value: formik.values.transferAmount,
                         keyboardType: "numeric",
                         editable: mode !== "edit" ? false : true,
                     }}
-                    iconName={ICON_NAMES.SENDMONEY}
                     customLabel="Transfer Amount"
                 />
                 <CustomDatePicker

@@ -20,7 +20,15 @@ const useTransferListener = (userID) => {
             const userTransfers = [];
             snapshotData.forEach(doc => {
                 userTransfers.push({
-                    ...doc.data(), id: doc.id 
+                    from_account: doc.data().from_account,
+                    to_account: doc.data().to_account,
+                    transfer_amount: doc.data().transfer_amount,
+                    comments: doc.data().transfer_amount,
+                    comment_img: doc.data().comment_img,
+                    comment_img_ref: doc.data().comment_img_ref,
+                    created_at: doc.data().created_at,
+                    user_id: userID || "1",
+                    id: doc.id
                 });
                 console.log("TRANSFER", doc.id);
             });

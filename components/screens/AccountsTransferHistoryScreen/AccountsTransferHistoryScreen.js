@@ -63,7 +63,6 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
                 finalDayData[targetIndex].data.push(transfers);
             });
             setHistoryData(finalDayData);
-            console.log(finalDayData);
         }
 
         else if (filterValue === "month") {
@@ -110,7 +109,7 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
             params: {
                 transferID: id
             }
-        });
+    });
 
     const renderAccountPanelItem = ({ item }) => {
         return(
