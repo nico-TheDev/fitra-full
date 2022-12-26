@@ -1,26 +1,23 @@
-import { Dimensions } from "react-native";
+import { Dimensions, View, Text } from "react-native";
 import React, { useState, useEffect } from "react";
-import { BarChart } from "react-native-chart-kit";
+import { BarChart, StackedBarChart, LineChart } from "react-native-chart-kit";
 // LOCAL IMPORTS
-import {
-    ChartsScreenContainer,
-    TypeNavi,
-    ChartPanel,
-    CategoryContainer,
-} from "./styles";
+import { ChartsScreenContainer, TypeNavi, ChartPanel, CategoryContainer } from "./styles";
 import Button from "components/Button";
 import ScreenHeader from "components/ScreenHeader";
 
 import FilterInput from "components/FilterInput";
 import { FONTS, ICON_NAMES } from "constants/constant";
-import colors from "assets/themes/colors";
 import CategoryPanelItem from "components/CategoryPanelItem/CategoryPanelItem";
 import CircleBG from "components/common/CircleBG";
-import useUserTransaction from "hooks/useUserTransaction";
 import useAuthStore from "hooks/useAuthStore";
-import filterByTime from "util/filterByTime";
+import useChartsData from "hooks/useChartsData";
+import { Line } from "react-native-svg";
 import useTransactionStore from "hooks/useTransactionStore";
-import getTransactionSum from "util/getTransactionSum";
+import colors from "assets/themes/colors";
+import formatDate from "util/formatDate";
+import convertTimestamp from "util/convertTimestamp";
+import GeneralCharts from "./GeneralCharts";
 
 const typeData = ["general", "expense", "income"];
 
@@ -29,7 +26,6 @@ const chartConfig = {
     backgroundGradientToOpacity: 0,
     color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     strokeWidth: 5, // optional, default 3
-    barPercentage: 0.5,
     decimalPlaces: 0,
     style: {
         fontFamily: FONTS.REGULAR,
@@ -37,18 +33,27 @@ const chartConfig = {
     propsForLabels: {
         fontFamily: FONTS.REGULAR,
     },
-    showBarTops: false
+    showBarTops: false,
 };
 
+const SLIDER_WIDTH = Dimensions.get("window").width;
 
 const ChartsScreen = () => {
-    const SLIDER_WIDTH = Dimensions.get("window").width;
     const [currentTab, setCurrentTab] = useState("general");
-    const user = useAuthStore(state => state.user);
-    const [userChartData] = useUserTransaction(user.user_id);
-    const [activeChartData, setActiveChartData] = useState([]);
-    const [activeData, setActiveData] = useState([]);
-    const allTransactions = useTransactionStore(state => state.transactions);
+    const user = useAuthStore((state) => state.user);
+    const allTransactions = useTransactionStore((state) => state.transactions);
+
+    const [chartData, setChartData] = useState({
+        generalYear: null,
+        generalMonth: null,
+        expenseYear: null,
+        expenseMonth: null,
+        incomeYear: null,
+        incomeMonth: null,
+    });
+    const [activeData, setActiveData] = useState({});
+    const [expenseData, setExpenseData] = useState(null);
+    const [incomeData, setIncomeData] = useState(null);
 
     const [filterItems, setFilterItems] = useState([
         { label: "Show Per Day", value: "day" },
@@ -57,88 +62,329 @@ const ChartsScreen = () => {
     ]);
     const [selectedFilter, setSelectedFilter] = useState("year");
 
-    // HANDLE FILTER SIDE EFFECT
-
     useEffect(() => {
-        if (userChartData.length !== 0) {
-            if (currentTab === "general") {
-                // GET THE DATA LIST
-                const generalData = userChartData[0];
-                const generalDataList = generalData?.data;
+        const user_id = user.user_id;
+        if (currentTab === "general") {
+            // GENERAL DATA
+            const expenseTotal = allTransactions.reduce((acc, currentTransaction) => {
+                if (currentTransaction.type === "expense") {
+                    acc += currentTransaction.amount;
+                }
+                return acc;
+            }, 0);
+            const incomeTotal = allTransactions.reduce((acc, currentTransaction) => {
+                if (currentTransaction.type === "income") {
+                    acc += currentTransaction.amount;
+                }
+                return acc;
+            }, 0);
+            // GET THE DATA LIST
+            const generalData = [
+                {
+                    user_id,
+                    amount: expenseTotal,
+                    type: "expense",
+                    target_account: "gcash",
+                    category_name: "Expense",
+                    transaction_icon: "food-icon",
+                    color: "#2ecc71",
+                    transaction_color: "#2ecc71",
+                    created_at: { seconds: 1000 },
+                },
+                {
+                    user_id,
+                    amount: incomeTotal,
+                    type: "income",
+                    target_account: "gcash",
+                    category_name: "Income",
+                    transaction_icon: "charts-icon",
+                    color: "#3498db",
+                    transaction_color: "#3498db",
+                    created_at: { seconds: 1000 },
+                },
+            ];
+            // console.log("GENERAL: ", generalData.length);
 
-                if (selectedFilter === "year") {
-                    setActiveData(generalDataList);
-                    setActiveChartData({
-                        labels: ["EXPENSE", "INCOME"],
-                        datasets: [
-                            {
-                                data: generalDataList?.map(item => item.amount),
-                                colors: [(opacity = 1) => generalDataList[0].color, (opacity = 1) => generalDataList[1].color]
-                            },
+            // setActiveData(generalData);
+            const generalChartYearData = {
+                labels: ["2021", "2022", "2023"],
+                legend: ["Expense", "Income"],
+                data: [[], generalData.map((item) => item.amount), []],
+                barColors: generalData.map((item) => item.color),
+                show: true,
+            };
+            const sortedByDate = allTransactions.sort(
+                (a, b) => a.created_at.seconds > b.created_at.seconds
+            );
+            const finalMonthData = [];
+            const monthNames = [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Ap",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+            ];
+
+            // ADD THE MONTHS TO THE FINAL DATA
+            monthNames.forEach((month) => {
+                finalMonthData.push({ title: month, data: [] });
+            });
+
+            sortedByDate.forEach((transaction) => {
+                const currentDate = formatDate(convertTimestamp(transaction.created_at));
+                const currentMonth = monthNames[currentDate.split("/")[0] - 1];
+                const targetIndex = finalMonthData.findIndex((item) => item.title === currentMonth);
+
+                finalMonthData[targetIndex].data.push(transaction);
+            });
+
+            // console.log("MONTH GEN: ", finalMonthData);
+
+            // RUN PER MONTH
+
+            // console.log(finalMonthData.map((item) => `${item.title}: ${item.data.length}`));
+
+            const monthDataList = finalMonthData.map((currentMonth) => {
+                if (currentMonth.data.length !== 0) {
+                    const sum = currentMonth.data.reduce((acc, currentTransaction) => {
+                        const currentDate = formatDate(
+                            convertTimestamp(currentTransaction.created_at)
+                        );
+                        const currentTransactionMonth = monthNames[currentDate.split("/")[0] - 1];
+                        // console.log("Current Month:", currentMonth);
+                        // console.log("Current Title:", currentMonth.title);
+                        if (currentTransactionMonth === currentMonth.title) {
+                            acc += currentTransaction.amount;
+                        }
+
+                        return acc;
+                    }, 0);
+
+                    return sum;
+                } else {
+                    return 0;
+                }
+            });
+
+            // console.log(monthDataList);
+
+            const generalChartMonthData = {
+                labels: monthNames,
+                datasets: [
+                    {
+                        data: monthDataList,
+                        colors: [
+                            (opacity = 1) => colors.secondary.chartColorOne,
+                            (opacity = 1) => colors.secondary.chartColorTwo,
+                            (opacity = 1) => colors.secondary.chartColorThree,
+                            (opacity = 1) => colors.secondary.chartColorFour,
+                            (opacity = 1) => colors.secondary.chartColorFive,
+                            (opacity = 1) => colors.secondary.chartColorSix,
+                            (opacity = 1) => colors.secondary.chartColorSeven,
+                            (opacity = 1) => colors.secondary.chartColorEight,
+                            (opacity = 1) => colors.secondary.chartColorNine,
+                            (opacity = 1) => colors.secondary.chartColorTen,
+                            (opacity = 1) => colors.secondary.chartColorEleven,
+                            (opacity = 1) => colors.secondary.chartColorTwelve,
                         ],
+                    },
+                ],
+            };
 
-                    });
+            setChartData({
+                ...chartData,
+                generalYear: generalChartYearData,
+                generalMonth: generalChartMonthData,
+            });
+        } else if (currentTab === "expense") {
+            const allExpenses = allTransactions.filter((item) => item.type === "expense");
+            setActiveData(allExpenses);
+
+            const sortedByDate = allExpenses.sort(
+                (a, b) => a.created_at.seconds > b.created_at.seconds
+            );
+            const finalMonthData = [];
+            const monthNames = [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Ap",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+            ];
+
+            // ADD THE MONTHS TO THE FINAL DATA
+            monthNames.forEach((month) => {
+                finalMonthData.push({ title: month, data: [] });
+            });
+
+            sortedByDate.forEach((transaction) => {
+                const currentDate = formatDate(convertTimestamp(transaction.created_at));
+                const currentMonth = monthNames[currentDate.split("/")[0] - 1];
+                const targetIndex = finalMonthData.findIndex((item) => item.title === currentMonth);
+
+                finalMonthData[targetIndex].data.push(transaction);
+            });
+
+            // console.log("MONTH GEN: ", finalMonthData);
+
+            // RUN PER MONTH
+
+            // console.log(finalMonthData.map((item) => `${item.title}: ${item.data.length}`));
+
+            const monthDataList = finalMonthData.map((currentMonth) => {
+                if (currentMonth.data.length !== 0) {
+                    const sum = currentMonth.data.reduce((acc, currentTransaction) => {
+                        const currentDate = formatDate(
+                            convertTimestamp(currentTransaction.created_at)
+                        );
+                        const currentTransactionMonth = monthNames[currentDate.split("/")[0] - 1];
+                        // console.log("Current Month:", currentMonth);
+                        // console.log("Current Title:", currentMonth.title);
+                        if (currentTransactionMonth === currentMonth.title) {
+                            acc += currentTransaction.amount;
+                        }
+
+                        return acc;
+                    }, 0);
+
+                    return sum;
+                } else {
+                    return 0;
                 }
-                else if (selectedFilter === "month") {
-                    const filteredGeneralData = filterByTime(generalDataList, selectedFilter);
+            });
 
-                    console.log(filteredGeneralData);
+            // console.log(monthDataList);
+
+            const expenseChartMonthData = {
+                labels: monthNames,
+                datasets: [
+                    {
+                        data: monthDataList,
+                        colors: [
+                            (opacity = 1) => colors.secondary.chartColorOne,
+                            (opacity = 1) => colors.secondary.chartColorTwo,
+                            (opacity = 1) => colors.secondary.chartColorThree,
+                            (opacity = 1) => colors.secondary.chartColorFour,
+                            (opacity = 1) => colors.secondary.chartColorFive,
+                            (opacity = 1) => colors.secondary.chartColorSix,
+                            (opacity = 1) => colors.secondary.chartColorSeven,
+                            (opacity = 1) => colors.secondary.chartColorEight,
+                            (opacity = 1) => colors.secondary.chartColorNine,
+                            (opacity = 1) => colors.secondary.chartColorTen,
+                            (opacity = 1) => colors.secondary.chartColorEleven,
+                            (opacity = 1) => colors.secondary.chartColorTwelve,
+                        ],
+                    },
+                ],
+            };
+
+            setExpenseData(expenseChartMonthData);
+        } else if (currentTab === "income") {
+            const allIncome = allTransactions.filter((item) => item.type === "income");
+            setActiveData(allIncome);
+
+            const sortedByDate = allIncome.sort(
+                (a, b) => a.created_at.seconds > b.created_at.seconds
+            );
+            const finalMonthData = [];
+            const monthNames = [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Ap",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+            ];
+
+            // ADD THE MONTHS TO THE FINAL DATA
+            monthNames.forEach((month) => {
+                finalMonthData.push({ title: month, data: [] });
+            });
+
+            sortedByDate.forEach((transaction) => {
+                const currentDate = formatDate(convertTimestamp(transaction.created_at));
+                const currentMonth = monthNames[currentDate.split("/")[0] - 1];
+                const targetIndex = finalMonthData.findIndex((item) => item.title === currentMonth);
+
+                finalMonthData[targetIndex].data.push(transaction);
+            });
+
+            // console.log("MONTH GEN: ", finalMonthData);
+
+            // RUN PER MONTH
+
+            // console.log(finalMonthData.map((item) => `${item.title}: ${item.data.length}`));
+
+            const monthDataList = finalMonthData.map((currentMonth) => {
+                if (currentMonth.data.length !== 0) {
+                    const sum = currentMonth.data.reduce((acc, currentTransaction) => {
+                        const currentDate = formatDate(
+                            convertTimestamp(currentTransaction.created_at)
+                        );
+                        const currentTransactionMonth = monthNames[currentDate.split("/")[0] - 1];
+                        // console.log("Current Month:", currentMonth);
+                        // console.log("Current Title:", currentMonth.title);
+                        if (currentTransactionMonth === currentMonth.title) {
+                            acc += currentTransaction.amount;
+                        }
+
+                        return acc;
+                    }, 0);
+
+                    return sum;
+                } else {
+                    return 0;
                 }
+            });
 
+            // console.log(monthDataList);
 
-            } else if (currentTab === "expense") {
-                const expenseData = userChartData[1];
-                const expenseDataList = expenseData.data;
-                console.log(expenseDataList);
+            const incomeChartMonthData = {
+                labels: monthNames,
+                datasets: [
+                    {
+                        data: monthDataList,
+                        colors: [
+                            (opacity = 1) => colors.secondary.chartColorOne,
+                            (opacity = 1) => colors.secondary.chartColorTwo,
+                            (opacity = 1) => colors.secondary.chartColorThree,
+                            (opacity = 1) => colors.secondary.chartColorFour,
+                            (opacity = 1) => colors.secondary.chartColorFive,
+                            (opacity = 1) => colors.secondary.chartColorSix,
+                            (opacity = 1) => colors.secondary.chartColorSeven,
+                            (opacity = 1) => colors.secondary.chartColorEight,
+                            (opacity = 1) => colors.secondary.chartColorNine,
+                            (opacity = 1) => colors.secondary.chartColorTen,
+                            (opacity = 1) => colors.secondary.chartColorEleven,
+                            (opacity = 1) => colors.secondary.chartColorTwelve,
+                        ],
+                    },
+                ],
+            };
 
-                setActiveData(expenseDataList);
-                setActiveChartData({
-                    labels: expenseDataList.map(item => item.category_name),
-                    datasets: [
-                        {
-                            data: expenseDataList.map(item => item.amount),
-                            colors: expenseDataList.map(item => {
-                                const color = (opacity = 1) => item.transaction_color;
-
-                                return color;
-                            }),
-
-                        },
-                    ],
-
-                });
-
-            } else if (currentTab === "income") {
-                const incomeData = userChartData[2];
-                const incomeDataList = incomeData.data;
-                console.log(incomeDataList);
-
-                setActiveData(incomeDataList);
-                setActiveChartData({
-                    labels: incomeDataList.map(item => item.category_name),
-                    datasets: [
-                        {
-                            data: incomeDataList.map(item => item.amount),
-                            colors: incomeDataList.map(item => {
-                                const color = (opacity = 1) => item.transaction_color;
-
-                                return color;
-                            }),
-
-                        },
-                    ],
-
-                });
-            }
-        } else {
-            console.log("loading");
+            setIncomeData(incomeChartMonthData);
         }
-
-    }, [selectedFilter, currentTab]);
-
-
-
-
+    }, [currentTab]);
 
     const ButtonRenderItem = ({ item }) => {
         return (
@@ -148,7 +394,9 @@ const ChartsScreen = () => {
                 textSize={14}
                 width="30%"
                 type={currentTab === item ? "filled" : "outlined"}
-                onPress={() => { console.log(item); setCurrentTab(item); }}
+                onPress={() => {
+                    setCurrentTab(item);
+                }}
             />
         );
     };
@@ -159,7 +407,7 @@ const ChartsScreen = () => {
             iconColor={item.transaction_color}
             title={item.category_name}
             price={String(item.amount)}
-            onPress={() => { }}
+            onPress={() => {}}
             priceSub=""
         />
     );
@@ -167,9 +415,7 @@ const ChartsScreen = () => {
     return (
         <ChartsScreenContainer>
             <CircleBG circleSize={250} />
-
             <ScreenHeader title="Charts" />
-
             <TypeNavi
                 data={typeData}
                 renderItem={ButtonRenderItem}
@@ -180,30 +426,63 @@ const ChartsScreen = () => {
                 extraData={{ currentTab }}
             />
 
-            <FilterInput items={filterItems} setItems={setFilterItems} value={selectedFilter} setValue={setSelectedFilter} />
+            {/* <FilterInput
+                items={filterItems}
+                setItems={setFilterItems}
+                value={selectedFilter}
+                setValue={setSelectedFilter}
+            /> */}
 
-            <ChartPanel>
-                {activeChartData.length !== 0 ? (
+            <ChartPanel horizontal={false}>
+                {chartData.generalYear && chartData.generalMonth && currentTab === "general" ? (
+                    <GeneralCharts
+                        yearData={chartData.generalYear}
+                        monthData={chartData.generalMonth}
+                    />
+                ) : null}
+                {expenseData && currentTab === "expense" ? (
                     <BarChart
-                        data={activeChartData}
+                        data={expenseData}
                         width={SLIDER_WIDTH * 0.9}
                         height={260}
-                        yAxisLabel="₱"
                         fromZero={true}
-                        chartConfig={chartConfig}
+                        style={{
+                            paddingRight: 0,
+                        }}
+                        chartConfig={{ ...chartConfig, barPercentage: 0.5 }}
                         withVerticalLabels={true}
-                        withHorizontalLabels={true}
+                        withHorizontalLabels={false}
                         withCustomBarColorFromData={true}
                         withInnerLines={false}
-                        showValuesOnTopOfBars={false}
+                        showValuesOnTopOfBars={true}
                         flatColor={true}
-                    />) : null}
+                        verticalLabelRotation={90}
+                    />
+                ) : null}
+                {incomeData && currentTab === "income" ? (
+                    <BarChart
+                        data={incomeData}
+                        width={SLIDER_WIDTH * 0.9}
+                        height={260}
+                        fromZero={true}
+                        style={{
+                            paddingRight: 0,
+                        }}
+                        chartConfig={{ ...chartConfig, barPercentage: 0.5 }}
+                        withVerticalLabels={true}
+                        withHorizontalLabels={false}
+                        withCustomBarColorFromData={true}
+                        withInnerLines={false}
+                        showValuesOnTopOfBars={true}
+                        flatColor={true}
+                        verticalLabelRotation={90}
+                    />
+                ) : null}
             </ChartPanel>
 
-            <CategoryContainer
-                data={activeData}
-                renderItem={CategoryPanelRenderItem}
-            />
+            {currentTab !== "general" ? (
+                <CategoryContainer data={activeData} renderItem={CategoryPanelRenderItem} />
+            ) : null}
         </ChartsScreenContainer>
     );
 };
