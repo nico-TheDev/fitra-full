@@ -13,15 +13,13 @@ export const TypeNavi = styled.FlatList`
     width: 90%;
     flex-grow: 0;
     height: 9%;
+    margin-bottom: 20px;
 `;
 
-export const ChartPanel = styled.View`
-    background-color: ${colors.white};
-    elevation: 5;
-    width: 90%;
-    margin-top: 20px;
-    height: 40%;
-    border-radius: 5px;
+export const ChartPanel = styled.ScrollView`
+    width:90%;
+    background-color: white;
+    margin:10px;
 `;
 
 export const CategoryContainer = styled.FlatList`

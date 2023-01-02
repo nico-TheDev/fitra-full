@@ -40,7 +40,8 @@ export default function useUserTransaction(userID) {
                 category_name: "Expense",
                 transaction_icon: "food-icon",
                 color: "#2ecc71",
-                transaction_color: "#2ecc71"
+                transaction_color: "#2ecc71",
+                created_at: { seconds: 1000 }
             }, {
                 user_id,
                 amount: incomeTotal,
@@ -49,7 +50,8 @@ export default function useUserTransaction(userID) {
                 category_name: "Income",
                 transaction_icon: "charts-icon",
                 color: "#3498db",
-                transaction_color: "#3498db"
+                transaction_color: "#3498db",
+                created_at: { seconds: 1000 }
             }];
 
             const expenseList = dataList.filter(item => item.type === "expense");
