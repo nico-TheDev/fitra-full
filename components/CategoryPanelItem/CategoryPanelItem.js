@@ -23,9 +23,9 @@ const CategoryPanelItem = ({ onPress, title, price, iconColor, iconName, comment
                         prefix={'₱'}
                         decimalScale={2}
                         renderText={value => <Text>{value}</Text>}
-                    /> 
+                    />
                 </PriceLabel>
-                {priceSub && <Subhead color={iconColor}>{priceSub}</Subhead>}
+                {priceSub ? <Subhead color={iconColor}>{priceSub}</Subhead> : null}
             </PriceContainer>
         </ItemContainer>
     );
