@@ -71,9 +71,9 @@ const LoginScreen = ({ navigation }) => {
     return (
         <LoginScreenContainer>
             <WelcomeTextContainer>
-                <WelcomeText1>Welcome user !</WelcomeText1>
-                <WelcomeText2>start monitoring your spending</WelcomeText2>
-                <UserImgContainer>{user.user_id ? <UserImg source={{ uri: user.profile_img }} /> : <Icon name={ICON_NAMES.SYSTEM_ICONS.USERPROFILE} size={70} color={colors.black} />}</UserImgContainer>
+                <WelcomeText1>Welcome !</WelcomeText1>
+                <WelcomeText2>Start monitoring your spending</WelcomeText2>
+                <UserImgContainer>{user.user_id ? <UserImg source={{ uri: user.profile_img }} /> : <Icon name={ICON_NAMES.SYSTEM_ICONS.ADD_PHOTO_V1} size={70} color={colors.primary.colorFive} />}</UserImgContainer>
             </WelcomeTextContainer>
             <LoginForm>
                 <InputHolder>
@@ -107,13 +107,13 @@ const LoginScreen = ({ navigation }) => {
                         rounded={"10px"}
                         onPress={formik.handleSubmit}
                     />
-                    <Button
+                    {/* <Button
                         title={"SIGN IN WITH GOOGLE"}
                         rounded={"10px"}
                         noBorder={false}
                         onPress={() => { console.log("GOOGLE"); }}
                     // onPress={handleGoogleSignIn}
-                    />
+                    /> */}
                 </LoginFormButtonsHolder>
             </LoginForm>
             <RegisterLinkBg>
@@ -122,7 +122,7 @@ const LoginScreen = ({ navigation }) => {
             <RegisterLinkHolder>
                 <CreateAccountText>Don't have an account ? </CreateAccountText>
                 <TouchableOpacity onPress={() => navigation.push("Register")}>
-                    <RegisterHere>Register Here</RegisterHere>
+                    <RegisterHere>REGISTER HERE</RegisterHere>
                 </TouchableOpacity>
             </RegisterLinkHolder>
         </LoginScreenContainer>

@@ -140,8 +140,8 @@ const RegisterScreen = ({ navigation }) => {
                         width={"100%"}
                         onPress={formik.handleSubmit}
                     />
-                    <Text style={{ color: colors.primary.colorFive }}>
-                        Lorem Ipsum Dolor amet
+                    <Text style={{ color: colors.primary.colorFive, fontSize: 16 }}>
+                        Have an account? Login
                     </Text>
                 </RegisterFormButtonsHolder>
             </RegisterForm>

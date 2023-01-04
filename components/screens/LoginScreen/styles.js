@@ -69,7 +69,7 @@ export const LoginFormButtonsHolder = styled.View`
 export const RegisterLinkBg = styled.View`
     position: absolute;
     width: 100%;
-    height: 10%;
+    height: 14%;
     bottom: 0%;
     z-index: -1;
 `;
@@ -80,7 +80,7 @@ export const RegisterLinkHolder = styled.View`
     flex-direction: row;
 `;
 export const RegisterHere = styled.Text`
-    font-size: 14px;
+    font-size: 16px;
     font-family: ${FONTS.BOLD};
     color: ${colors.white};
 `;
@@ -102,4 +102,5 @@ export const ForgotPasswordText = styled.Text`
 export const CreateAccountText = styled.Text`
     color: ${colors.white};
     font-family: ${FONTS.REGULAR};
+    font-size: 16px;
 `;
