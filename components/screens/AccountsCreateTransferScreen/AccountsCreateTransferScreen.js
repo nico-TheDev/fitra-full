@@ -20,28 +20,30 @@ import { ICON_NAMES } from "constants/constant";
 import useAuthStore from "hooks/useAuthStore";
 import useUploadImage from "hooks/useUploadImage";
 import useTransferStore from "hooks/useTransferStore";
+import useAccountStore from "hooks/useAccountStore";
+import capitalize from "util/capitalize";
 
 const AccountsCreateTransferScreen = ({ navigation }) => {
     let photoId = uuid.v4();
     const user = useAuthStore(state => state.user);
     const transfers = useTransferStore(state => state.transfers);
     const addTransfer = useTransferStore((state) => state.addTransfer);
-    
+    const userAccounts = useAccountStore(state => state.accounts);
+
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transfer/");
     // DATE VALUE is current Date
     const [date, setDate] = useState(new Date());
 
-    // TODO: To be replaced with actual data
-    const [senderItems, setSenderItems] = useState([
-        { label: "Wallet", value: "wallet" },
-        { label: "GCASH", value: "gcash" },
-        { label: "UnionBank", value: "unionbank" },
-    ]);
-    const [receiverItems, setReceiverItems] = useState([
-        { label: "Wallet", value: "wallet" },
-        { label: "GCASH", value: "gcash" },
-        { label: "UnionBank", value: "unionbank" },
-    ]);
+    const [senderItems, setSenderItems] = useState(() => {
+        const accounts = userAccounts.map(account => ({ label: capitalize(account.account_name), value: account.id }));
+        return accounts;
+    });
+    const [selectedSender, setSelectedSender] = useState("");
+    const [selectedReceiver, setSelectedReceiver] = useState("");
+    const [receiverItems, setReceiverItems] = useState(() => {
+        const accounts = userAccounts.map(account => ({ label: capitalize(account.account_name), value: account.id }));
+        return accounts;
+    });
 
     const handleFormikSubmit = async (values, { resetForm }) => {
         // console.log(values);
@@ -51,8 +53,10 @@ const AccountsCreateTransferScreen = ({ navigation }) => {
             imgFile = await uploadImage();
         }
         addTransfer({
-            from_account: values.fromAccount,
-            to_account: values.toAccount,
+            sender_account_id: values.senderAccountId,
+            sender_account_name: values.senderAccountName,
+            receiver_account_id: values.receiverAccountId,
+            receiver_account_name: values.receiverAccountName,
             transfer_amount: Number(values.transferAmount),
             comment_img_ref: imgFile ? imgFile.imgRef : "",
             comment_img: imgFile ? imgFile.imgUri : "",
@@ -60,17 +64,20 @@ const AccountsCreateTransferScreen = ({ navigation }) => {
             user_id: user.user_id,
             created_at: date
         });
+        console.log(values);
         resetForm();
         Alert.alert("Success", "Transfer Created.");
         navigation.navigate("Accounts", { screen: "AccountsMain" });
     };
 
     const initialValues = {
-        fromAccount: "",
-        toAccount: "",
+        senderAccountId: "",
+        senderAccountName: "",
+        receiverAccountId: "",
+        receiverAccountName: "",
         transferAmount: "",
         date,
-        comment: "",
+        comments: "",
         commentImg: "",
     };
 
@@ -95,10 +102,15 @@ const AccountsCreateTransferScreen = ({ navigation }) => {
                     placeholder: "Choose Source Account",
                     zIndex: 3000,
                     zIndexInverse: 1000,
-                    onChangeValue:
-                    formik.handleChange("fromAccount"),
+                    onChangeValue: (value) => {
+                        formik.setFieldValue("senderAccountId", value);
+                        const targetAccount = senderItems.find(item => item.value === value);
+                        formik.setFieldValue("senderAccountName", targetAccount.label);
+                    }
                 }}
                 customLabel="Transfer From Account"
+                setValue={setSelectedSender}
+                value={selectedSender}
             />
             <CustomDropdown
                 width="90%"
@@ -108,16 +120,22 @@ const AccountsCreateTransferScreen = ({ navigation }) => {
                     placeholder: "Choose Receiving Account",
                     zIndex: 1000,
                     zIndexInverse: 3000,
-                    onChangeValue:
-                    formik.handleChange("toAccount"),
+                    onChangeValue: (value) => {
+                        formik.setFieldValue("receiverAccountId", value);
+                        const targetAccount = receiverItems.find(item => item.value === value);
+                        formik.setFieldValue("receiverAccountName", targetAccount.label);
+                    }
                 }}
                 customLabel="Transfer to Account"
+                setValue={setSelectedReceiver}
+                value={selectedReceiver}
             />
             <ScrollContainer centerContent={true}>
                 <CustomTextInput
                     inputProps={{
                         placeholder: "Enter Amount",
                         onChangeText: formik.handleChange("transferAmount"),
+                        keyboardType: "numeric",
                     }}
                     iconName={ICON_NAMES.SENDMONEY}
                     customLabel="Transfer Amount"

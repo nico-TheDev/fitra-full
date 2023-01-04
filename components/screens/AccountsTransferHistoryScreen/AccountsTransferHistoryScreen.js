@@ -10,11 +10,7 @@ import { transferHistoryLogData } from "fitra/SampleData";
 import convertTimestamp from "util/convertTimestamp";
 import formatDate from "util/formatDate";
 
-import {
-    SectionHeader,
-    TransferHistoryContainer,
-    TransferSectionList,
-} from "./styles";
+import { SectionHeader, TransferHistoryContainer, TransferSectionList } from "./styles";
 
 import useAuthStore from "hooks/useAuthStore";
 import useTransferStore from "hooks/useTransferStore";
@@ -28,8 +24,8 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
         { label: "Show Per Year", value: "year" },
     ]);
 
-    const transferLog = useTransferStore(state => state.transfers);
-    const user = useAuthStore(state => state.user);
+    const transferLog = useTransferStore((state) => state.transfers);
+    const user = useAuthStore((state) => state.user);
     const [userTransfers] = useTransferListener(user.user_id);
 
     const [historyData, setHistoryData] = useState([]);
@@ -37,13 +33,15 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
 
     useEffect(() => {
         if (filterValue === "day") {
-            const sortedByDate = transferLog.sort((a, b) => a.created_at.seconds > b.created_at.seconds);
+            const sortedByDate = transferLog.sort(
+                (a, b) => a.created_at.seconds > b.created_at.seconds
+            );
             // CREATE UNIQUE DAYS ARRAY
             const uniqueDays = [];
             const finalDayData = [];
 
             // GET THE AVAILABLE DATES
-            sortedByDate.forEach(item => {
+            sortedByDate.forEach((item) => {
                 const currentDate = formatDate(convertTimestamp(item.created_at));
                 if (!uniqueDays.includes(currentDate)) {
                     uniqueDays.push(currentDate);
@@ -51,28 +49,41 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
             });
 
             // ADD THE DATES TO THE FINAL DATA
-            uniqueDays.forEach(date => {
+            uniqueDays.forEach((date) => {
                 const textDate = formatDate(new Date(date), true);
                 finalDayData.push({ title: textDate, data: [], date });
             });
 
-            transferLog.forEach(transfers => {
+            transferLog.forEach((transfers) => {
                 const currentDate = formatDate(convertTimestamp(transfers.created_at));
-                const targetIndex = finalDayData.findIndex(item => item.date === currentDate);
+                const targetIndex = finalDayData.findIndex((item) => item.date === currentDate);
 
                 finalDayData[targetIndex].data.push(transfers);
             });
             setHistoryData(finalDayData);
-        }
-
-        else if (filterValue === "month") {
-            const sortedByDate = transferLog.sort((a, b) => a.created_at.seconds > b.created_at.seconds);
+        } else if (filterValue === "month") {
+            const sortedByDate = transferLog.sort(
+                (a, b) => a.created_at.seconds > b.created_at.seconds
+            );
             const finalMonthData = [];
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const monthNames = [
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December",
+            ];
             const uniqueMonths = [];
 
             // GET THE AVAILABLE MONTHS
-            sortedByDate.forEach(item => {
+            sortedByDate.forEach((item) => {
                 const currentDate = formatDate(convertTimestamp(item.created_at));
 
                 const currentMonth = Number(currentDate.split("/")[0]) - 1;
@@ -82,50 +93,58 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
             });
 
             // ADD THE MONTHS TO THE FINAL DATA
-            uniqueMonths.forEach(month => {
-                finalMonthData.push({ title: month, data: [], });
+            uniqueMonths.forEach((month) => {
+                finalMonthData.push({ title: month, data: [] });
             });
 
-            transferLog.forEach(transfers => {
+            transferLog.forEach((transfers) => {
                 const currentDate = formatDate(convertTimestamp(transfers.created_at));
                 const currentMonth = monthNames[currentDate.split("/")[0] - 1];
-                const targetIndex = finalMonthData.findIndex(item => item.title === currentMonth);
+                const targetIndex = finalMonthData.findIndex((item) => item.title === currentMonth);
 
                 finalMonthData[targetIndex].data.push(transfers);
             });
             setHistoryData(finalMonthData);
-
         } else if (filterValue === "year") {
-            setHistoryData([{
-                title: "2022",
-                data: userTransfers
-            }]);
+            setHistoryData([
+                {
+                    title: "2022",
+                    data: userTransfers,
+                },
+            ]);
         }
-    }, [filterValue])
+    }, [filterValue]);
 
     const handleNavigate = (id) =>
         navigation.navigate("Accounts", {
             screen: "AccountsEditTransferScreen",
             params: {
-                transferID: id
-            }
-    });
+                transferID: id,
+            },
+        });
 
     const renderAccountPanelItem = ({ item }) => {
-        return(
+        console.log(item);
+        return (
             <AccountPanelItem
-            iconColor={colors.primary.colorFive}
-            price={String(item.transfer_amount)}
-            sender={item.from_account}
-            receiver={item.to_account}
-            onPress={handleNavigate}
-        />
-    )};
+                iconColor={colors.primary.colorFive}
+                price={String(item.transfer_amount)}
+                sender={item.sender_account_name}
+                receiver={item.receiver_account_name}
+                onPress={() => handleNavigate(item.id)}
+            />
+        );
+    };
 
     return (
         <TransferHistoryContainer>
             <ScreenHeader title="Transfer History" />
-            <FilterInput items={items} setItems={setItems} setValue={setFilterValue} value={filterValue}/>
+            <FilterInput
+                items={items}
+                setItems={setItems}
+                setValue={setFilterValue}
+                value={filterValue}
+            />
             <TransferSectionList
                 sections={historyData}
                 keyExtractor={(item, index) => item + index}
