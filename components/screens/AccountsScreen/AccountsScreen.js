@@ -50,7 +50,7 @@ const AccountsScreen = () => {
         <AccountsContainer>
             <ScreenHeader
                 title="Accounts"
-                iconName={ICON_NAMES.SYSTEM_ICONS.TRANSFER}
+                iconName={ICON_NAMES.SYSTEM_ICONS.REFRESH}
                 onPressIcon={() =>
                     navigation.navigate("Accounts", {
                         screen: "AccountsTransferHistoryScreen",

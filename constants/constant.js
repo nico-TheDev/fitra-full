@@ -91,6 +91,7 @@ export const ICON_NAMES = {
         FILTER: "filter-icon",
         LOGOUT: "logout-icon",
         MORE: "more-icon",
+        REFRESH: "refresh-icon",
         SETTINGS: "settings-icon",
         TRANSFER: "transfer-icon",
         USERPROFILE: "user-profile-icon",

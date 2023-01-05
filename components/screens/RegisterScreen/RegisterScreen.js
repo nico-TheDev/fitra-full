@@ -78,13 +78,13 @@ const RegisterScreen = ({ navigation }) => {
                     <RegisterWelcomeText2>Start your financial journey !</RegisterWelcomeText2>
                 </RegisterWelcomeTextHolder>
                 <ButtonIcon
-                    name={ICON_NAMES.ADD_PHOTO_V1}
+                    name={ICON_NAMES.SYSTEM_ICONS.USERPROFILE}
                     iconColor={colors.primary.colorFive}
                     type={"filled"}
                     imageUri={image}
                     onPress={chooseImage}
                     filename={filename}
-                    iconSize={50}
+                    iconSize={100}
                 />
             </GreetingsHolder>
             <RegisterForm>
