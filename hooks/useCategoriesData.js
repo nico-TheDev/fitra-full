@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { addDoc, collection, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import firestore, { addDoc, collection, serverTimestamp, deleteDoc, doc, updateDoc, query, where, getDocs, writeBatch, getDoc } from 'firebase/firestore';
 
 import { db } from 'fitra/firebase.config.js';
 
@@ -20,6 +20,48 @@ const categoriesStore = (set, get) => ({
         // CREATE A REFERENCE FOR THE DOCUMENT AND THE FILE
         const docRef = doc(db, "categories", documentId);
         try {
+            const relatedTransactionsRef = collection(db, "transactions");
+            const relatedQuery = query(relatedTransactionsRef, where("category_id", "==", documentId));
+            const relatedTransactions = await getDocs(relatedQuery);
+
+            const batch = writeBatch(db);
+
+            const accountUpdates = [];
+
+            relatedTransactions.forEach((doc) => {
+                const currentTransaction = doc.data();
+                const currentUpdate = {
+                    account_id: currentTransaction.target_account,
+                    income: 0,
+                    expense: 0
+                };
+
+                // RETURN THE SUBTRACTED AMOUNT
+                if (currentTransaction.type === "expense") {
+                    currentUpdate.expense = currentUpdate.expense + currentTransaction.amount;
+                } else {
+                    currentUpdate.income = currentUpdate.income + currentTransaction.amount;
+                }
+
+                accountUpdates.push(currentUpdate);
+                batch.delete(doc.ref);
+            });
+
+            // console.log(accountUpdates);
+
+            // UPDATE THE ACCOUNTS
+            for (const update of accountUpdates) {
+                const accountRef = doc(db, "accounts", update.account_id);
+                const currentAccountResponse = await getDoc(accountRef);
+                const currentAccount = currentAccountResponse.data();
+
+                await updateDoc(accountRef, {
+                    account_amount: currentAccount.account_amount - update.income + update.expense
+                });
+            }
+
+            await batch.commit();
+
             // DELETE THE DOCUMENT AND OBJECT 
             await deleteDoc(docRef);
         } catch (err) {
