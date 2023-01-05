@@ -4,20 +4,19 @@ import { TriangleColorPicker } from 'react-native-color-picker';
 import PropTypes from "prop-types";
 
 import { ColorPickerContainer, CloseBtn } from './styles/commonStyles';
+import Icon from './Icon';
+import { ICON_NAMES } from 'constants/constant';
+import colors from 'assets/themes/colors';
 
 const ColorPicker = ({ handleColorPress, setShowColorWheel }) => {
     return (
         <ColorPickerContainer>
             <CloseBtn onPress={() => setShowColorWheel(false)}>
-                <Text
-                    style={{
-                        color: "white",
-                        fontSize: 25,
-                        fontWeight: "bold",
-                    }}
-                >
-                    X
-                </Text>
+                <Icon
+                    name={ICON_NAMES.SYSTEM_ICONS.CROSS}
+                    color={colors.white}
+                    size={50}
+                />
             </CloseBtn>
             <TriangleColorPicker
                 onColorSelected={handleColorPress}

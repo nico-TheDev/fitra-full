@@ -38,7 +38,7 @@ export default function useUserTransaction(userID) {
                 type: "expense",
                 target_account: "gcash",
                 category_name: "Expense",
-                transaction_icon: "food-icon",
+                transaction_icon: "expense-icon",
                 color: "#2ecc71",
                 transaction_color: "#2ecc71",
                 created_at: { seconds: 1000 }
@@ -48,7 +48,7 @@ export default function useUserTransaction(userID) {
                 type: "income",
                 target_account: "gcash",
                 category_name: "Income",
-                transaction_icon: "charts-icon",
+                transaction_icon: "income-icon",
                 color: "#3498db",
                 transaction_color: "#3498db",
                 created_at: { seconds: 1000 }

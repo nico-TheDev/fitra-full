@@ -84,6 +84,7 @@ export const ICON_NAMES = {
         CALENDAR: "calendar-icon",
         CATEGORIES: "categories-icon",
         CHARTS: "charts-icon",
+        CROSS: "cross-icon",
         DASHBOARD: "dashboard-icon",
         DROPDOWN: "dropdown-icon",
         EDIT: "edit-icon",
@@ -93,6 +94,8 @@ export const ICON_NAMES = {
         SETTINGS: "settings-icon",
         TRANSFER: "transfer-icon",
         USERPROFILE: "user-profile-icon",
+        EXPENSE: "expense-icon",
+        INCOME: "income-icon"
     },
     CATEGORIES_ICONS: {
         APPLIANCE: "appliances-icon",
