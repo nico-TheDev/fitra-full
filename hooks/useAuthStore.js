@@ -1,7 +1,7 @@
 import create from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
-import { doc, setDoc } from 'firebase/firestore';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "firebase/auth";
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, updateEmail, updatePassword, signOut, deleteUser } from "firebase/auth";
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -37,8 +37,6 @@ const authStore = (set) => ({
                 user_id: createdUserResponse.user.uid,
                 profile_img: createdUserResponse.user.photoURL
             };
-            // console.log(createdUserResponse);
-            // console.log(createdUser);
             set({
                 user: createdUser, isLoggedIn: true
             });
@@ -89,6 +87,41 @@ const authStore = (set) => ({
             Alert.alert('Status', 'Failed to log out.');
             console.log(err);
         }
+    },
+    getDocument: async () => {
+        const user = auth.currentUser;
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        return docSnap;
+    },
+    updateProfileName: async (editUser) => {
+        await updateProfile(auth.currentUser, {
+            displayName: editUser.new_firstName + " " + editUser.new_lastName,    //updates displayName
+            // photoURL: editUser.new_profile_img,                             //updates photoURL
+        });
+    },
+    updateProfileEmail: async (editUser) => {
+        await updateEmail(auth.currentUser, editUser.new_email);     //updates email
+    },
+    updateProfilePassword: async (editUser) => {
+        await updatePassword(auth.currentUser, editUser.new_password);  //updates password
+    },
+    updateProfileDocument: async (documentId, updatedProfile) => {
+        try {
+            let docRef;
+            docRef = doc(db, "accounts", documentId);
+            await updateDoc(docRef, updatedProfile);
+        } catch (err) {
+            console.log("updateAccountError:", err);
+        }
+    },
+    deleteUser: async () => {
+        await deleteUser(auth.currentUser);                         //delete user
+    },
+    deleteDocument: async () => {
+        const user = auth.currentUser;
+        await deleteDoc(doc(db, "users", user.uid));
     }
 });
 

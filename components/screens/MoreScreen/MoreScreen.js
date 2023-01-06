@@ -19,18 +19,20 @@ import colors from "assets/themes/colors";
 import useAuthStore from 'hooks/useAuthStore';
 import useCategoriesStore from "hooks/useCategoriesData";
 
-const BUTTONDATA = [
-    {
-        id: 1,
-        title: "Settings",
-        iconName: ICON_NAMES.SYSTEM_ICONS.SETTINGS,
-    },
-    {
-        id: 2,
-        title: "Logout",
-        iconName: ICON_NAMES.SYSTEM_ICONS.LOGOUT,
-    },
-];
+// const BUTTONDATA = [
+//     {
+//         id: 1,
+//         title: "Settings",
+//         iconName: ICON_NAMES.SYSTEM_ICONS.SETTINGS,
+//         function: "handleSettings"
+//     },
+//     {
+//         id: 2,
+//         title: "Logout",
+//         iconName: ICON_NAMES.SYSTEM_ICONS.LOGOUT,
+//         function: "handleLogOut"
+//     },
+// ];
 
 const MoreScreen = ({ navigation }) => {
     const resetCategories = useCategoriesStore(state => state.reset);
@@ -40,26 +42,27 @@ const MoreScreen = ({ navigation }) => {
     const circleWidth = 1000;
     const circleHeight = 275;
 
+    const handleEditProfile = () => navigation.navigate("EditProfile");
     const handleLogOut = () => {
         logoutUser();
         resetCategories();
     };
 
-    const renderItem = ({ item }) => (
-        <Button
-            title={item.title}
-            textSize={24}
-            iconName={item.iconName}
-            iconSize={40}
-            iconColor={colors.primary.colorFive}
-            styles={{
-                justifyContent: "flex-start",
-                backgroundColor: "transparent",
-            }}
-            buttonLabelStyle={{ marginLeft: 20 }}
-            onPress={handleLogOut}
-        />
-    );
+    // const renderItem = ({ item }) => (
+    //     <Button
+    //         title={item.title}
+    //         textSize={24}
+    //         iconName={item.iconName}
+    //         iconSize={40}
+    //         iconColor={colors.primary.colorFive}
+    //         styles={{
+    //             justifyContent: "flex-start",
+    //             backgroundColor: "transparent",
+    //         }}
+    //         buttonLabelStyle={{ marginLeft: 20 }}
+    //         onPress={item.function}
+    //     />
+    // );
 
     return (
         <MorescreenContainer>
@@ -74,11 +77,37 @@ const MoreScreen = ({ navigation }) => {
                 <Email>{user.email || "No Email"}</Email>
             </UserContainer>
             {/*SCROLLVIEW*/}
-            <MoreButtonList
+            <Button
+                title="Edit Profile"
+                textSize={24}
+                iconName={ICON_NAMES.SYSTEM_ICONS.USERPROFILE}
+                iconSize={40}
+                iconColor={colors.primary.colorFive}
+                styles={{
+                    justifyContent: "flex-start",
+                    backgroundColor: "transparent",
+                }}
+                buttonLabelStyle={{ marginLeft: 20 }}
+                onPress={handleEditProfile}
+            />
+            <Button
+                title="Log Out"
+                textSize={24}
+                iconName={ICON_NAMES.SYSTEM_ICONS.LOGOUT}
+                iconSize={40}
+                iconColor={colors.primary.colorFive}
+                styles={{
+                    justifyContent: "flex-start",
+                    backgroundColor: "transparent",
+                }}
+                buttonLabelStyle={{ marginLeft: 20 }}
+                onPress={handleLogOut}
+            />
+            {/* <MoreButtonList
                 data={BUTTONDATA}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
-            />
+            /> */}
         </MorescreenContainer>
     );
 };
