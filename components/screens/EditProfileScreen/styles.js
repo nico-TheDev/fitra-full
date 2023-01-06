@@ -25,3 +25,11 @@ export const ButtonHolder = styled.View`
     justify-content: space-between;
 `;
 
+export const ImgButton = styled.TouchableOpacity``;
+
+export const UserImg = styled.Image`
+    position: relative;
+    height:100px;
+    width:100px;
+    border-radius: 100px;
+`;

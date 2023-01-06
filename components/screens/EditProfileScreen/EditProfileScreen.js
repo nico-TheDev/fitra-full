@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import { Alert } from "react-native";
-import uuid from 'react-native-uuid';
+import { Alert, TouchableOpacity } from "react-native";
+import uuid from "react-native-uuid";
 
 import CircleBG from "components/common/CircleBG";
 import CustomTextInput from "components/CustomTextInput";
@@ -16,26 +16,28 @@ import {
     EditProfileContainer,
     FunctionContainer,
     EditProfileBG,
-    ButtonHolder
+    ButtonHolder,
+    UserImg,
 } from "./styles";
 
-import { auth, storage } from '../../../firebase.config';
+import { auth, storage } from "../../../firebase.config";
 import { deleteObject, ref } from "firebase/storage";
 
-import useAuthStore from 'hooks/useAuthStore';
+import useAuthStore from "hooks/useAuthStore";
 import useUploadImage from "hooks/useUploadImage";
+import Icon from "components/common/Icon";
 
 const EditProfileScreen = () => {
-    const updateProfileName = useAuthStore(state => state.updateProfileName);
-    const updateProfileEmail = useAuthStore(state => state.updateProfileEmail);
-    const updateProfilePassword = useAuthStore(state => state.updateProfilePassword);
-    
+    const updateProfileName = useAuthStore((state) => state.updateProfileName);
+    const updateProfileEmail = useAuthStore((state) => state.updateProfileEmail);
+    const updateProfilePassword = useAuthStore((state) => state.updateProfilePassword);
+
     const photoId = uuid.v4();
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "users/");
 
-    const logoutUser = useAuthStore(state => state.logoutUser);
-    const deleteUser = useAuthStore(state => state.deleteUser);
-    
+    const logoutUser = useAuthStore((state) => state.logoutUser);
+    const deleteUser = useAuthStore((state) => state.deleteUser);
+
     const user = auth.currentUser;
     const currentDisplayName = user.displayName;
     const currentEmail = user.email;
@@ -43,14 +45,14 @@ const EditProfileScreen = () => {
 
     const initialValues = {
         displayName: currentDisplayName,
-        email: currentEmail ,
-        password: '',
+        email: currentEmail,
+        password: "",
     };
 
     const handleFormikSubmit = async (values) => {
         let imgFile,
             oldImgRef = currentPhotoURL;
-        // IF THERE IS AN EXISTING IMAGE AND NEW IMAGE IS SELECTED 
+        // IF THERE IS AN EXISTING IMAGE AND NEW IMAGE IS SELECTED
         if (image && oldImgRef) {
             // THEN DELETE THE OLD IMAGE
             const oldFileRef = ref(storage, oldImgRef);
@@ -65,27 +67,29 @@ const EditProfileScreen = () => {
         let updatedImg = imgFile ? imgFile.imgUri : currentPhotoURL;
 
         updateProfileName({
-            new_displayName : values.displayName,
-            new_image: values.updatedImg
+            new_displayName: values.displayName,
+            new_image: values.updatedImg,
         });
-        updateProfileEmail({new_email: values.email});
-        updateProfilePassword({new_password: values.password});
+        updateProfileEmail({ new_email: values.email });
+        updateProfilePassword({ new_password: values.password });
         Alert.alert("SUCCESS", "Profile Updated");
 
         formik.resetForm();
     };
 
     const showDeletePrompt = () => {
-        Alert.alert("Deleting file", "Are you sure ?", [{
-            text: "Yes",
-            onPress: handleDelete,
-            style: "destructive"
-        }, {
-            text: "No",
-            onPress: () => { },
-            style: "cancel"
-        }]);
-
+        Alert.alert("Deleting file", "Are you sure ?", [
+            {
+                text: "Yes",
+                onPress: handleDelete,
+                style: "destructive",
+            },
+            {
+                text: "No",
+                onPress: () => {},
+                style: "cancel",
+            },
+        ]);
     };
 
     const handleDelete = () => {
@@ -122,10 +126,29 @@ const EditProfileScreen = () => {
         </>
     );
 
+    useEffect(() => {
+        console.log(image);
+    }, [image]);
+
     return (
         <EditProfileContainer>
             <CircleBG circleSize={250} />
             <ScreenHeader title="Edit Profile" />
+
+            {currentPhotoURL || image ? (
+                <TouchableOpacity onPress={chooseImage}>
+                    <UserImg source={{ uri: image.uri }} />
+                </TouchableOpacity>
+            ) : (
+                <TouchableOpacity onPress={chooseImage}>
+                    <Icon
+                        name={ICON_NAMES.SYSTEM_ICONS.USERPROFILE}
+                        size={100}
+                        color={colors.primary.colorFive}
+                    />
+                </TouchableOpacity>
+            )}
+
             <FunctionContainer>
                 <CustomTextInput
                     inputProps={{
@@ -151,21 +174,13 @@ const EditProfileScreen = () => {
                     }}
                     customLabel="Profile Password:"
                 />
-                <ButtonIcon
-                    name={ICON_NAMES.SYSTEM_ICONS.USERPROFILE}
-                    iconColor={colors.primary.colorFive}
-                    type={"filled"}
-                    imageUri={{ uri: image ? image.uri : currentPhotoURL }}
-                    onPress={chooseImage}
-                    filename={filename}
-                    iconSize={100}
-                />
+
                 <ButtonHolder>
                     <EditButtonGroup />
                 </ButtonHolder>
             </FunctionContainer>
         </EditProfileContainer>
-    )
-}
+    );
+};
 
-export default EditProfileScreen
+export default EditProfileScreen;
