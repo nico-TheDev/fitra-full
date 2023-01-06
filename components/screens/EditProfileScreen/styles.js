@@ -16,3 +16,12 @@ export const EditProfileBG = styled.View`
     right: -35%;
 `;
 
+export const ButtonHolder = styled.View`
+    position: relative;
+    width: 100%;
+    flex-direction: row;
+    margin-top: 8px;
+    align-items: center;
+    justify-content: space-between;
+`;
+

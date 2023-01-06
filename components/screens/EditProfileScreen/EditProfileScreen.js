@@ -1,62 +1,72 @@
 import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { Alert } from "react-native";
+import uuid from 'react-native-uuid';
 
 import CircleBG from "components/common/CircleBG";
 import CustomTextInput from "components/CustomTextInput";
 import Button from "components/Button";
 import ScreenHeader from "components/ScreenHeader";
+import ButtonIcon from "components/ButtonIcon";
+
+import { ICON_NAMES } from "constants/constant";
+import colors from "assets/themes/colors";
 
 import {
     EditProfileContainer,
     FunctionContainer,
-    EditProfileBG
+    EditProfileBG,
+    ButtonHolder
 } from "./styles";
 
+import { auth, storage } from '../../../firebase.config';
+import { deleteObject, ref } from "firebase/storage";
+
 import useAuthStore from 'hooks/useAuthStore';
+import useUploadImage from "hooks/useUploadImage";
 
 const EditProfileScreen = () => {
-    // 
-
-    const getDocument = useAuthStore(state => state.getDocument);
     const updateProfileName = useAuthStore(state => state.updateProfileName);
     const updateProfileEmail = useAuthStore(state => state.updateProfileEmail);
     const updateProfilePassword = useAuthStore(state => state.updateProfilePassword);
-    const updateProfileDocument = useAuthStore(state => state.updateProfileDocument);
+    
+    const photoId = uuid.v4();
+    const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "users/");
 
     const logoutUser = useAuthStore(state => state.logoutUser);
     const deleteUser = useAuthStore(state => state.deleteUser);
-    const deleteDocument = useAuthStore(state => state.deleteDocument);
+    
+    const user = auth.currentUser;
+    const currentDisplayName = user.displayName;
+    const currentEmail = user.email;
+    const currentPhotoURL = user.photoURL;
 
-    
-    const [currentProfile, setCurrentProfile] = useState(getDocument());
-    
     const initialValues = {
-        first_Name: currentProfile.first_Name,
-        last_Name: currentProfile.last_Name,
-        email: currentProfile.email,
-        password: "",
+        displayName: currentDisplayName,
+        email: currentEmail ,
+        password: '',
     };
 
-    useEffect(() => {
-        setCurrentProfile(getDocument());
-    }, []);
-
     const handleFormikSubmit = async (values) => {
-        const newUser = {
-            first_Name: values.first_Name,
-            last_Name: values.last_Name,
-            email: values.email,
-        };
+        let imgFile,
+            oldImgRef = currentPhotoURL;
+        // IF THERE IS AN EXISTING IMAGE AND NEW IMAGE IS SELECTED 
+        if (image && oldImgRef) {
+            // THEN DELETE THE OLD IMAGE
+            const oldFileRef = ref(storage, oldImgRef);
+            await deleteObject(oldFileRef);
+            imgFile = await uploadImage();
+            // IF THERE IS AN IMAGE BUT NO OLD IMAGE
+        } else if (image && !oldImgRef) {
+            imgFile = await uploadImage();
+        }
 
         updateProfileName({
-            new_firstName : values.first_Name,
-            new_lastName: values.last_Name,
+            new_displayName : values.displayName,
         });
         updateProfileEmail({new_email: values.email});
         updateProfilePassword({new_password: values.password});
-        updateProfileDocument(user.uid, newUser);
-        Alert.alert("SUCCESS", "Document Updated");
+        Alert.alert("SUCCESS", "Profile Updated");
 
         formik.resetForm();
     };
@@ -115,19 +125,11 @@ const EditProfileScreen = () => {
             <FunctionContainer>
                 <CustomTextInput
                     inputProps={{
-                        placeholder: "Edit Profile First Name",
-                        onChangeText: formik.handleChange("first_Name"),
-                        value: formik.values.first_Name,
+                        placeholder: "Edit Profile Name",
+                        onChangeText: formik.handleChange("displayName"),
+                        value: formik.values.displayName,
                     }}
-                    customLabel="Profile First Name:"
-                />
-                <CustomTextInput
-                    inputProps={{
-                        placeholder: "Edit Profile Last Name",
-                        onChangeText: formik.handleChange("last_Name"),
-                        value: formik.values.last_Name,
-                    }}
-                    customLabel="Profile Last Name:"
+                    customLabel="Profile Name:"
                 />
                 <CustomTextInput
                     inputProps={{
@@ -145,7 +147,18 @@ const EditProfileScreen = () => {
                     }}
                     customLabel="Profile Password:"
                 />
-                <EditButtonGroup />
+                <ButtonIcon
+                    name={ICON_NAMES.SYSTEM_ICONS.USERPROFILE}
+                    iconColor={colors.primary.colorFive}
+                    type={"filled"}
+                    imageUri={{ uri: image ? image.uri : currentPhotoURL }}
+                    onPress={chooseImage}
+                    filename={filename}
+                    iconSize={100}
+                />
+                <ButtonHolder>
+                    <EditButtonGroup />
+                </ButtonHolder>
             </FunctionContainer>
         </EditProfileContainer>
     )

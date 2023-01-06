@@ -5,7 +5,6 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfi
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 import { auth, db } from '../firebase.config';
 
 const authStore = (set) => ({
@@ -88,16 +87,9 @@ const authStore = (set) => ({
             console.log(err);
         }
     },
-    getDocument: async () => {
-        const user = auth.currentUser;
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-
-        return docSnap;
-    },
     updateProfileName: async (editUser) => {
         await updateProfile(auth.currentUser, {
-            displayName: editUser.new_firstName + " " + editUser.new_lastName,    //updates displayName
+            displayName: editUser.new_displayName,    //updates displayName
             // photoURL: editUser.new_profile_img,                             //updates photoURL
         });
     },
@@ -107,22 +99,9 @@ const authStore = (set) => ({
     updateProfilePassword: async (editUser) => {
         await updatePassword(auth.currentUser, editUser.new_password);  //updates password
     },
-    updateProfileDocument: async (documentId, updatedProfile) => {
-        try {
-            let docRef;
-            docRef = doc(db, "accounts", documentId);
-            await updateDoc(docRef, updatedProfile);
-        } catch (err) {
-            console.log("updateAccountError:", err);
-        }
-    },
     deleteUser: async () => {
         await deleteUser(auth.currentUser);                         //delete user
     },
-    deleteDocument: async () => {
-        const user = auth.currentUser;
-        await deleteDoc(doc(db, "users", user.uid));
-    }
 });
 
 const useAuthStore = create(
