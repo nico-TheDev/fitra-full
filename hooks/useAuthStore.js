@@ -90,7 +90,7 @@ const authStore = (set) => ({
     updateProfileName: async (editUser) => {
         await updateProfile(auth.currentUser, {
             displayName: editUser.new_displayName,    //updates displayName
-            // photoURL: editUser.new_profile_img,                             //updates photoURL
+            photoURL: editUser.new_image,                             //updates photoURL
         });
     },
     updateProfileEmail: async (editUser) => {

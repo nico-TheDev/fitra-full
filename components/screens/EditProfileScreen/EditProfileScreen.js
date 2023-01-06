@@ -61,8 +61,12 @@ const EditProfileScreen = () => {
             imgFile = await uploadImage();
         }
 
+        let updatedImgRef = imgFile ? imgFile.imgRef : currentPhotoURL;
+        let updatedImg = imgFile ? imgFile.imgUri : currentPhotoURL;
+
         updateProfileName({
             new_displayName : values.displayName,
+            new_image: values.updatedImg
         });
         updateProfileEmail({new_email: values.email});
         updateProfilePassword({new_password: values.password});
