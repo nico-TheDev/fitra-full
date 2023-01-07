@@ -229,7 +229,7 @@ const AccountsEditTransferScreen = ({ route }) => {
                         placeholder: "Enter Amount",
                         onChangeText:
                             formik.handleChange("transferAmount"),
-                        value: formik.values.transferAmount,
+                        value: String(formik.values.transferAmount),
                         keyboardType: "numeric",
                         editable: mode !== "edit" ? false : true,
                     }}
