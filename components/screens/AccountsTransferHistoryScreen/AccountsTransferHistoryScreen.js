@@ -15,21 +15,58 @@ import { SectionHeader, TransferHistoryContainer, TransferSectionList } from "./
 import useAuthStore from "hooks/useAuthStore";
 import useTransferStore from "hooks/useTransferStore";
 import useTransferListener from "hooks/useTransferListener";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { db } from "fitra/firebase.config";
 
 const AccountsTransferHistoryScreen = ({ navigation }) => {
     const [items, setItems] = useState([
         { label: "Show Per Day", value: "day" },
-        { label: "Show Per Week", value: "week" },
         { label: "Show Per Month", value: "month" },
         { label: "Show Per Year", value: "year" },
     ]);
 
-    const transferLog = useTransferStore((state) => state.transfers);
     const user = useAuthStore((state) => state.user);
-    const [userTransfers] = useTransferListener(user.user_id);
+    const setTransfers = useTransferStore(state => state.setTransfers);
+    const transferColRef = collection(db, "transfers");
+    let [transferLog, setTransferLog] = useState([]);
+    const transferQuery = query(transferColRef, where("user_id", "==", user.user_id));
+
+    // const [userTransfers] = useTransferListener(user.user_id);
 
     const [historyData, setHistoryData] = useState([]);
-    const [filterValue, setFilterValue] = useState("year");
+    const [filterValue, setFilterValue] = useState("");
+
+
+    useEffect(() => {
+        const unsubscribe = onSnapshot(transferQuery, (snapshotData) => {
+            // console.log(userID);
+            const userTransfers = [];
+            snapshotData.forEach(doc => {
+                userTransfers.push({
+                    sender_account_name: doc.data().sender_account_name,
+                    sender_account_id: doc.data().sender_account_id,
+                    receiver_account_id: doc.data().receiver_account_id,
+                    receiver_account_name: doc.data().receiver_account_name,
+                    transfer_amount: doc.data().transfer_amount,
+                    comments: doc.data().transfer_amount,
+                    comment_img: doc.data().comment_img,
+                    comment_img_ref: doc.data().comment_img_ref,
+                    created_at: doc.data().created_at,
+                    user_id: doc.data().user_id || "1",
+                    id: doc.id
+                });
+                // console.log("TRANSFER", doc.id);
+            });
+            // console.log("USER TRANSFERS", userTransfers);
+            setTransfers(userTransfers);
+            setTransferLog(userTransfers);
+            setFilterValue("year");
+        });
+
+
+        return unsubscribe;
+    }, []);
+
 
     useEffect(() => {
         if (filterValue === "day") {
@@ -108,8 +145,8 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
         } else if (filterValue === "year") {
             setHistoryData([
                 {
-                    title: "2022",
-                    data: userTransfers,
+                    title: "2023",
+                    data: transferLog,
                 },
             ]);
         }
@@ -124,7 +161,7 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
         });
 
     const renderAccountPanelItem = ({ item }) => {
-        console.log(item);
+        console.log("ITEM:", item);
         return (
             <AccountPanelItem
                 iconColor={colors.primary.colorFive}

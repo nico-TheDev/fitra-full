@@ -48,7 +48,7 @@ const AccountsEditTransferScreen = ({ route }) => {
     const userAccounts = useAccountStore(state => state.accounts);
 
     const photoId = uuid.v4(); // unique id for new image
-    const [date, setDate] = useState(convertTimestamp(currentTransfer.created_at));
+    const [date, setDate] = useState(convertTimestamp(currentTransfer?.created_at));
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transfer/");
 
     const [senderItems, setSenderItems] = useState(() => {
@@ -92,7 +92,7 @@ const AccountsEditTransferScreen = ({ route }) => {
         let updatedImg = imgFile ? imgFile.imgUri : currentTransfer.comment_img;
 
         const newTransfer = {
-            transfer_amount: Number(values.transferAmount),
+            transfer_amount: String(values.transferAmount),
             sender_account_id: values.senderAccountId,
             sender_account_name: values.senderAccountName,
             receiver_account_id: values.receiverAccountId,
