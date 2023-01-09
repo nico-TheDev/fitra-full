@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { View } from "react-native";
 // LOCAL IMPORTS
 
 import ScreenHeader from "components/ScreenHeader";
@@ -10,13 +11,20 @@ import { transferHistoryLogData } from "fitra/SampleData";
 import convertTimestamp from "util/convertTimestamp";
 import formatDate from "util/formatDate";
 
-import { SectionHeader, TransferHistoryContainer, TransferSectionList } from "./styles";
+import {
+    SectionHeader,
+    TransferHistoryContainer,
+    TransferSectionList,
+    Placeholder,
+    ViewHolder,
+} from "./styles";
 
 import useAuthStore from "hooks/useAuthStore";
 import useTransferStore from "hooks/useTransferStore";
 import useTransferListener from "hooks/useTransferListener";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "fitra/firebase.config";
+import Button from "components/Button";
 
 const AccountsTransferHistoryScreen = ({ navigation }) => {
     const [items, setItems] = useState([
@@ -26,7 +34,7 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
     ]);
 
     const user = useAuthStore((state) => state.user);
-    const setTransfers = useTransferStore(state => state.setTransfers);
+    const setTransfers = useTransferStore((state) => state.setTransfers);
     const transferColRef = collection(db, "transfers");
     let [transferLog, setTransferLog] = useState([]);
     const transferQuery = query(transferColRef, where("user_id", "==", user.user_id));
@@ -36,12 +44,11 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
     const [historyData, setHistoryData] = useState([]);
     const [filterValue, setFilterValue] = useState("");
 
-
     useEffect(() => {
         const unsubscribe = onSnapshot(transferQuery, (snapshotData) => {
             // console.log(userID);
             const userTransfers = [];
-            snapshotData.forEach(doc => {
+            snapshotData.forEach((doc) => {
                 userTransfers.push({
                     sender_account_name: doc.data().sender_account_name,
                     sender_account_id: doc.data().sender_account_id,
@@ -53,7 +60,7 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
                     comment_img_ref: doc.data().comment_img_ref,
                     created_at: doc.data().created_at,
                     user_id: doc.data().user_id || "1",
-                    id: doc.id
+                    id: doc.id,
                 });
                 // console.log("TRANSFER", doc.id);
             });
@@ -63,10 +70,8 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
             setFilterValue("year");
         });
 
-
         return unsubscribe;
     }, []);
-
 
     useEffect(() => {
         if (filterValue === "day") {
@@ -160,6 +165,13 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
             },
         });
 
+    const handleTransferNavigate = (screen) => {
+        navigation.navigate("Accounts", {
+            screen,
+            initial: false,
+        });
+    };
+
     const renderAccountPanelItem = ({ item }) => {
         console.log("ITEM:", item);
         return (
@@ -182,14 +194,29 @@ const AccountsTransferHistoryScreen = ({ navigation }) => {
                 setValue={setFilterValue}
                 value={filterValue}
             />
-            <TransferSectionList
-                sections={historyData}
-                keyExtractor={(item, index) => item + index}
-                renderItem={renderAccountPanelItem}
-                renderSectionHeader={({ section: { title } }) => (
-                    <SectionHeader>{title}</SectionHeader>
-                )}
-            />
+            {transferLog.length !== 0 ? (
+                <TransferSectionList
+                    sections={historyData}
+                    keyExtractor={(item, index) => item + index}
+                    renderItem={renderAccountPanelItem}
+                    renderSectionHeader={({ section: { title } }) => (
+                        <SectionHeader>{title}</SectionHeader>
+                    )}
+                />
+            ) : (
+                <ViewHolder>
+                    <Placeholder>📩 Start Adding Transfers</Placeholder>
+                    <Button
+                        type="filled"
+                        width="160px"
+                        iconSize={20}
+                        title="Add Transfer"
+                        rounded="15px"
+                        textSize={14}
+                        onPress={() => handleTransferNavigate("AccountsCTScreen")}
+                    />
+                </ViewHolder>
+            )}
         </TransferHistoryContainer>
     );
 };

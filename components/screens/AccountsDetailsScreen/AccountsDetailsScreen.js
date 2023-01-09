@@ -161,7 +161,7 @@ const AccountsDetailsScreen = ({ route }) => {
                     inputProps={{
                         placeholder: "Account Amount",
                         onChangeText: formik.handleChange("account_amount"),
-                        value: formik.values.account_amount,
+                        value: String(formik.values.account_amount),
                         editable: mode === "edit"
                     }}
                     customLabel="Amount:"

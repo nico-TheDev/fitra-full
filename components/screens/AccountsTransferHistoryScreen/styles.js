@@ -15,3 +15,14 @@ export const SectionHeader = styled.Text`
     font-size: 20px;
     margin-bottom: 10px;
 `;
+
+
+export const Placeholder = styled.Text`
+    font-size: 20px;
+    padding:10px;
+    font-family: ${FONTS.BOLD};
+`;
+
+export const ViewHolder = styled.View`
+align-items: center;
+`;

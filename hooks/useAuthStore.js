@@ -66,7 +66,7 @@ const authStore = (set) => ({
         }
         catch (err) {
             Alert.alert('Status', 'Email and password incorrect. Login failed.');
-            console.log(err);
+            console.log(err.message);
         }
     },
     logoutUser: async () => {

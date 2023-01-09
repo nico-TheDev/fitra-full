@@ -1,4 +1,4 @@
-import { Text } from "react-native";
+import { Alert, Text } from "react-native";
 import React from "react";
 import { useFormik } from "formik";
 
@@ -46,20 +46,24 @@ const RegisterScreen = ({ navigation }) => {
     };
 
     const handleFormikSubmit = async (values, { resetForm }) => {
-        console.log(values);
-        let imgFile;
-        if (image) {
-            imgFile = await uploadImage();
+        // console.log(values);
+        if (values.firstName === "" || values.lastName === "" || values.email === "" || values.password === "") {
+            Alert.alert("Incomplete Input", "Please fill up your first name, last name, email and password");
+        } else {
+            let imgFile;
+            if (image) {
+                imgFile = await uploadImage();
+            }
+            addUser({
+                firstName: values.firstName,
+                lastName: values.lastName,
+                email: values.email,
+                password: values.password,
+                profile_img_ref: imgFile ? imgFile.imgRef : "",
+                profile_img: imgFile ? imgFile.imgUri : "",
+            });
+            resetForm();
         }
-        addUser({
-            firstName: values.firstName,
-            lastName: values.lastName,
-            email: values.email,
-            password: values.password,
-            profile_img_ref: imgFile ? imgFile.imgRef : "",
-            profile_img: imgFile ? imgFile.imgUri : "",
-        });
-        resetForm();
     };
 
     const formik = useFormik({

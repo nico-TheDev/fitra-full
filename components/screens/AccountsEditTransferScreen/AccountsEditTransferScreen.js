@@ -123,7 +123,7 @@ const AccountsEditTransferScreen = ({ route }) => {
     const handleDelete = () => {
         deleteTransfer(transferID, currentTransfer.comment_img_ref);
         Alert.alert("Success", "Item Deleted.");
-        navigation.navigate("Accounts", { screen: "AccountsMain" });
+        navigation.navigate("Accounts", { screen: "AccountsTransferHistoryScreen" });
     };
 
     const handleSelectDate = (event, selectedDate) => {
@@ -237,7 +237,7 @@ const AccountsEditTransferScreen = ({ route }) => {
                 />
                 <CustomDatePicker
                     date={date}
-                    buttonProps={{ disabled: false }}
+                    buttonProps={{ disabled: mode === "edit" ? false : true }}
                     onChange={handleSelectDate}
                 />
                 <CommentInput

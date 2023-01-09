@@ -1,4 +1,4 @@
-import { TouchableOpacity } from "react-native";
+import { Alert, TouchableOpacity } from "react-native";
 import React from "react";
 import { useFormik } from "formik";
 
@@ -37,36 +37,20 @@ const LoginScreen = ({ navigation }) => {
     const initialValues = { email: "", password: "" };
 
     const handleFormikSubmit = (values) => {
-        verifyUser({
-            email: values.email,
-            password: values.password
-        });
+        if (values.email === "" || values.password === "") {
+            Alert.alert("Incomplete Input", "Please fill up the email and password.");
+        } else {
+            verifyUser({
+                email: values.email,
+                password: values.password
+            });
+        };
     };
 
     const formik = useFormik({
         initialValues: initialValues,
         onSubmit: handleFormikSubmit,
     });
-
-    // useEffect(() => {
-    //     const response = GOOGLE_CLIENT_ID;
-    // });
-
-    // const handleGoogleSignIn = (response) => {
-    //     try{
-    //         const idToken = response.credential;
-    //         const credential = GoogleAuthProvider.credential(idToken);
-    //         signInWithCredential(auth, credential).catch((error) => {
-    //             const errorCode = error.code;
-    //             const errorMessage = error.message;
-    //             const email = error.email;
-    //             const credential = GoogleAuthProvider.credentialFromError(error);
-    //             // ...
-    //         });
-    //     }catch(err){
-    //         console.log(err)
-    //     }
-    // }
 
     return (
         <LoginScreenContainer>
