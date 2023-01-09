@@ -20,8 +20,9 @@ import {
     UserImg,
 } from "./styles";
 
-import { auth, storage } from "../../../firebase.config";
+import { auth, db, storage } from "../../../firebase.config";
 import { deleteObject, ref } from "firebase/storage";
+import { doc, getDoc } from "firebase/firestore";
 
 import useAuthStore from "hooks/useAuthStore";
 import useUploadImage from "hooks/useUploadImage";
@@ -31,6 +32,8 @@ const EditProfileScreen = () => {
     const updateProfileName = useAuthStore((state) => state.updateProfileName);
     const updateProfileEmail = useAuthStore((state) => state.updateProfileEmail);
     const updateProfilePassword = useAuthStore((state) => state.updateProfilePassword);
+    // const updateDocument = useAuthStore((state) => state.updateDocument);
+    // const getCurrentDocument = useAuthStore((state) => state.getCurrentDocument);
 
     const photoId = uuid.v4();
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "users/");
@@ -38,10 +41,15 @@ const EditProfileScreen = () => {
     const logoutUser = useAuthStore((state) => state.logoutUser);
     const deleteUser = useAuthStore((state) => state.deleteUser);
 
-    const user = auth.currentUser;
-    const currentDisplayName = user.displayName;
-    const currentEmail = user.email;
-    const currentPhotoURL = user.photoURL;
+    const current_user = auth.currentUser;
+    const currentDisplayName = current_user.displayName;
+    const currentEmail = current_user.email;
+    const currentUserID= current_user.uid;
+    const currentPhotoURL = current_user.photoURL
+
+    // const currentDocument = getCurrentDocument(currentUserID);
+    // const current_profile_img = currentDocument.profile_img;
+    // const current_profile_img_ref = currentDocument.profile_img_ref;
 
     const initialValues = {
         displayName: currentDisplayName,
@@ -63,13 +71,19 @@ const EditProfileScreen = () => {
             imgFile = await uploadImage();
         }
 
-        let updatedImgRef = imgFile ? imgFile.imgRef : currentPhotoURL;
-        let updatedImg = imgFile ? imgFile.imgUri : currentPhotoURL;
+        // let updatedImgRef = imgFile ? imgFile.imgRef : current_profile_img_ref;
+        // let updatedImg = imgFile ? imgFile.imgUri : current_profile_img;
+
+        // const newImage = {
+        //     profile_img: updatedImg,
+        //     profile_img_ref:updatedImgRef
+        // }
 
         updateProfileName({
             new_displayName: values.displayName,
-            new_image: values.updatedImg,
+            // new_image: updatedImg
         });
+        // updateDocument(currentUserID, newImage);
         updateProfileEmail({ new_email: values.email });
         updateProfilePassword({ new_password: values.password });
         Alert.alert("SUCCESS", "Profile Updated");
@@ -137,7 +151,7 @@ const EditProfileScreen = () => {
 
             {currentPhotoURL || image ? (
                 <TouchableOpacity onPress={chooseImage}>
-                    <UserImg source={{ uri: image.uri }} />
+                    <UserImg source={{ uri: currentPhotoURL }} />
                 </TouchableOpacity>
             ) : (
                 <TouchableOpacity onPress={chooseImage}>

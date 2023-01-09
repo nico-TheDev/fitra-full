@@ -1,6 +1,6 @@
 import create from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, documentId } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, updateEmail, updatePassword, signOut, deleteUser } from "firebase/auth";
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -87,6 +87,10 @@ const authStore = (set) => ({
             console.log(err);
         }
     },
+    // getCurrentDocument: async (editUser) => {
+    //     document = await getDoc(doc(db, "users", editUser));
+    //     return document;
+    // },
     updateProfileName: async (editUser) => {
         await updateProfile(auth.currentUser, {
             displayName: editUser.new_displayName,    //updates displayName
@@ -98,6 +102,14 @@ const authStore = (set) => ({
     },
     updateProfilePassword: async (editUser) => {
         await updatePassword(auth.currentUser, editUser.new_password);  //updates password
+    },
+    updateDocument: async (documentId, updatedDocument) => {
+        try {
+            docRef = doc(db, "users", documentId);
+            await updateDoc(docRef, updatedDocument);
+        } catch (err) {
+            console.log("updateDocumentError:", err);
+        }
     },
     deleteUser: async () => {
         await deleteUser(auth.currentUser);                         //delete user

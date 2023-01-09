@@ -11,6 +11,7 @@ const DashboardHead = () => {
     const navigation = useNavigation();
 
     const user = useAuthStore(state => state.user);
+
     return (
         <HeadContainer>
             <TouchableOpacity onPress={() =>
