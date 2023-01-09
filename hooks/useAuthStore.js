@@ -1,6 +1,6 @@
 import create from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
-import { doc, setDoc, getDoc, documentId } from 'firebase/firestore';
+import { doc, setDoc, getDoc, documentId, updateDoc } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, updateEmail, updatePassword, signOut, deleteUser } from "firebase/auth";
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,8 +24,8 @@ const authStore = (set) => ({
             });
             await setDoc(doc(db, "users", createdUserResponse.user.uid), {      //sets document of user
                 uid: createdUserResponse.user.uid,                              //generated uid
-                first_Name: newUser.firstName,                  //fetched data from firstName (RegisterScreen) will be stored here
-                last_Name: newUser.lastName,                    //fetched data from lastName (RegisterScreen) will be stored here
+                first_name: newUser.firstName,                  //fetched data from firstName (RegisterScreen) will be stored here
+                last_name: newUser.lastName,                    //fetched data from lastName (RegisterScreen) will be stored here
                 email: newUser.email,                           //fetched data from email (RegisterScreen) will be stored here
                 profile_img_ref: newUser.profile_img_ref,       //fetched data from profile_img (RegisterScreen) will be stored here
                 profile_img: newUser.profile_img                //fetched data from profile_img (RegisterScreen) will be stored here
@@ -87,10 +87,14 @@ const authStore = (set) => ({
             console.log(err);
         }
     },
-    // getCurrentDocument: async (editUser) => {
-    //     document = await getDoc(doc(db, "users", editUser));
-    //     return document;
-    // },
+    getCurrentDocument: async (editUser) => {
+        const docRef = doc(db, "users", editUser);
+        const document = await getDoc(docRef);
+
+        if (document.exists()) {
+            return document.data();
+        }
+    },
     updateProfileName: async (editUser) => {
         await updateProfile(auth.currentUser, {
             displayName: editUser.new_displayName,    //updates displayName
@@ -105,7 +109,7 @@ const authStore = (set) => ({
     },
     updateDocument: async (documentId, updatedDocument) => {
         try {
-            docRef = doc(db, "users", documentId);
+            const docRef = doc(db, "users", documentId);
             await updateDoc(docRef, updatedDocument);
         } catch (err) {
             console.log("updateDocumentError:", err);

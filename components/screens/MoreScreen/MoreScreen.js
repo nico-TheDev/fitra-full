@@ -19,21 +19,6 @@ import colors from "assets/themes/colors";
 import useAuthStore from 'hooks/useAuthStore';
 import useCategoriesStore from "hooks/useCategoriesData";
 
-// const BUTTONDATA = [
-//     {
-//         id: 1,
-//         title: "Settings",
-//         iconName: ICON_NAMES.SYSTEM_ICONS.SETTINGS,
-//         function: "handleSettings"
-//     },
-//     {
-//         id: 2,
-//         title: "Logout",
-//         iconName: ICON_NAMES.SYSTEM_ICONS.LOGOUT,
-//         function: "handleLogOut"
-//     },
-// ];
-
 const MoreScreen = ({ navigation }) => {
     const resetCategories = useCategoriesStore(state => state.reset);
     const logoutUser = useAuthStore(state => state.logoutUser);
@@ -47,22 +32,6 @@ const MoreScreen = ({ navigation }) => {
         logoutUser();
         resetCategories();
     };
-
-    // const renderItem = ({ item }) => (
-    //     <Button
-    //         title={item.title}
-    //         textSize={24}
-    //         iconName={item.iconName}
-    //         iconSize={40}
-    //         iconColor={colors.primary.colorFive}
-    //         styles={{
-    //             justifyContent: "flex-start",
-    //             backgroundColor: "transparent",
-    //         }}
-    //         buttonLabelStyle={{ marginLeft: 20 }}
-    //         onPress={item.function}
-    //     />
-    // );
 
     return (
         <MorescreenContainer>

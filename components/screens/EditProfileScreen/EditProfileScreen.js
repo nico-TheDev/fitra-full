@@ -28,28 +28,30 @@ import useAuthStore from "hooks/useAuthStore";
 import useUploadImage from "hooks/useUploadImage";
 import Icon from "components/common/Icon";
 
-const EditProfileScreen = () => {
+const EditProfileScreen = ({ navigation }) => {
     const updateProfileName = useAuthStore((state) => state.updateProfileName);
     const updateProfileEmail = useAuthStore((state) => state.updateProfileEmail);
     const updateProfilePassword = useAuthStore((state) => state.updateProfilePassword);
-    // const updateDocument = useAuthStore((state) => state.updateDocument);
-    // const getCurrentDocument = useAuthStore((state) => state.getCurrentDocument);
+    const updateDocument = useAuthStore((state) => state.updateDocument);
+    const getCurrentDocument = useAuthStore((state) => state.getCurrentDocument);
 
     const photoId = uuid.v4();
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "users/");
 
+    const user = useAuthStore(state => state.user);
     const logoutUser = useAuthStore((state) => state.logoutUser);
+    const setUser = useAuthStore((state) => state.setUser);
     const deleteUser = useAuthStore((state) => state.deleteUser);
 
     const current_user = auth.currentUser;
     const currentDisplayName = current_user.displayName;
     const currentEmail = current_user.email;
-    const currentUserID= current_user.uid;
-    const currentPhotoURL = current_user.photoURL
+    const currentUserID = current_user.uid;
+    const currentPhotoURL = current_user.photoURL;
 
-    // const currentDocument = getCurrentDocument(currentUserID);
-    // const current_profile_img = currentDocument.profile_img;
-    // const current_profile_img_ref = currentDocument.profile_img_ref;
+    console.log(user);
+
+
 
     const initialValues = {
         displayName: currentDisplayName,
@@ -58,6 +60,11 @@ const EditProfileScreen = () => {
     };
 
     const handleFormikSubmit = async (values) => {
+        const currentDocument = await getCurrentDocument(currentUserID);
+        console.log("CURRENT DOCUMENT", currentDocument);
+        const current_profile_img = currentDocument.profile_img;
+        const current_profile_img_ref = currentDocument.profile_img_ref;
+
         let imgFile,
             oldImgRef = currentPhotoURL;
         // IF THERE IS AN EXISTING IMAGE AND NEW IMAGE IS SELECTED
@@ -71,24 +78,39 @@ const EditProfileScreen = () => {
             imgFile = await uploadImage();
         }
 
-        // let updatedImgRef = imgFile ? imgFile.imgRef : current_profile_img_ref;
-        // let updatedImg = imgFile ? imgFile.imgUri : current_profile_img;
-
-        // const newImage = {
-        //     profile_img: updatedImg,
-        //     profile_img_ref:updatedImgRef
-        // }
-
+        let updatedImgRef = imgFile ? imgFile.imgRef : current_profile_img_ref;
+        let updatedImg = imgFile ? imgFile.imgUri : current_profile_img;
+        updateDocument(currentUserID, {
+            email: values.email,
+            full_name: values.displayName,
+            first_name: values.displayName.split(" ")[0],
+            last_name: values.displayName.split(" ")[1],
+            profile_img: updatedImg,
+            profile_img_ref: updatedImgRef,
+        });
         updateProfileName({
             new_displayName: values.displayName,
-            // new_image: updatedImg
+            new_image: updatedImg
         });
-        // updateDocument(currentUserID, newImage);
         updateProfileEmail({ new_email: values.email });
-        updateProfilePassword({ new_password: values.password });
-        Alert.alert("SUCCESS", "Profile Updated");
+        if (values.password !== "") {
+            updateProfilePassword({ new_password: values.password });
+        }
 
+        // UPDATE LOCAL STATE
+        setUser({
+            email: values.email,
+            name: values.displayName,
+            user_id: currentUserID,
+            profile_img: updatedImg
+        });
+
+        Alert.alert("SUCCESS", "Profile Updated");
         formik.resetForm();
+
+        if (values.password !== "" || values.email !== currentEmail) {
+            logoutUser();
+        }
     };
 
     const showDeletePrompt = () => {
@@ -100,7 +122,7 @@ const EditProfileScreen = () => {
             },
             {
                 text: "No",
-                onPress: () => {},
+                onPress: () => { },
                 style: "cancel",
             },
         ]);
@@ -151,7 +173,7 @@ const EditProfileScreen = () => {
 
             {currentPhotoURL || image ? (
                 <TouchableOpacity onPress={chooseImage}>
-                    <UserImg source={{ uri: currentPhotoURL }} />
+                    <UserImg source={{ uri: currentPhotoURL || image.uri }} />
                 </TouchableOpacity>
             ) : (
                 <TouchableOpacity onPress={chooseImage}>
@@ -185,6 +207,7 @@ const EditProfileScreen = () => {
                         placeholder: "Edit Profile Password",
                         onChangeText: formik.handleChange("password"),
                         value: formik.values.password,
+                        secureTextEntry: true
                     }}
                     customLabel="Profile Password:"
                 />
