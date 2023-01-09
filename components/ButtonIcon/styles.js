@@ -33,6 +33,7 @@ export const ButtonLabel = styled.Text`
 `;
 
 export const CustomImage = styled.Image`
-    width:100%;
-    height:100%
+    width:100px;
+    height:100px;
+    border-radius: 200px;
 `;
