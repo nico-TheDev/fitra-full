@@ -12,16 +12,16 @@ const useTransferListener = (userID) => {
     const setTransfers = useTransferStore((state) => (state.setTransfers));
     const transferQuery = query(transferColRef, where("user_id", "==", userID));
 
-    const data = [...transfers];
-
     useEffect(() => {
         const unsubscribe = onSnapshot(transferQuery, (snapshotData) => {
             console.log(userID);
             const userTransfers = [];
             snapshotData.forEach(doc => {
                 userTransfers.push({
-                    from_account: doc.data().from_account,
-                    to_account: doc.data().to_account,
+                    sender_account_name: doc.data().sender_account_name,
+                    sender_account_id: doc.data().sender_account_id,
+                    receiver_account_id: doc.data().receiver_account_id,
+                    receiver_account_name: doc.data().receiver_account_name,
                     transfer_amount: doc.data().transfer_amount,
                     comments: doc.data().transfer_amount,
                     comment_img: doc.data().comment_img,
@@ -33,7 +33,7 @@ const useTransferListener = (userID) => {
                 console.log("TRANSFER", doc.id);
             });
             setTransfers(userTransfers);
-            setTransferLog(userTransfers)
+            setTransferLog(userTransfers);
         });
         return unsubscribe;
     }, []);

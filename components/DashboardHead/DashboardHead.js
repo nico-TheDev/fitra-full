@@ -11,6 +11,7 @@ const DashboardHead = () => {
     const navigation = useNavigation();
 
     const user = useAuthStore(state => state.user);
+
     return (
         <HeadContainer>
             <TouchableOpacity onPress={() =>
@@ -20,7 +21,7 @@ const DashboardHead = () => {
                 <UserImg source={user.profile_img ? { uri: user.profile_img } : profileImgPlaceholder} />
             </TouchableOpacity>
             <TextContainer>
-                <HeadingThree>Good Afternoon !</HeadingThree>
+                <HeadingThree>Good Day !</HeadingThree>
                 <HeadingThree>How is your spending ?</HeadingThree>
             </TextContainer>
         </HeadContainer>

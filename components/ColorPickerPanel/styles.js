@@ -47,9 +47,7 @@ export const TextLabel = styled.Text`
     margin-bottom: 10px;
 `;
 
-export const Selected = styled.Text`
-    font-family: ${FONTS.BLACK};
-    font-size: 20px;
-    text-align: center;
+export const Selected = styled.TouchableOpacity`
+    align-items:center;
     color: white;
 `;

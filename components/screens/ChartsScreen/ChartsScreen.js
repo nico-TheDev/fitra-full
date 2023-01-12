@@ -205,7 +205,6 @@ const ChartsScreen = () => {
             });
         } else if (currentTab === "expense") {
             const allExpenses = allTransactions.filter((item) => item.type === "expense");
-            setActiveData(allExpenses);
 
             const sortedByDate = allExpenses.sort(
                 (a, b) => a.created_at.seconds > b.created_at.seconds
@@ -291,11 +290,10 @@ const ChartsScreen = () => {
                     },
                 ],
             };
-
+            setActiveData(allExpenses);
             setExpenseData(expenseChartMonthData);
         } else if (currentTab === "income") {
             const allIncome = allTransactions.filter((item) => item.type === "income");
-            setActiveData(allIncome);
 
             const sortedByDate = allIncome.sort(
                 (a, b) => a.created_at.seconds > b.created_at.seconds
@@ -381,7 +379,7 @@ const ChartsScreen = () => {
                     },
                 ],
             };
-
+            setActiveData(allIncome);
             setIncomeData(incomeChartMonthData);
         }
     }, [currentTab]);
@@ -407,8 +405,7 @@ const ChartsScreen = () => {
             iconColor={item.transaction_color}
             title={item.category_name}
             price={String(item.amount)}
-            onPress={() => {}}
-            priceSub=""
+            onPress={() => { }}
         />
     );
 
@@ -426,21 +423,14 @@ const ChartsScreen = () => {
                 extraData={{ currentTab }}
             />
 
-            {/* <FilterInput
-                items={filterItems}
-                setItems={setFilterItems}
-                value={selectedFilter}
-                setValue={setSelectedFilter}
-            /> */}
-
             <ChartPanel horizontal={false}>
-                {chartData.generalYear && chartData.generalMonth && currentTab === "general" ? (
+                {(chartData.generalYear && chartData.generalMonth && currentTab === "general") ? (
                     <GeneralCharts
                         yearData={chartData.generalYear}
                         monthData={chartData.generalMonth}
                     />
                 ) : null}
-                {expenseData && currentTab === "expense" ? (
+                {(expenseData && currentTab === "expense") ? (
                     <BarChart
                         data={expenseData}
                         width={SLIDER_WIDTH * 0.9}
@@ -459,7 +449,7 @@ const ChartsScreen = () => {
                         verticalLabelRotation={90}
                     />
                 ) : null}
-                {incomeData && currentTab === "income" ? (
+                {(incomeData && currentTab === "income") ? (
                     <BarChart
                         data={incomeData}
                         width={SLIDER_WIDTH * 0.9}

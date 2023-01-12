@@ -25,19 +25,19 @@ const carouselData = [
     {
         title: "Monitor Your Cashflow",
         description:
-            "   Lorem ipsum dolor sit amet consectetur adipisicing elit.Laboriosam, eligendi!",
+            "   Welcome to our finance tracker! Keep track of all your expenses and income with ease.",
         illustration: IllustrationOne,
     },
     {
         title: "Know How to Grow your Money",
         description:
-            "   Lorem ipsum dolor sit amet consectetur adipisicing elit.Laboriosam, eligendi!",
+            "   Start achieving your financial goals today with our finance tracker! Keep all your financial information in one place and get insight into your spending habits.",
         illustration: IllustrationTwo,
     },
     {
         title: "Learn Financial Skills",
         description:
-            "   Lorem ipsum dolor sit amet consectetur adipisicing elit.Laboriosam, eligendi!",
+            "   Take the first step towards financial freedom with our finance tracker. Track your expenses and income with a simple, user-friendly interface.",
         illustration: IllustrationThree,
     },
 ];

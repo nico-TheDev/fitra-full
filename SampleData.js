@@ -1620,11 +1620,11 @@ export const trasferLog = [
 export const colorCollection = [
     {
         colorID: "1",
-        color: "#5FB572",
+        color: "#FF0032",
     },
     {
         colorID: "2",
-        color: "#00A3FF",
+        color: "#FF0032",
     },
     {
         colorID: "3",

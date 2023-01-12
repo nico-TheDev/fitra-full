@@ -12,9 +12,10 @@ export const MorescreenContainer = styled(Container)`
 export const UserContainer = styled.View`
     position: relative;
     justify-content: center;
-    padding-top: 60px;
+    padding-top: 80px;
     padding-bottom: 20px;
     align-items: center;
+    margin-bottom: 20px;
 `;
 export const Email = styled.Text`
     color: ${colors.white};

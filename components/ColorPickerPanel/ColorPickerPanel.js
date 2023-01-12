@@ -30,7 +30,10 @@ const ColorPickerPanel = ({ colorList = [], selectedColor, onColorPress, onAddPr
                     data={colorList}
                     renderItem={({ item }) => (
                         <ColorButton color={item.color} onPress={() => onColorPress(item.color)}>
-                            {selectedColor === item.color && <Selected>X</Selected>}
+                            {selectedColor === item.color && <Selected><Icon
+                                name={ICON_NAMES.SYSTEM_ICONS.CROSS}
+                                color={colors.white}
+                            /></Selected>}
                         </ColorButton>
                     )}
                     keyExtractor={(item) => item.colorID}

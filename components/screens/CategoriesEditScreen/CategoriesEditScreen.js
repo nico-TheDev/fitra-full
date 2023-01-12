@@ -21,7 +21,7 @@ import {
     CloseBtn
 } from "./styles";
 
-import { colorCollection } from "fitra/SampleData";
+import Colors from "fitra/data/colorsCollection";
 import useCategoriesData from "hooks/useCategoriesData";
 import useType from "hooks/useType";
 import { ICON_NAMES } from "constants/constant";
@@ -151,7 +151,7 @@ const CategoriesEditScreen = ({ route, navigation }) => {
                 setSelectedIcon={setSelectedIcon}
             />
             <ColorPickerPanel
-                colorList={colorCollection}
+                colorList={Colors}
                 onColorPress={handleColorPress}
                 selectedColor={selectedColor}
                 setSelectedColor={setSelectedColor}

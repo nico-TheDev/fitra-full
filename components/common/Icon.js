@@ -67,6 +67,9 @@ import StoreBusinessIcon from "assets/icons/StoreBusinessIcon";
 import StreamingSubscriptionIcon from "assets/icons/StreamingSubscriptionIcon";
 import TrainIcon from "assets/icons/TrainIcon";
 import WashingMachineIcon from "assets/icons/WashingMachineIcon";
+import ExpenseIcon from "assets/icons/ExpenseIcon";
+import IncomeIcon from "assets/icons/IncomeIcon";
+import CrossIcon from "assets/icons/CrossIcon";
 
 const Icon = ({ name, size = 40, color }) => {
     if (name === ICON_NAMES.SYSTEM_ICONS.ACCOUNT) return <AccountIcon color={color} size={size} />;
@@ -131,9 +134,13 @@ const Icon = ({ name, size = 40, color }) => {
     if (name === ICON_NAMES.CATEGORIES_ICONS.STREAMING_SUBSCRIPTION) return <StreamingSubscriptionIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.TRAIN) return <TrainIcon color={color} size={size} />;
     if (name === ICON_NAMES.SYSTEM_ICONS.TRANSFER) return <TransferIcon color={color} size={size} />;
-    if (name === ICON_NAMES.CATEGORIES_ICONS.USERPROFILE) return <UserProfileIcon color={color} size={size} />;
+    if (name === ICON_NAMES.SYSTEM_ICONS.USERPROFILE) return <UserProfileIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.WATER) return <WaterIcon color={color} size={size} />;
     if (name === ICON_NAMES.CATEGORIES_ICONS.WASHING_MACHINE) return <WashingMachineIcon color={color} size={size} />;
+    if (name === ICON_NAMES.SYSTEM_ICONS.EXPENSE) return <ExpenseIcon color={color} size={size} />;
+    if (name === ICON_NAMES.SYSTEM_ICONS.INCOME) return <IncomeIcon color={color} size={size} />;
+    if (name === ICON_NAMES.SYSTEM_ICONS.CROSS) return <CrossIcon color={color} size={size} />;
+
 
     return null;
 };

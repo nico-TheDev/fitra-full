@@ -1,4 +1,4 @@
-import { Text } from "react-native";
+import { Alert, Text } from "react-native";
 import React from "react";
 import { useFormik } from "formik";
 
@@ -10,7 +10,7 @@ import { ICON_NAMES } from "constants/constant";
 import CircleBigBg from "assets/illustrations/Cirle-Big-Bg.svg";
 import RegisterScreenLogo from "assets/illustrations/Colored-Profile-Logo.svg";
 import ButtonIcon from "components/ButtonIcon";
-import uuid from 'react-native-uuid';
+import uuid from "react-native-uuid";
 
 import {
     GreetingsHolder,
@@ -25,7 +25,7 @@ import {
     Input,
 } from "./styles";
 
-import useAuthStore from 'hooks/useAuthStore';
+import useAuthStore from "hooks/useAuthStore";
 import useUploadImage from "hooks/useUploadImage";
 
 const RegisterScreen = ({ navigation }) => {
@@ -36,7 +36,7 @@ const RegisterScreen = ({ navigation }) => {
 
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "users/");
 
-    const addUser = useAuthStore(state => state.addUser);
+    const addUser = useAuthStore((state) => state.addUser);
 
     const initialValues = {
         firstName: "",
@@ -46,20 +46,24 @@ const RegisterScreen = ({ navigation }) => {
     };
 
     const handleFormikSubmit = async (values, { resetForm }) => {
-        console.log(values);
-        let imgFile;
-        if (image) {
-            imgFile = await uploadImage();
+        // console.log(values);
+        if (values.firstName === "" || values.lastName === "" || values.email === "" || values.password === "") {
+            Alert.alert("Incomplete Input", "Please fill up your first name, last name, email and password");
+        } else {
+            let imgFile;
+            if (image) {
+                imgFile = await uploadImage();
+            }
+            addUser({
+                firstName: values.firstName,
+                lastName: values.lastName,
+                email: values.email,
+                password: values.password,
+                profile_img_ref: imgFile ? imgFile.imgRef : "",
+                profile_img: imgFile ? imgFile.imgUri : "",
+            });
+            resetForm();
         }
-        addUser({
-            firstName: values.firstName,
-            lastName: values.lastName,
-            email: values.email,
-            password: values.password,
-            profile_img_ref: imgFile ? imgFile.imgRef : "",
-            profile_img: imgFile ? imgFile.imgUri : "",
-        });
-        resetForm();
     };
 
     const formik = useFormik({
@@ -75,18 +79,16 @@ const RegisterScreen = ({ navigation }) => {
             <GreetingsHolder>
                 <RegisterWelcomeTextHolder>
                     <RegisterWelcomeText1>Create Account</RegisterWelcomeText1>
-                    <RegisterWelcomeText2>
-                        Start your financial journey !
-                    </RegisterWelcomeText2>
+                    <RegisterWelcomeText2>Start your financial journey !</RegisterWelcomeText2>
                 </RegisterWelcomeTextHolder>
                 <ButtonIcon
-                    name={ICON_NAMES.ADD_PHOTO_V1}
+                    name={ICON_NAMES.SYSTEM_ICONS.USERPROFILE}
                     iconColor={colors.primary.colorFive}
-                    type={'filled'}
+                    type={"filled"}
                     imageUri={image}
                     onPress={chooseImage}
                     filename={filename}
-                    iconSize={50}
+                    iconSize={100}
                 />
             </GreetingsHolder>
             <RegisterForm>
@@ -95,9 +97,7 @@ const RegisterScreen = ({ navigation }) => {
                         onChangeText={formik.handleChange("firstName")}
                         value={formik.values.firstName}
                         placeholder="First Name"
-                        placeholderTextColor={
-                            colors.primary.colorFive
-                        }
+                        placeholderTextColor={colors.primary.colorFive}
                     />
                 </InputHolder>
                 <InputHolder>
@@ -105,9 +105,7 @@ const RegisterScreen = ({ navigation }) => {
                         onChangeText={formik.handleChange("lastName")}
                         value={formik.values.lastName}
                         placeholder="Last Name"
-                        placeholderTextColor={
-                            colors.primary.colorFive
-                        }
+                        placeholderTextColor={colors.primary.colorFive}
                     />
                 </InputHolder>
                 <InputHolder>
@@ -115,9 +113,7 @@ const RegisterScreen = ({ navigation }) => {
                         onChangeText={formik.handleChange("email")}
                         value={formik.values.email}
                         placeholder="Email"
-                        placeholderTextColor={
-                            colors.primary.colorFive
-                        }
+                        placeholderTextColor={colors.primary.colorFive}
                     />
                 </InputHolder>
                 <InputHolder>
@@ -126,9 +122,7 @@ const RegisterScreen = ({ navigation }) => {
                         value={formik.values.password}
                         placeholder="Password"
                         secureTextEntry={true}
-                        placeholderTextColor={
-                            colors.primary.colorFive
-                        }
+                        placeholderTextColor={colors.primary.colorFive}
                     />
                 </InputHolder>
 
@@ -140,9 +134,9 @@ const RegisterScreen = ({ navigation }) => {
                         width={"100%"}
                         onPress={formik.handleSubmit}
                     />
-                    <Text style={{ color: colors.primary.colorFive }}>
-                        Lorem Ipsum Dolor amet
-                    </Text>
+                    <Button
+                        title="Have an account? Login"
+                        onPress={() => navigation.goBack()}></Button>
                 </RegisterFormButtonsHolder>
             </RegisterForm>
         </RegisterScreenContainer>

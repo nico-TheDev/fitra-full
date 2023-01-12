@@ -31,6 +31,8 @@ import convertTimestamp from "util/convertTimestamp";
 import useAuthStore from "hooks/useAuthStore";
 import useTransferStore from "hooks/useTransferStore";
 import useUploadImage from "hooks/useUploadImage";
+import useAccountStore from "hooks/useAccountStore";
+import capitalize from "util/capitalize";
 
 const AccountsEditTransferScreen = ({ route }) => {
     const { transferID } = route.params;
@@ -43,28 +45,31 @@ const AccountsEditTransferScreen = ({ route }) => {
     const deleteTransfer = useTransferStore(state => state.deleteTransfer);
     const updateTransfer = useTransferStore(state => state.updateTransfer);
     const [currentTransfer, setCurrentTransfer] = useState(() => transferList.find(transfer => transfer.id === transferID));
+    const userAccounts = useAccountStore(state => state.accounts);
 
     const photoId = uuid.v4(); // unique id for new image
-    const [date, setDate] = useState(convertTimestamp(currentTransfer.created_at));
+    const [date, setDate] = useState(convertTimestamp(currentTransfer?.created_at));
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transfer/");
 
-    // TODO: To be replaced with actual data
-    const [senderItems, setSenderItems] = useState([
-        { label: "Wallet", value: "wallet" },
-        { label: "GCASH", value: "gcash" },
-        { label: "UnionBank", value: "unionbank" },
-    ]);
-    const [receiverItems, setReceiverItems] = useState([
-        { label: "Wallet", value: "wallet" },
-        { label: "GCASH", value: "gcash" },
-        { label: "UnionBank", value: "unionbank" },
-    ]);
+    const [senderItems, setSenderItems] = useState(() => {
+        const accounts = userAccounts.map(account => ({ label: capitalize(account.account_name), value: account.id }));
+        return accounts;
+    });
+    const [selectedSender, setSelectedSender] = useState("");
+    const [selectedReceiver, setSelectedReceiver] = useState("");
+    const [receiverItems, setReceiverItems] = useState(() => {
+        const accounts = userAccounts.map(account => ({ label: capitalize(account.account_name), value: account.id }));
+        return accounts;
+    });
 
     // MANAGE THE STATE AFTER FIRST MOUNT
     useEffect(() => {
         const targetTransfer = transferList.find(transfer => transfer.id === transferID);
-        // console.log(targetTransaction);
+        console.log(targetTransfer);
         setCurrentTransfer(targetTransfer);
+        setSelectedSender(targetTransfer.sender_account_id);
+        setSelectedReceiver(targetTransfer.receiver_account_id);
+
     }, [transferID]);
 
     const handleFormikSubmit = async (values) => {
@@ -87,9 +92,11 @@ const AccountsEditTransferScreen = ({ route }) => {
         let updatedImg = imgFile ? imgFile.imgUri : currentTransfer.comment_img;
 
         const newTransfer = {
-            transfer_amount: Number(values.transfer_amount),
-            from_account: values.from_account,
-            to_account: values.to_account,
+            transfer_amount: String(values.transferAmount),
+            sender_account_id: values.senderAccountId,
+            sender_account_name: values.senderAccountName,
+            receiver_account_id: values.receiverAccountId,
+            receiver_account_name: values.receiverAccountName,
             comment_img_ref: updatedImgRef,
             comment_img: updatedImg,
             comments: values.comments,
@@ -116,7 +123,7 @@ const AccountsEditTransferScreen = ({ route }) => {
     const handleDelete = () => {
         deleteTransfer(transferID, currentTransfer.comment_img_ref);
         Alert.alert("Success", "Item Deleted.");
-        navigation.navigate("Accounts", { screen: "AccountsMain" });
+        navigation.navigate("Accounts", { screen: "AccountsTransferHistoryScreen" });
     };
 
     const handleSelectDate = (event, selectedDate) => {
@@ -124,6 +131,10 @@ const AccountsEditTransferScreen = ({ route }) => {
     };
 
     const initialValues = {
+        senderAccountId: currentTransfer.sender_account_id,
+        senderAccountName: currentTransfer.sender_account_name,
+        receiverAccountId: currentTransfer.receiver_account_id,
+        receiverAccountName: currentTransfer.receiver_account_name,
         transferAmount: String(currentTransfer.transfer_amount),
         fromAccount: currentTransfer.from_account,
         toAccount: currentTransfer.to_account,
@@ -185,9 +196,11 @@ const AccountsEditTransferScreen = ({ route }) => {
                         formik.setFieldValue("fromAccount", item.value);
                     },
                     disabled: mode === "edit" ? false : true,
-                    value: formik.values.fromAccount,
+                    value: formik.values.senderAccountId,
                 }}
                 customLabel="Transfer From Account"
+                setValue={setSelectedSender}
+                value={selectedSender}
             />
             <CustomDropdown
                 width="90%"
@@ -204,17 +217,19 @@ const AccountsEditTransferScreen = ({ route }) => {
                         formik.setFieldValue("toAccount", item.value);
                     },
                     disabled: mode === "edit" ? false : true,
-                    value: formik.values.toAccount,
+                    value: formik.values.receiverAccountId,
                 }}
                 customLabel="Transfer to Account"
+                setValue={setSelectedReceiver}
+                value={selectedReceiver}
             />
             <ScrollContainer centerContent={true}>
                 <CustomTextInput
                     inputProps={{
                         placeholder: "Enter Amount",
                         onChangeText:
-                        formik.handleChange("transferAmount"),
-                        value: formik.values.transferAmount,
+                            formik.handleChange("transferAmount"),
+                        value: String(formik.values.transferAmount),
                         keyboardType: "numeric",
                         editable: mode !== "edit" ? false : true,
                     }}
@@ -222,7 +237,7 @@ const AccountsEditTransferScreen = ({ route }) => {
                 />
                 <CustomDatePicker
                     date={date}
-                    buttonProps={{ disabled: false }}
+                    buttonProps={{ disabled: mode === "edit" ? false : true }}
                     onChange={handleSelectDate}
                 />
                 <CommentInput

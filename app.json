@@ -27,7 +27,8 @@
                 "backgroundColor": "#FFFFFF"
             },
             "package": "com.yourcompany.yourappname",
-            "versionCode": 1
+            "versionCode": 1,
+            "permissions": ["android.permission.RECORD_AUDIO"]
         },
         "web": {
             "favicon": "./assets/favicon.png"
@@ -36,9 +37,14 @@
             [
                 "expo-image-picker",
                 {
-                    "photosPermission": "The app accesses your photos to let you share them with your friends."
+                    "photosPermission": "The app accesses your photos to add more details to your experience."
                 }
             ]
-        ]
+        ],
+        "extra": {
+            "eas": {
+                "projectId": "b7cec5a8-e5de-47fc-9021-a94b6ec09136"
+            }
+        }
     }
 }

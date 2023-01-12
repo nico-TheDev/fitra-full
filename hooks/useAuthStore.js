@@ -1,10 +1,9 @@
 import create from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
-import { doc, setDoc } from 'firebase/firestore';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "firebase/auth";
+import { doc, setDoc, getDoc, documentId, updateDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, updateEmail, updatePassword, signOut, deleteUser } from "firebase/auth";
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 import { auth, db } from '../firebase.config';
 
@@ -25,8 +24,8 @@ const authStore = (set) => ({
             });
             await setDoc(doc(db, "users", createdUserResponse.user.uid), {      //sets document of user
                 uid: createdUserResponse.user.uid,                              //generated uid
-                first_Name: newUser.firstName,                  //fetched data from firstName (RegisterScreen) will be stored here
-                last_Name: newUser.lastName,                    //fetched data from lastName (RegisterScreen) will be stored here
+                first_name: newUser.firstName,                  //fetched data from firstName (RegisterScreen) will be stored here
+                last_name: newUser.lastName,                    //fetched data from lastName (RegisterScreen) will be stored here
                 email: newUser.email,                           //fetched data from email (RegisterScreen) will be stored here
                 profile_img_ref: newUser.profile_img_ref,       //fetched data from profile_img (RegisterScreen) will be stored here
                 profile_img: newUser.profile_img                //fetched data from profile_img (RegisterScreen) will be stored here
@@ -37,8 +36,6 @@ const authStore = (set) => ({
                 user_id: createdUserResponse.user.uid,
                 profile_img: createdUserResponse.user.photoURL
             };
-            // console.log(createdUserResponse);
-            // console.log(createdUser);
             set({
                 user: createdUser, isLoggedIn: true
             });
@@ -69,7 +66,7 @@ const authStore = (set) => ({
         }
         catch (err) {
             Alert.alert('Status', 'Email and password incorrect. Login failed.');
-            console.log(err);
+            console.log(err.message);
         }
     },
     logoutUser: async () => {
@@ -89,7 +86,38 @@ const authStore = (set) => ({
             Alert.alert('Status', 'Failed to log out.');
             console.log(err);
         }
-    }
+    },
+    getCurrentDocument: async (editUser) => {
+        const docRef = doc(db, "users", editUser);
+        const document = await getDoc(docRef);
+
+        if (document.exists()) {
+            return document.data();
+        }
+    },
+    updateProfileName: async (editUser) => {
+        await updateProfile(auth.currentUser, {
+            displayName: editUser.new_displayName,    //updates displayName
+            photoURL: editUser.new_image,                             //updates photoURL
+        });
+    },
+    updateProfileEmail: async (editUser) => {
+        await updateEmail(auth.currentUser, editUser.new_email);     //updates email
+    },
+    updateProfilePassword: async (editUser) => {
+        await updatePassword(auth.currentUser, editUser.new_password);  //updates password
+    },
+    updateDocument: async (documentId, updatedDocument) => {
+        try {
+            const docRef = doc(db, "users", documentId);
+            await updateDoc(docRef, updatedDocument);
+        } catch (err) {
+            console.log("updateDocumentError:", err);
+        }
+    },
+    deleteUser: async () => {
+        await deleteUser(auth.currentUser);                         //delete user
+    },
 });
 
 const useAuthStore = create(
