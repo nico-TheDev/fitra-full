@@ -20,7 +20,7 @@ import {
 } from "./styles";
 
 import useCategoriesData from "hooks/useCategoriesData";
-import { colorCollection } from "fitra/SampleData";
+import Colors from "fitra/data/colorsCollection";
 import { ICON_NAMES } from "constants/constant";
 import useAuthStore from "hooks/useAuthStore";
 import ColorPicker from "components/common/ColorPicker";
@@ -109,7 +109,7 @@ const CategoriesCreateScreen = ({ navigation }) => {
                 setSelectedIcon={setSelectedIcon}
             />
             <ColorPickerPanel
-                colorList={colorCollection}
+                colorList={Colors}
                 onColorPress={handleColorPress}
                 selectedColor={selectedColor}
                 setSelectedColor={setSelectedColor}

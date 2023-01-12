@@ -52,6 +52,7 @@ export const FigureTitle = styled.Text`
 export const FigureSub = styled.Text`
     font-size: 16px;
     font-family: ${FONTS.REGULAR};
+    text-align: center;
     color: ${colors.darkgray};
     margin-top: 40px;
 `;
