@@ -1,9 +1,8 @@
-import create from 'zustand';
-import { persist, devtools } from 'zustand/middleware';
+import { create } from 'zustand';
+import { persist, devtools, createJSONStorage } from 'zustand/middleware';
 import { doc, setDoc, getDoc, documentId, updateDoc } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, updateEmail, updatePassword, signOut, deleteUser } from "firebase/auth";
 import { Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { auth, db } from '../firebase.config';
 
@@ -126,7 +125,7 @@ const useAuthStore = create(
             authStore,
             {
                 name: "user",
-                getStorage: () => AsyncStorage
+                storage: createJSONStorage(() => sessionStorage)
             }
         )
     )
