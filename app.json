@@ -1,50 +1,55 @@
 {
-    "expo": {
-        "name": "fitra",
-        "slug": "fitra",
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "icon": "./assets/img/icon.png",
-        "userInterfaceStyle": "light",
-        "androidStatusBar": {
-            "backgroundColor": "#000000"
-        },
-        "splash": {
-            "image": "./assets/img/splash.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
-        },
-        "updates": {
-            "fallbackToCacheTimeout": 0
-        },
-        "assetBundlePatterns": ["**/*"],
-        "ios": {
-            "supportsTablet": true
-        },
-        "android": {
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/img/adaptive-icon.png",
-                "backgroundColor": "#FFFFFF"
-            },
-            "package": "com.yourcompany.yourappname",
-            "versionCode": 1,
-            "permissions": ["android.permission.RECORD_AUDIO"]
-        },
-        "web": {
-            "favicon": "./assets/favicon.png"
-        },
-        "plugins": [
-            [
-                "expo-image-picker",
-                {
-                    "photosPermission": "The app accesses your photos to add more details to your experience."
-                }
-            ]
-        ],
-        "extra": {
-            "eas": {
-                "projectId": "b7cec5a8-e5de-47fc-9021-a94b6ec09136"
-            }
+  "expo": {
+    "name": "fitra",
+    "slug": "fitra",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/img/icon.png",
+    "userInterfaceStyle": "light",
+    "androidStatusBar": {
+      "backgroundColor": "#000000"
+    },
+    "splash": {
+      "image": "./assets/img/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourcompany.yourappname"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/img/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.yourcompany.yourappname",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to add more details to your experience."
         }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b7cec5a8-e5de-47fc-9021-a94b6ec09136"
+      }
     }
+  }
 }

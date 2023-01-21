@@ -5,6 +5,7 @@
             "distribution": "internal"
         },
         "preview": {
+            "distribution": "internal",
             "android": {
                 "buildType": "apk"
             }
@@ -17,6 +18,16 @@
         "preview3": {
             "developmentClient": true
         },
-        "production": {}
+        "production": {
+            "env": {
+                "REACT_APP_API_KEY": "AIzaSyAblqc2OfmQc25dxGsXEyos1zUJe7VfdlU",
+                "REACT_APP_AUTH_DOMAIN": "fitra-d2324.firebaseapp.com",
+                "REACT_APP_PROJECT_ID": "fitra-d2324",
+                "REACT_APP_STORAGE_BUCKET": "fitra-d2324.appspot.com",
+                "REACT_APP_MESSAGING_SENDER_ID": "250395441915",
+                "REACT_APP_APP_ID": "1:250395441915:web:6a5af57f650239ab904e5e",
+                "REACT_APP_MEASUREMENT_ID": "G-03FHDEH2CX"
+            }
+        }
     }
 }
