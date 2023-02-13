@@ -1,7 +1,7 @@
 import { FlatList, Text } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { NumericFormat } from 'react-number-format';
+import { NumericFormat } from "react-number-format";
 
 // LOCAL IMPORTS
 import {
@@ -19,25 +19,38 @@ import CategoryPanelItem from "components/CategoryPanelItem";
 import useAccountsListener from "hooks/useAccountsListener";
 import useAuthStore from "hooks/useAuthStore";
 import useAccountStore from "hooks/useAccountStore";
+import { useEffect } from "react";
 
 const AccountsScreen = () => {
     const navigation = useNavigation();
-    const user = useAuthStore(state => state.user);
-    const accounts = useAccountStore(state => state.accounts);
-    const [totalBalance] = useAccountsListener(user.user_id);
+    const user = useAuthStore((state) => state.user);
+    const accounts = useAccountStore((state) => state.accounts);
+    // const [totalBalance] = useAccountsListener(user.user_id);
+    let [totalBalance, setTotalBalance] = useState("");
+
+    useEffect(() => {
+        const accountsTotal = accounts.reduce((acc, currentAccount) => {
+            acc += parseFloat(currentAccount.account_amount);
+            return acc;
+        }, 0);
+
+        setTotalBalance(accountsTotal);
+    }, [accounts]);
 
     const handleNavigation = (id) =>
         navigation.navigate("Accounts", {
             screen: "AccountsDetailsScreen",
             params: {
-                accountID: id
-            }
+                accountID: id,
+            },
         });
 
     const renderCategoryPanelItem = ({ item }) => {
         return (
             <CategoryPanelItem
-                onPress={() => { handleNavigation(item.id); }}
+                onPress={() => {
+                    handleNavigation(item.id);
+                }}
                 iconName={item.account_icon}
                 iconColor={item.account_color}
                 title={item.account_name}
@@ -62,11 +75,11 @@ const AccountsScreen = () => {
                 <TotalAmountBalanceLabel>
                     <NumericFormat
                         value={totalBalance}
-                        displayType={'text'}
+                        displayType={"text"}
                         thousandSeparator={true}
-                        prefix={'₱'}
+                        prefix={"₱"}
                         decimalScale={2}
-                        renderText={value => <Text>{value}</Text>}
+                        renderText={(value) => <Text>{value}</Text>}
                     />
                 </TotalAmountBalanceLabel>
             </TotalBalanceContainer>

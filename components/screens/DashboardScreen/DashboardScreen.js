@@ -2,8 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Dimensions, Text } from "react-native";
 import Carousel, { Pagination } from "react-native-snap-carousel";
-import { onSnapshot, collection, orderBy, query, where } from 'firebase/firestore';
-
+import { onSnapshot, collection, orderBy, query, where } from "firebase/firestore";
 
 // LOCAL IMPORTS
 
@@ -20,7 +19,7 @@ import getCurrentDate from "util/getCurrentDate";
 import useAuthStore from "hooks/useAuthStore";
 import useUserTransaction from "hooks/useUserTransaction";
 import Button from "components/Button";
-
+import useAccountsListener from "hooks/useAccountsListener";
 
 const dotStyle = {
     width: 15,
@@ -34,28 +33,22 @@ const DashboardScreen = ({ navigation }) => {
     const SLIDER_WIDTH = Dimensions.get("window").width;
     const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9);
     const [pageIndex, setPageIndex] = useState(0);
-    const transactions = useTransactionStore(state => state.transactions);
-    const user = useAuthStore(state => state.user);
+    const transactions = useTransactionStore((state) => state.transactions);
+    const user = useAuthStore((state) => state.user);
     const isCarousel = useRef(null);
     const [chartData] = useUserTransaction(user.user_id);
+    const _ = useAccountsListener(user.user_id);
 
     const handleNavigation = (id) =>
         navigation.navigate("Dashboard", {
             screen: "TransactionDetails",
             params: {
-                transactionID: id
-            }
-
+                transactionID: id,
+            },
         });
 
     const dashboardChartRenderItem = ({ item, index }) => {
-        return (
-            <DashboardChart
-                title={item.name}
-                chartData={item?.data}
-                key={index}
-            />
-        );
+        return <DashboardChart title={item.name} chartData={item?.data} key={index} />;
     };
 
     const recentPanelRenderItem = ({ item }) => {
@@ -70,7 +63,6 @@ const DashboardScreen = ({ navigation }) => {
 
     const handleAddTransaction = () => navigation.navigate("AddTransaction");
 
-
     return (
         <DashboardContainer>
             {/* BACKGROUND */}
@@ -79,41 +71,54 @@ const DashboardScreen = ({ navigation }) => {
             <DashboardHead />
             <DashboardDate>{getCurrentDate()}</DashboardDate>
 
-            {transactions.length ? <Carousel
-                ref={isCarousel}
-                data={chartData}
-                renderItem={dashboardChartRenderItem}
-                sliderWidth={SLIDER_WIDTH}
-                itemWidth={ITEM_WIDTH}
-                loop={true}
-                onSnapToItem={(i) => setPageIndex(i)}
-            /> : <DefaultTransactionPanel>
-                <DefaultText>💵</DefaultText>
-                <DefaultText>Start tracking to see graphs</DefaultText>
-                <Button title="Add Transaction" type="filled" onPress={handleAddTransaction} styles={{ marginTop: 30 }} />
-            </DefaultTransactionPanel>}
+            {transactions.length ? (
+                <Carousel
+                    ref={isCarousel}
+                    data={chartData}
+                    renderItem={dashboardChartRenderItem}
+                    sliderWidth={SLIDER_WIDTH}
+                    itemWidth={ITEM_WIDTH}
+                    loop={true}
+                    onSnapToItem={(i) => setPageIndex(i)}
+                />
+            ) : (
+                <DefaultTransactionPanel>
+                    <DefaultText>💵</DefaultText>
+                    <DefaultText>Start tracking to see graphs</DefaultText>
+                    <Button
+                        title="Add Transaction"
+                        type="filled"
+                        onPress={handleAddTransaction}
+                        styles={{ marginTop: 30 }}
+                    />
+                </DefaultTransactionPanel>
+            )}
 
-            {transactions.length ? <Pagination
-                dotsLength={chartData.length}
-                activeDotIndex={pageIndex}
-                carouselRef={isCarousel}
-                dotStyle={dotStyle}
-                tappableDots={true}
-                inactiveDotStyle={{
-                    backgroundColor: colors.darkgray,
-                }}
-                inactiveDotOpacity={0.4}
-                inactiveDotScale={0.8}
-            /> : null}
+            {transactions.length ? (
+                <Pagination
+                    dotsLength={chartData.length}
+                    activeDotIndex={pageIndex}
+                    carouselRef={isCarousel}
+                    dotStyle={dotStyle}
+                    tappableDots={true}
+                    inactiveDotStyle={{
+                        backgroundColor: colors.darkgray,
+                    }}
+                    inactiveDotOpacity={0.4}
+                    inactiveDotScale={0.8}
+                />
+            ) : null}
 
-            {transactions.length ? <Carousel
-                data={transactions.slice(0, 5)}
-                renderItem={recentPanelRenderItem}
-                sliderWidth={SLIDER_WIDTH}
-                itemWidth={ITEM_WIDTH}
-                loop={true}
-                firstItem={0}
-            /> : null}
+            {transactions.length ? (
+                <Carousel
+                    data={transactions.slice(0, 5)}
+                    renderItem={recentPanelRenderItem}
+                    sliderWidth={SLIDER_WIDTH}
+                    itemWidth={ITEM_WIDTH}
+                    loop={true}
+                    firstItem={0}
+                />
+            ) : null}
         </DashboardContainer>
     );
 };
