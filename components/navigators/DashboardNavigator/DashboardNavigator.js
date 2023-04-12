@@ -9,6 +9,7 @@ import AddTransactionScreen from "components/screens/AddTransactionScreen";
 import EditTransactionScreen from "components/screens/EditTransactionScreen";
 import MoreScreen from "components/screens/MoreScreen";
 import EditProfileScreen from "components/screens/EditProfileScreen";
+import AboutScreen from "components/screens/AboutScreen/AboutScreen";
 
 const DashboardStack = createNativeStackNavigator();
 
@@ -47,6 +48,10 @@ const DashboardNavigator = () => {
             <DashboardStack.Screen
                 name="EditProfile"
                 component={EditProfileScreen}
+            />
+            <DashboardStack.Screen
+                name="About"
+                component={AboutScreen}
             />
         </DashboardStack.Navigator>
     );

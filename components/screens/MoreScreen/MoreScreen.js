@@ -28,6 +28,7 @@ const MoreScreen = ({ navigation }) => {
     const circleHeight = 275;
 
     const handleEditProfile = () => navigation.navigate("EditProfile");
+    const handleAbout = () => navigation.navigate("About");
     const handleLogOut = () => {
         logoutUser();
         resetCategories();
@@ -58,6 +59,19 @@ const MoreScreen = ({ navigation }) => {
                 }}
                 buttonLabelStyle={{ marginLeft: 20 }}
                 onPress={handleEditProfile}
+            />
+            <Button
+                title="About Us"
+                textSize={24}
+                iconName={ICON_NAMES.SYSTEM_ICONS.MORE}
+                iconSize={40}
+                iconColor={colors.primary.colorFive}
+                styles={{
+                    justifyContent: "flex-start",
+                    backgroundColor: "transparent",
+                }}
+                buttonLabelStyle={{ marginLeft: 20 }}
+                onPress={handleAbout}
             />
             <Button
                 title="Log Out"
