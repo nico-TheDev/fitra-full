@@ -13,7 +13,8 @@ import {
 } from "./styles";
 
 import Logo from '../../../assets/img/icon.png';
-import xcImg from '../../../assets/img/xc.jpg'
+import xcImg from '../../../assets/img/xc.jpg';
+import nicoImg from '../../../assets/img/nico.png';
 import ScreenHeader from "components/ScreenHeader";
 
 const AboutScreen = () => {

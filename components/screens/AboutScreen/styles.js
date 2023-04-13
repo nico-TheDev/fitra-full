@@ -40,13 +40,13 @@ export const DetailsHolder = styled.View`
 export const NameText = styled.Text`
     font-family: ${FONTS.BLACK};
     font-size: 16px;
-    width:50%;
+    width:100%;
 `;
 
 export const PositionText = styled.Text`
     font-family: ${FONTS.REGULAR};
     font-size: 12px;
-    width:50%;
+    width:100%;
     color: ${colors.darkgray};
 `;
 
