@@ -29,15 +29,14 @@ const carouselData = [
         illustration: IllustrationOne,
     },
     {
-        title: "Know How to Grow your Money",
+        title: "Increase your financial awareness",
         description:
-            "   Start achieving your financial goals today with our finance tracker! Keep all your financial information in one place and get insight into your spending habits.",
+            "Start using Fitra to improve your financial awareness by monitoring your cashflow",
         illustration: IllustrationTwo,
     },
     {
-        title: "Learn Financial Skills",
-        description:
-            "   Take the first step towards financial freedom with our finance tracker. Track your expenses and income with a simple, user-friendly interface.",
+        title: "Analyze your spending habits",
+        description: "Track your expenses and income with a simple, user-friendly interface.",
         illustration: IllustrationThree,
     },
 ];

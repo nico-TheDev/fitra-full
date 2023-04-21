@@ -28,7 +28,7 @@
     "prop-types": "^15.8.1",
     "react": "18.1.0",
     "react-dom": "18.1.0",
-    "react-native": "0.70.5",
+    "react-native": "0.70.8",
     "react-native-chart-kit": "^6.12.0",
     "react-native-color-picker": "^0.6.0",
     "react-native-dotenv": "^3.4.2",
