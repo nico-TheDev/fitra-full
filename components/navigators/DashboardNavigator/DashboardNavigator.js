@@ -9,6 +9,7 @@ import AddTransactionScreen from "components/screens/AddTransactionScreen";
 import EditTransactionScreen from "components/screens/EditTransactionScreen";
 import MoreScreen from "components/screens/MoreScreen";
 import EditProfileScreen from "components/screens/EditProfileScreen";
+import AboutScreen from "components/screens/AboutScreen";
 
 const DashboardStack = createNativeStackNavigator();
 
@@ -18,36 +19,15 @@ const DashboardNavigator = () => {
             screenOptions={{
                 headerShown: false,
             }}
-            initialRouteName="DashboardMain"
-        >
-            <DashboardStack.Screen
-                name="DashboardMain"
-                component={DashboardScreen}
-            />
-            <DashboardStack.Screen
-                name="TransactionDetails"
-                component={TransactionDetailsScreen}
-            />
-            <DashboardStack.Screen
-                name="TransactionHistory"
-                component={TransactionHistoryScreen}
-            />
-            <DashboardStack.Screen
-                name="AddTransaction"
-                component={AddTransactionScreen}
-            />
-            <DashboardStack.Screen
-                name="EditTransaction"
-                component={EditTransactionScreen}
-            />
-            <DashboardStack.Screen
-                name="More"
-                component={MoreScreen}
-            />
-            <DashboardStack.Screen
-                name="EditProfile"
-                component={EditProfileScreen}
-            />
+            initialRouteName="DashboardMain">
+            <DashboardStack.Screen name="DashboardMain" component={DashboardScreen} />
+            <DashboardStack.Screen name="TransactionDetails" component={TransactionDetailsScreen} />
+            <DashboardStack.Screen name="TransactionHistory" component={TransactionHistoryScreen} />
+            <DashboardStack.Screen name="AddTransaction" component={AddTransactionScreen} />
+            <DashboardStack.Screen name="EditTransaction" component={EditTransactionScreen} />
+            <DashboardStack.Screen name="More" component={MoreScreen} />
+            <DashboardStack.Screen name="About" component={AboutScreen} />
+            <DashboardStack.Screen name="EditProfile" component={EditProfileScreen} />
         </DashboardStack.Navigator>
     );
 };
