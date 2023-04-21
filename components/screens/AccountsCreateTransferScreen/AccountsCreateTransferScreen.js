@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Alert } from "react-native";
 import { useFormik } from "formik";
 import uuid from 'react-native-uuid';
+import Toast from "react-native-toast-message";
 
 // LOCAL IMPORTS
 import Button from "components/Button";
@@ -25,23 +26,29 @@ import capitalize from "util/capitalize";
 
 const AccountsCreateTransferScreen = ({ navigation }) => {
     let photoId = uuid.v4();
-    const user = useAuthStore(state => state.user);
-    const transfers = useTransferStore(state => state.transfers);
+    const user = useAuthStore((state) => state.user);
+    const transfers = useTransferStore((state) => state.transfers);
     const addTransfer = useTransferStore((state) => state.addTransfer);
-    const userAccounts = useAccountStore(state => state.accounts);
+    const userAccounts = useAccountStore((state) => state.accounts);
 
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transfer/");
     // DATE VALUE is current Date
     const [date, setDate] = useState(new Date());
 
     const [senderItems, setSenderItems] = useState(() => {
-        const accounts = userAccounts.map(account => ({ label: capitalize(account.account_name), value: account.id }));
+        const accounts = userAccounts.map((account) => ({
+            label: capitalize(account.account_name),
+            value: account.id,
+        }));
         return accounts;
     });
     const [selectedSender, setSelectedSender] = useState("");
     const [selectedReceiver, setSelectedReceiver] = useState("");
     const [receiverItems, setReceiverItems] = useState(() => {
-        const accounts = userAccounts.map(account => ({ label: capitalize(account.account_name), value: account.id }));
+        const accounts = userAccounts.map((account) => ({
+            label: capitalize(account.account_name),
+            value: account.id,
+        }));
         return accounts;
     });
 
@@ -62,11 +69,16 @@ const AccountsCreateTransferScreen = ({ navigation }) => {
             comment_img: imgFile ? imgFile.imgUri : "",
             comments: values.comments,
             user_id: user.user_id,
-            created_at: date
+            created_at: date,
         });
         console.log(values);
         resetForm();
-        Alert.alert("Success", "Transfer Created.");
+        Toast.show({
+            type: "success",
+            text1: "Success",
+            text2: "Transfer Created.",
+        });
+        // Alert.alert("Success", "Transfer Created.");
         navigation.navigate("Accounts", { screen: "AccountsMain" });
     };
 
@@ -104,9 +116,9 @@ const AccountsCreateTransferScreen = ({ navigation }) => {
                     zIndexInverse: 1000,
                     onChangeValue: (value) => {
                         formik.setFieldValue("senderAccountId", value);
-                        const targetAccount = senderItems.find(item => item.value === value);
+                        const targetAccount = senderItems.find((item) => item.value === value);
                         formik.setFieldValue("senderAccountName", targetAccount.label);
-                    }
+                    },
                 }}
                 customLabel="Transfer From Account"
                 setValue={setSelectedSender}
@@ -122,9 +134,9 @@ const AccountsCreateTransferScreen = ({ navigation }) => {
                     zIndexInverse: 3000,
                     onChangeValue: (value) => {
                         formik.setFieldValue("receiverAccountId", value);
-                        const targetAccount = receiverItems.find(item => item.value === value);
+                        const targetAccount = receiverItems.find((item) => item.value === value);
                         formik.setFieldValue("receiverAccountName", targetAccount.label);
-                    }
+                    },
                 }}
                 customLabel="Transfer to Account"
                 setValue={setSelectedReceiver}

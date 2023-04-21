@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 // FONT IMPORTS
 import { loadAsync } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import Toast from "react-native-toast-message";
 // LOCAL IMPORTS
 // COMPONENTS
 import MainApp from "components/MainApp";
@@ -14,7 +15,6 @@ import { AuthProvider } from "fitra/contexts/AuthContext";
 
 export default function App() {
     const [isAppReady, setIsAppReady] = useState(false);
-
 
     useEffect(() => {
         async function prepare() {
@@ -53,6 +53,7 @@ export default function App() {
         <AuthProvider>
             <ThemeProvider>
                 <MainApp onLayoutRootView={onLayoutRootView} />
+                <Toast visibilityTime={2000} />
             </ThemeProvider>
         </AuthProvider>
     );

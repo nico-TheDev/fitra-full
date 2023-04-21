@@ -1,8 +1,7 @@
 import { Alert, TouchableOpacity } from "react-native";
 import React from "react";
 import { useFormik } from "formik";
-
-
+import Toast from "react-native-toast-message";
 // LOCAL IMPORTS
 import EllipseBg from "assets/illustrations/Ellipse-Bg.svg";
 import colors from "assets/themes/colors";
@@ -22,29 +21,33 @@ import {
     RegisterHere,
     RegisterLinkBg,
     CreateAccountText,
-    UserImgContainer
+    UserImgContainer,
 } from "./styles";
 import userProfile from "assets/img/user-1.jpg";
 import Button from "components/Button";
-import useAuthStore from 'hooks/useAuthStore';
+import useAuthStore from "hooks/useAuthStore";
 import Icon from "components/common/Icon";
 import { ICON_NAMES } from "constants/constant";
 
-
 const LoginScreen = ({ navigation }) => {
-    const verifyUser = useAuthStore(state => state.verifyUser);
-    const user = useAuthStore(state => state.user);
+    const verifyUser = useAuthStore((state) => state.verifyUser);
+    const user = useAuthStore((state) => state.user);
     const initialValues = { email: "", password: "" };
 
     const handleFormikSubmit = (values) => {
         if (values.email === "" || values.password === "") {
-            Alert.alert("Incomplete Input", "Please fill up the email and password.");
+            Toast.show({
+                type: "error",
+                text1: "Incomplete Input",
+                text2: "Please fill up the email and password.",
+            });
+            // Alert.alert("Incomplete Input", "Please fill up the email and password.");
         } else {
             verifyUser({
                 email: values.email,
-                password: values.password
+                password: values.password,
             });
-        };
+        }
     };
 
     const formik = useFormik({
@@ -57,7 +60,17 @@ const LoginScreen = ({ navigation }) => {
             <WelcomeTextContainer>
                 <WelcomeText1>Welcome !</WelcomeText1>
                 <WelcomeText2>Start monitoring your spending</WelcomeText2>
-                <UserImgContainer>{user.user_id ? <UserImg source={{ uri: user.profile_img }} /> : <Icon name={ICON_NAMES.SYSTEM_ICONS.USERPROFILE} size={100} color={colors.primary.colorFive} />}</UserImgContainer>
+                <UserImgContainer>
+                    {user.user_id ? (
+                        <UserImg source={{ uri: user.profile_img }} />
+                    ) : (
+                        <Icon
+                            name={ICON_NAMES.SYSTEM_ICONS.USERPROFILE}
+                            size={100}
+                            color={colors.primary.colorFive}
+                        />
+                    )}
+                </UserImgContainer>
             </WelcomeTextContainer>
             <LoginForm>
                 <InputHolder>
@@ -77,13 +90,13 @@ const LoginScreen = ({ navigation }) => {
                         placeholderTextColor={colors.primary.colorFive}
                     />
                 </InputHolder>
-                <ForgotPasswordHolder>
+                {/* <ForgotPasswordHolder>
                     <TouchableOpacity onPress={() => { }}>
                         <ForgotPasswordText>
                             Forgot your Password?
                         </ForgotPasswordText>
                     </TouchableOpacity>
-                </ForgotPasswordHolder>
+                </ForgotPasswordHolder> */}
                 <LoginFormButtonsHolder>
                     <Button
                         title={"LOGIN"}

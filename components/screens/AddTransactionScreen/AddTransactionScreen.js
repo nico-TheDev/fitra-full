@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import uuid from 'react-native-uuid';
-
+import Toast from "react-native-toast-message";
 // LOCAL IMPORTS
 import SwitchCategory from "components/SwitchCategory";
 import CustomDropdown from "components/CustomDropdown";
@@ -34,27 +34,28 @@ import capitalize from "util/capitalize";
 
 const AddTransactionScreen = ({ navigation }) => {
     let photoId = uuid.v4(); // unique id for the photo file name in storage
-    const user = useAuthStore(state => state.user);
+    const user = useAuthStore((state) => state.user);
     const [isExpense, setIsExpense] = useType();
     const [categories] = useCategoriesListener(user.user_id, isExpense);
-    const addTransaction = useTransactionStore(state => state.addTransaction);
-    const userAccounts = useAccountStore(state => state.accounts);
-    // Upload Hook 
+    const addTransaction = useTransactionStore((state) => state.addTransaction);
+    const userAccounts = useAccountStore((state) => state.accounts);
+    // Upload Hook
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transaction/");
     const [selectedIcon, setSelectedIcon] = useState({
         label: "",
         icon: "",
         currentIcon: "",
-        id: ""
+        id: "",
     });
-    const [date, setDate] = useState(new Date()); // Initial state will always be today 
+    const [date, setDate] = useState(new Date()); // Initial state will always be today
     const [accountItems, setAccountItems] = useState(() => {
-        const accounts = userAccounts.map(account => ({ label: capitalize(account.account_name), value: account.id }));
+        const accounts = userAccounts.map((account) => ({
+            label: capitalize(account.account_name),
+            value: account.id,
+        }));
         return accounts;
-    }
-    );
+    });
     const [selectedAccount, setSelectedAccount] = useState("");
-
 
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
@@ -84,10 +85,15 @@ const AddTransactionScreen = ({ navigation }) => {
             category_id: selectedIcon.id,
             user_id: user.user_id,
             type: values.type,
-            created_at: date
+            created_at: date,
         });
         resetForm();
-        Alert.alert("Success", "Transaction Created.");
+        // Alert.alert("Success", "Transaction Created.");
+        Toast.show({
+            type: "success",
+            text1: "Status",
+            text2: "Transaction Created",
+        });
         navigation.navigate("Dashboard", { screen: "DashboardMain" });
     };
 
@@ -100,7 +106,7 @@ const AddTransactionScreen = ({ navigation }) => {
         categoryName: "",
         comments: "",
         targetAccountId: "",
-        accountName: ""
+        accountName: "",
     };
 
     const formik = useFormik({
@@ -113,7 +119,10 @@ const AddTransactionScreen = ({ navigation }) => {
         setDate(selectedDate);
     };
 
-    let isSubmitDisabled = Number(formik.values.amount) <= 0 || !formik.values.targetAccount || !formik.values.categoryName;
+    let isSubmitDisabled =
+        Number(formik.values.amount) <= 0 ||
+        !formik.values.targetAccount ||
+        !formik.values.categoryName;
 
     return (
         <AddTransactionScreenContainer>
@@ -127,11 +136,7 @@ const AddTransactionScreen = ({ navigation }) => {
                     onChangeText={formik.handleChange("amount")}
                 />
                 <SwitchCategoryHolder>
-                    <SwitchCategory
-                        isEnabled={isExpense}
-                        setIsEnabled={setIsExpense}
-                        type="dark"
-                    />
+                    <SwitchCategory isEnabled={isExpense} setIsEnabled={setIsExpense} type="dark" />
                 </SwitchCategoryHolder>
             </TransactionPanelHolder>
 
@@ -146,11 +151,10 @@ const AddTransactionScreen = ({ navigation }) => {
                         onChangeValue: (value) => {
                             // console.log("dropdown:", value);
                             formik.setFieldValue("targetAccount", value);
-                            const targetAccount = accountItems.find(item => item.value === value);
+                            const targetAccount = accountItems.find((item) => item.value === value);
                             // console.log(targetAccount);
                             formik.setFieldValue("accountName", targetAccount.label);
-
-                        }
+                        },
                     }}
                     width="100%"
                     setValue={setSelectedAccount}
@@ -163,7 +167,6 @@ const AddTransactionScreen = ({ navigation }) => {
                             iconData={categories}
                             handlePress={handleIconPress}
                             selectedIcon={selectedIcon}
-
                         />
                     </TransactionCategoryHolder>
                     <CustomDatePicker

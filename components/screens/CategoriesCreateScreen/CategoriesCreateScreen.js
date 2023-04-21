@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Alert } from "react-native";
 import { useFormik } from "formik";
-
+import Toast from "react-native-toast-message";
 //LOCAL IMPORTS
 import CircleBG from "components/common/CircleBG";
 import CustomTextInput from "components/CustomTextInput";
@@ -12,12 +12,7 @@ import SwitchCategory from "components/SwitchCategory";
 import Button from "components/Button";
 
 import ScreenHeader from "components/ScreenHeader";
-import {
-    CategoriesContainer,
-    FunctionContainer,
-    ButtonContainer,
-    SwitchContainer,
-} from "./styles";
+import { CategoriesContainer, FunctionContainer, ButtonContainer, SwitchContainer } from "./styles";
 
 import useCategoriesData from "hooks/useCategoriesData";
 import Colors from "fitra/data/colorsCollection";
@@ -27,7 +22,7 @@ import ColorPicker from "components/common/ColorPicker";
 
 const CategoriesCreateScreen = ({ navigation }) => {
     const addCategory = useCategoriesData((state) => state.addCategory);
-    const user = useAuthStore(state => state.user);
+    const user = useAuthStore((state) => state.user);
     const [isExpense, setIsExpense] = useState(false);
     const [selectedIcon, setSelectedIcon] = useState("");
     const [selectedColor, setSelectedColor] = useState("");
@@ -40,7 +35,7 @@ const CategoriesCreateScreen = ({ navigation }) => {
         userID: "",
         type: "",
         createdAt: "",
-        updatedAt: ""
+        updatedAt: "",
     };
 
     const handleIconPress = (icon) => {
@@ -63,10 +58,15 @@ const CategoriesCreateScreen = ({ navigation }) => {
             category_type: values.type,
             created_at: new Date(),
             update_at: "",
-            user_id: user.user_id
+            user_id: user.user_id,
         });
         resetForm();
-        Alert.alert("Success", "Created a New Category");
+        Toast.show({
+            type: "success",
+            text1: "Status",
+            text2: "Category Created Successfully",
+        });
+        // Alert.alert("Success", "Created a New Category");
         navigation.navigate("Categories", { screen: "CategoriesMain" });
     };
 
@@ -85,7 +85,12 @@ const CategoriesCreateScreen = ({ navigation }) => {
         <CategoriesContainer>
             <CircleBG circleSize={250} />
             <ScreenHeader title="Create Category" />
-            {showColorWheel && <ColorPicker handleColorPress={handleColorPress} setShowColorWheel={setShowColorWheel} />}
+            {showColorWheel && (
+                <ColorPicker
+                    handleColorPress={handleColorPress}
+                    setShowColorWheel={setShowColorWheel}
+                />
+            )}
             <FunctionContainer>
                 <CustomTextInput
                     inputProps={{
@@ -97,10 +102,7 @@ const CategoriesCreateScreen = ({ navigation }) => {
                 />
             </FunctionContainer>
             <SwitchContainer>
-                <SwitchCategory
-                    isEnabled={isExpense}
-                    setIsEnabled={setIsExpense}
-                />
+                <SwitchCategory isEnabled={isExpense} setIsEnabled={setIsExpense} />
             </SwitchContainer>
             <IconOnlySelector
                 iconData={Object.values(ICON_NAMES.CATEGORIES_ICONS)}

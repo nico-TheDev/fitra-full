@@ -1,7 +1,7 @@
 import { Alert, Text } from "react-native";
 import React from "react";
 import { useFormik } from "formik";
-
+import Toast from "react-native-toast-message";
 // LOCAL IMPORTS
 import Button from "components/Button";
 import colors from "assets/themes/colors";
@@ -47,8 +47,18 @@ const RegisterScreen = ({ navigation }) => {
 
     const handleFormikSubmit = async (values, { resetForm }) => {
         // console.log(values);
-        if (values.firstName === "" || values.lastName === "" || values.email === "" || values.password === "") {
-            Alert.alert("Incomplete Input", "Please fill up your first name, last name, email and password");
+        if (
+            values.firstName === "" ||
+            values.lastName === "" ||
+            values.email === "" ||
+            values.password === ""
+        ) {
+            Toast.show({
+                type: "Error",
+                text1: "Incomplete Input",
+                text2: "Please fill up your first name, last name, email and password",
+            });
+            // Alert.alert("Incomplete Input", "Please fill up your first name, last name, email and password");
         } else {
             let imgFile;
             if (image) {

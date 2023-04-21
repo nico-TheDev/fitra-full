@@ -23,6 +23,7 @@
     "expo-image-picker": "~14.0.2",
     "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.2",
+    "expo-updates": "~0.15.6",
     "firebase": "9.6.11",
     "formik": "^2.2.9",
     "prop-types": "^15.8.1",
@@ -36,14 +37,14 @@
     "react-native-snap-carousel": "^4.0.0-beta.6",
     "react-native-svg": "13.4.0",
     "react-native-svg-transformer": "^1.0.0",
+    "react-native-toast-message": "^2.1.6",
     "react-native-uuid": "^2.0.1",
     "react-native-web": "~0.18.7",
     "react-number-format": "^5.1.2",
     "react-redux": "^8.0.2",
     "styled-components": "^5.3.5",
     "swr": "^1.3.0",
-    "zustand": "^4.1.1",
-    "expo-updates": "~0.15.6"
+    "zustand": "^4.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",

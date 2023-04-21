@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { Alert, TouchableOpacity } from "react-native";
 import uuid from "react-native-uuid";
-
+import Toast from "react-native-toast-message";
 import CircleBG from "components/common/CircleBG";
 import CustomTextInput from "components/CustomTextInput";
 import Button from "components/Button";
@@ -104,7 +104,12 @@ const EditProfileScreen = ({ navigation }) => {
                 profile_img: updatedImg,
             });
 
-            Alert.alert("SUCCESS", "Profile Updated");
+            // Alert.alert("SUCCESS", "Profile Updated");
+            Toast.show({
+                type: "success",
+                text1: "Status",
+                text2: "Profile Updated",
+            });
             navigation.navigate("Dashboard", { screen: "DashboardMain" });
             formik.resetForm();
 

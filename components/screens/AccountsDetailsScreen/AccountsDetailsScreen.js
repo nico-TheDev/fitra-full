@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
 // LOCAL IMPORTS
 import CircleBG from "components/common/CircleBG";
 import CustomTextInput from "components/CustomTextInput";
@@ -15,11 +16,7 @@ import ScreenHeader from "components/ScreenHeader";
 import { ICON_NAMES } from "constants/constant";
 import { colorCollection } from "fitra/SampleData";
 
-import {
-    AccountsContainer,
-    FunctionContainer,
-    ButtonContainer,
-} from "./styles";
+import { AccountsContainer, FunctionContainer, ButtonContainer } from "./styles";
 
 import useAccountStore from "hooks/useAccountStore";
 import useAuthStore from "hooks/useAuthStore";
@@ -30,14 +27,16 @@ const AccountsDetailsScreen = ({ route }) => {
     const navigation = useNavigation();
 
     // GLOBAL STATES
-    const user = useAuthStore(state => state.user);
-    const allAccounts = useAccountStore(state => state.accounts);
-    const deleteAccount = useAccountStore(state => state.deleteAccount);
-    const addAccount = useAccountStore(state => state.addAccount);
-    const updateAccount = useAccountStore(state => state.updateAccount);
+    const user = useAuthStore((state) => state.user);
+    const allAccounts = useAccountStore((state) => state.accounts);
+    const deleteAccount = useAccountStore((state) => state.deleteAccount);
+    const addAccount = useAccountStore((state) => state.addAccount);
+    const updateAccount = useAccountStore((state) => state.updateAccount);
 
     // COMPONENT STATE
-    const [currentAccount, setCurrentAccount] = useState(() => allAccounts.find(account => account.id === accountID));
+    const [currentAccount, setCurrentAccount] = useState(() =>
+        allAccounts.find((account) => account.id === accountID)
+    );
     const [selectedIcon, setSelectedIcon] = useState(currentAccount.account_icon);
     const [selectedColor, setSelectedColor] = useState(currentAccount.account_color);
     const [showColorWheel, setShowColorWheel] = useState(false);
@@ -51,7 +50,7 @@ const AccountsDetailsScreen = ({ route }) => {
 
     // MANAGE THE STATE AFTER FIRST MOUNT
     useEffect(() => {
-        const targetAccount = allAccounts.find(account => account.id === accountID);
+        const targetAccount = allAccounts.find((account) => account.id === accountID);
         // console.log(targetTransaction);
         setCurrentAccount(targetAccount);
         setSelectedIcon(targetAccount.account_icon);
@@ -75,13 +74,22 @@ const AccountsDetailsScreen = ({ route }) => {
             account_amount: values.account_amount,
             account_icon: values.account_icon,
             account_color: values.account_color,
-            id: accountID
+            id: accountID,
         };
-        if (allAccounts.filter(account => account.user_id === user.user_id).map(account => account.id).includes(accountID)) {
+        if (
+            allAccounts
+                .filter((account) => account.user_id === user.user_id)
+                .map((account) => account.id)
+                .includes(accountID)
+        ) {
             updateAccount(accountID, newAccount);
-            Alert.alert("SUCCESS", "Document Updated");
-        }
-        else {
+            // Alert.alert("SUCCESS", "Document Updated");
+            Toast.show({
+                type: "success",
+                text1: "Status",
+                text2: "Account Details Updated",
+            });
+        } else {
             addAccount({
                 user_id: user.user_id,
                 account_name: values.account_name,
@@ -95,16 +103,18 @@ const AccountsDetailsScreen = ({ route }) => {
     };
 
     const showDeletePrompt = () => {
-        Alert.alert("Deleting file", "Are you sure ?", [{
-            text: "Yes",
-            onPress: handleDelete,
-            style: "destructive"
-        }, {
-            text: "No",
-            onPress: () => { },
-            style: "cancel"
-        }]);
-
+        Alert.alert("Deleting file", "Are you sure ?", [
+            {
+                text: "Yes",
+                onPress: handleDelete,
+                style: "destructive",
+            },
+            {
+                text: "No",
+                onPress: () => {},
+                style: "cancel",
+            },
+        ]);
     };
 
     const handleDelete = () => {
@@ -146,14 +156,19 @@ const AccountsDetailsScreen = ({ route }) => {
         <AccountsContainer>
             <CircleBG circleSize={250} />
             <ScreenHeader title={screenTitle} />
-            {showColorWheel && <ColorPicker handleColorPress={handleColorPress} setShowColorWheel={setShowColorWheel} />}
+            {showColorWheel && (
+                <ColorPicker
+                    handleColorPress={handleColorPress}
+                    setShowColorWheel={setShowColorWheel}
+                />
+            )}
             <FunctionContainer>
                 <CustomTextInput
                     inputProps={{
                         placeholder: "Account Name",
                         onChangeText: formik.handleChange("account_name"),
                         value: formik.values.account_name,
-                        editable: mode === "edit"
+                        editable: mode === "edit",
                     }}
                     customLabel="Account Name:"
                 />
@@ -162,7 +177,7 @@ const AccountsDetailsScreen = ({ route }) => {
                         placeholder: "Account Amount",
                         onChangeText: formik.handleChange("account_amount"),
                         value: String(formik.values.account_amount),
-                        editable: mode === "edit"
+                        editable: mode === "edit",
                     }}
                     customLabel="Amount:"
                 />

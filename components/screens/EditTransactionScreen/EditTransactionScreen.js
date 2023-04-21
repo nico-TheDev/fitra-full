@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import uuid from 'react-native-uuid';
 import { deleteObject, ref } from "firebase/storage";
 import { Alert } from "react-native";
-
+import Toast from "react-native-toast-message";
 // firebase
 import { storage } from "fitra/firebase.config";
 
@@ -38,17 +38,17 @@ import useAccountStore from "hooks/useAccountStore";
 import capitalize from "util/capitalize";
 
 const EditTransactionScreen = ({ route, navigation }) => {
-    // Transaction State 
+    // Transaction State
     const { transactionID } = route.params;
-    const transactionList = useTransactionStore(state => state.transactions);
-    const deleteTransaction = useTransactionStore(state => state.deleteTransaction);
-    const updateTransaction = useTransactionStore(state => state.updateTransaction);
+    const transactionList = useTransactionStore((state) => state.transactions);
+    const deleteTransaction = useTransactionStore((state) => state.deleteTransaction);
+    const updateTransaction = useTransactionStore((state) => state.updateTransaction);
     const [currentTransaction, setCurrentTransaction] = useState(() => {
-        return transactionList.find(transaction => transaction.id === transactionID);
+        return transactionList.find((transaction) => transaction.id === transactionID);
     });
 
-    const user = useAuthStore(state => state.user);
-    const userAccounts = useAccountStore(state => state.accounts);
+    const user = useAuthStore((state) => state.user);
+    const userAccounts = useAccountStore((state) => state.accounts);
     const photoId = uuid.v4(); // unique id for new image
     const [date, setDate] = useState(convertTimestamp(currentTransaction.created_at));
     const [image, chooseImage, uploadImage, filename] = useUploadImage(photoId, "transaction/");
@@ -60,14 +60,19 @@ const EditTransactionScreen = ({ route, navigation }) => {
         currentIcon: "",
     });
     const [accountItems, setAccountItems] = useState(() => {
-        const accounts = userAccounts.map(account => ({ label: capitalize(account.account_name), value: account.id }));
+        const accounts = userAccounts.map((account) => ({
+            label: capitalize(account.account_name),
+            value: account.id,
+        }));
         return accounts;
     });
     const [selectedAccount, setSelectedAccount] = useState(currentTransaction.target_account);
 
     // MANAGE THE STATE AFTER FIRST MOUNT
     useEffect(() => {
-        const targetTransaction = transactionList.find(transaction => transaction.id === transactionID);
+        const targetTransaction = transactionList.find(
+            (transaction) => transaction.id === transactionID
+        );
         // console.log(targetTransaction);
         setCurrentTransaction(targetTransaction);
         setSelectedIcon({
@@ -75,17 +80,15 @@ const EditTransactionScreen = ({ route, navigation }) => {
             icon: currentTransaction.transaction_icon,
             color: currentTransaction.transaction_color,
             currentIcon: currentTransaction.transaction_icon,
-            id: currentTransaction.category_id
+            id: currentTransaction.category_id,
         });
     }, [transactionID]);
-
 
     const handleIconPress = (icon) => {
         setSelectedIcon(icon);
         formik.setFieldValue("categoryName", icon.label);
         formik.setFieldValue("transactionIcon", icon.currentIcon);
         formik.setFieldValue("transactionColor", icon.color);
-
     };
 
     const handleFormikSubmit = async (values) => {
@@ -94,7 +97,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
 
         values.transactionType = isExpense ? "expense" : "income";
 
-        // IF THERE IS AN EXISTING IMAGE AND NEW IMAGE IS SELECTED 
+        // IF THERE IS AN EXISTING IMAGE AND NEW IMAGE IS SELECTED
         if (image && oldImgRef) {
             // THEN DELETE THE OLD IMAGE
             const oldFileRef = ref(storage, oldImgRef);
@@ -108,9 +111,18 @@ const EditTransactionScreen = ({ route, navigation }) => {
         // Updates the img refs if there's a selected image or the current ref
         let updatedImgRef = imgFile ? imgFile.imgRef : currentTransaction.comment_img_ref;
         let updatedImg = imgFile ? imgFile.imgUri : currentTransaction.comment_img;
-        const transactionIcon = values.icon === currentTransaction.transaction_icon ? currentTransaction.transaction_icon : selectedIcon.currentIcon;
-        const categoryName = values.categoryName === currentTransaction.category_name ? currentTransaction.category_name : selectedIcon.label;
-        const targetAccount = values.categoryName === currentTransaction.category_name ? currentTransaction.category_name : selectedIcon.label;
+        const transactionIcon =
+            values.icon === currentTransaction.transaction_icon
+                ? currentTransaction.transaction_icon
+                : selectedIcon.currentIcon;
+        const categoryName =
+            values.categoryName === currentTransaction.category_name
+                ? currentTransaction.category_name
+                : selectedIcon.label;
+        const targetAccount =
+            values.categoryName === currentTransaction.category_name
+                ? currentTransaction.category_name
+                : selectedIcon.label;
 
         const newTransaction = {
             amount: Number(values.amount),
@@ -124,29 +136,41 @@ const EditTransactionScreen = ({ route, navigation }) => {
             user_id: user.user_id,
             type: values.type,
             created_at: date,
-            account_name: values.accountName
+            account_name: values.accountName,
         };
         updateTransaction(transactionID, newTransaction);
-        Alert.alert("SUCCESS", "Document Updated");
+        // Alert.alert("SUCCESS", "Document Updated");
+        Toast.show({
+            type: "success",
+            text1: "Status",
+            text2: "Transaction Updated",
+        });
         navigation.navigate("Dashboard", { screen: "DashboardMain" });
     };
 
     const showDeletePrompt = () => {
-        Alert.alert("Deleting file", "Are you sure ?", [{
-            text: "Yes",
-            onPress: handleDelete,
-            style: "destructive"
-        }, {
-            text: "No",
-            onPress: () => { },
-            style: "cancel"
-        }]);
-
+        Alert.alert("Deleting file", "Are you sure ?", [
+            {
+                text: "Yes",
+                onPress: handleDelete,
+                style: "destructive",
+            },
+            {
+                text: "No",
+                onPress: () => {},
+                style: "cancel",
+            },
+        ]);
     };
 
     const handleDelete = () => {
         deleteTransaction(transactionID, currentTransaction.comment_img_ref);
-        Alert.alert("Success", "Item Deleted.");
+        // Alert.alert("Success", "Item Deleted.");
+        Toast.show({
+            type: "success",
+            text1: "Status",
+            text2: "Transaction Deleted",
+        });
         navigation.navigate("Dashboard", { screen: "DashboardMain" });
     };
 
@@ -164,7 +188,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
         categoryId: currentTransaction.category_id,
         categoryName: currentTransaction.category_name,
         comments: currentTransaction.comments,
-        accountName: currentTransaction.account_name
+        accountName: currentTransaction.account_name,
     };
 
     const formik = useFormik({
@@ -184,11 +208,7 @@ const EditTransactionScreen = ({ route, navigation }) => {
                     onChangeText={formik.handleChange("amount")}
                 />
                 <SwitchCategoryHolder>
-                    <SwitchCategory
-                        isEnabled={isExpense}
-                        setIsEnabled={setIsExpense}
-                        type="dark"
-                    />
+                    <SwitchCategory isEnabled={isExpense} setIsEnabled={setIsExpense} type="dark" />
                 </SwitchCategoryHolder>
             </TransactionPanelHolder>
 
@@ -206,10 +226,12 @@ const EditTransactionScreen = ({ route, navigation }) => {
                         },
                         onSelectItem: (item) => {
                             formik.setFieldValue("targetAccount", item.value);
-                            const targetAccount = accountItems.find(account => account.value === item.value);
+                            const targetAccount = accountItems.find(
+                                (account) => account.value === item.value
+                            );
                             // console.log(targetAccount);
                             formik.setFieldValue("accountName", targetAccount.label);
-                        }
+                        },
                     }}
                     width="100%"
                     setValue={setSelectedAccount}

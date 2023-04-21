@@ -2,8 +2,9 @@ import { Alert } from 'react-native';
 import { useState } from 'react';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import * as ImagePicker from 'expo-image-picker';
+import Toast from "react-native-toast-message";
 
-import { storage } from 'fitra/firebase.config';
+import { storage } from "fitra/firebase.config";
 
 /*
     PROPS 
@@ -29,7 +30,7 @@ export default function useUploadImage(id, filepath, metadata = {}) {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
-            quality: 1
+            quality: 1,
         });
 
         let source = { uri: result.assets[0].uri };
@@ -40,7 +41,12 @@ export default function useUploadImage(id, filepath, metadata = {}) {
             setFilename(filename);
         } else {
             console.log("Choosing an Image Failed");
-            Alert.alert("Error", "Something went wrong when picking an image");
+            // Alert.alert("Error", "Something went wrong when picking an image");
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Something Went Wrong when picking an image",
+            });
             setImage(null);
             setFilename("");
         }
@@ -63,24 +69,34 @@ export default function useUploadImage(id, filepath, metadata = {}) {
         // GET A REFERENCE IN THE STORAGE WITH FILEPATH (e.g transactions/) and the unique ID
         const storageRef = ref(storage, filepath + fileId);
 
-        let fileExtension = image.uri.substring(image.uri.lastIndexOf('.') + 1);
+        let fileExtension = image.uri.substring(image.uri.lastIndexOf(".") + 1);
 
         try {
-            const snapshot = await uploadBytes(storageRef, fileBlob, { ...metadata, fileExtension });
+            const snapshot = await uploadBytes(storageRef, fileBlob, {
+                ...metadata,
+                fileExtension,
+            });
             const imgUrl = await getDownloadURL(snapshot.ref);
 
             // RESET THE STATE
             resetState();
-            Alert.alert("Upload Completed", "The image upload was successful.");
+            Toast.show({
+                type: "success",
+                text1: "Upload Completed",
+                text2: "The image upload was successful.",
+            });
+            // Alert.alert("Upload Completed", "The image upload was successful.");
             // returns the image url string , the imgRef string and fileExtension (optional)
             return { imgUri: imgUrl, imgRef: `${filepath}${fileId}`, mediaType: fileExtension };
         } catch (err) {
             console.log(err);
             // console.log("UPLOAD FAILED");
-            Alert.alert(
-                'Error',
-                "Something went wrong in uploading the image. Try again."
-            );
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Something went wrong in uploading the image. Try again.",
+            });
+            // Alert.alert("Error", "Something went wrong in uploading the image. Try again.");
             resetState();
         }
         // console.log(blob);

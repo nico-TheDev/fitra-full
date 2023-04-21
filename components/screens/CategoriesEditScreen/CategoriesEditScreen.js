@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { Alert, Text } from "react-native";
 import { TriangleColorPicker } from "react-native-color-picker";
-
+import Toast from "react-native-toast-message";
 //LOCAL IMPORTS
 import CircleBG from "components/common/CircleBG";
 import CustomTextInput from "components/CustomTextInput";
@@ -18,7 +18,7 @@ import {
     ButtonContainer,
     SwitchContainer,
     ColorPickerContainer,
-    CloseBtn
+    CloseBtn,
 } from "./styles";
 
 import Colors from "fitra/data/colorsCollection";
@@ -31,14 +31,16 @@ import ColorPicker from "components/common/ColorPicker";
 const CategoriesEditScreen = ({ route, navigation }) => {
     const { categoryID } = route.params;
     // GLOBAL STATES
-    const user = useAuthStore(state => state.user);
-    const allCategories = useCategoriesData(state => state.categories);
-    const deleteCategory = useCategoriesData(state => state.deleteCategory);
-    const addCategory = useCategoriesData(state => state.addCategory);
-    const updateCategory = useCategoriesData(state => state.updateCategory);
+    const user = useAuthStore((state) => state.user);
+    const allCategories = useCategoriesData((state) => state.categories);
+    const deleteCategory = useCategoriesData((state) => state.deleteCategory);
+    const addCategory = useCategoriesData((state) => state.addCategory);
+    const updateCategory = useCategoriesData((state) => state.updateCategory);
 
     // COMPONENT STATE
-    const [currentCategory, setCurrentCategory] = useState(() => allCategories.find(category => category.id === categoryID));
+    const [currentCategory, setCurrentCategory] = useState(() =>
+        allCategories.find((category) => category.id === categoryID)
+    );
     const [isExpense, setIsExpense] = useType(currentCategory.type !== "expense");
     const [selectedIcon, setSelectedIcon] = useState(currentCategory.category_icon);
     const [selectedColor, setSelectedColor] = useState(currentCategory.category_color);
@@ -48,12 +50,12 @@ const CategoriesEditScreen = ({ route, navigation }) => {
         type: currentCategory.type,
         category_icon: currentCategory.category_icon,
         category_name: currentCategory.category_name,
-        category_color: currentCategory.category_color
+        category_color: currentCategory.category_color,
     };
 
     // MANAGE THE STATE AFTER FIRST MOUNT
     useEffect(() => {
-        const targetCategory = allCategories.find(category => category.id === categoryID);
+        const targetCategory = allCategories.find((category) => category.id === categoryID);
         // console.log(targetTransaction);
         setCurrentCategory(targetCategory);
         setSelectedIcon(targetCategory.category_icon);
@@ -78,13 +80,22 @@ const CategoriesEditScreen = ({ route, navigation }) => {
             category_name: values.category_name,
             category_icon: values.category_icon,
             category_color: values.category_color,
-            id: categoryID
+            id: categoryID,
         };
-        if (allCategories.filter(category => category.user_id === user.user_id).map(category => category.id).includes(categoryID)) {
+        if (
+            allCategories
+                .filter((category) => category.user_id === user.user_id)
+                .map((category) => category.id)
+                .includes(categoryID)
+        ) {
             updateCategory(categoryID, newCategory);
-            Alert.alert("SUCCESS", "Document Updated");
-        }
-        else {
+            Toast.show({
+                type: "success",
+                text1: "Status",
+                text2: "Category Updated.",
+            });
+            // Alert.alert("SUCCESS", "Document Updated");
+        } else {
             addCategory({
                 user_id: user.user_id,
                 category_type: values.type,
@@ -98,21 +109,28 @@ const CategoriesEditScreen = ({ route, navigation }) => {
     };
 
     const showDeletePrompt = () => {
-        Alert.alert("Deleting file", "Are you sure ?", [{
-            text: "Yes",
-            onPress: handleDelete,
-            style: "destructive"
-        }, {
-            text: "No",
-            onPress: () => { },
-            style: "cancel"
-        }]);
-
+        Alert.alert("Deleting file", "Are you sure ?", [
+            {
+                text: "Yes",
+                onPress: handleDelete,
+                style: "destructive",
+            },
+            {
+                text: "No",
+                onPress: () => {},
+                style: "cancel",
+            },
+        ]);
     };
 
     const handleDelete = () => {
         deleteCategory(categoryID);
-        Alert.alert("Successfully Deleted Category");
+        // Alert.alert("Successfully Deleted Category");
+        Toast.show({
+            type: "success",
+            text1: "Status",
+            text2: "Category Deleted",
+        });
         navigation.navigate("Categories", { screen: "CategoriesMain" });
     };
 
@@ -126,23 +144,25 @@ const CategoriesEditScreen = ({ route, navigation }) => {
             <CircleBG circleSize={250} />
             <ScreenHeader title="Edit Category" />
 
-            {showColorWheel && <ColorPicker handleColorPress={handleColorPress} setShowColorWheel={setShowColorWheel} />}
+            {showColorWheel && (
+                <ColorPicker
+                    handleColorPress={handleColorPress}
+                    setShowColorWheel={setShowColorWheel}
+                />
+            )}
 
             <FunctionContainer>
                 <CustomTextInput
                     inputProps={{
                         placeholder: "Category Name",
                         onChangeText: formik.handleChange("category_name"),
-                        value: formik.values.category_name
+                        value: formik.values.category_name,
                     }}
                     customLabel="Category Name:"
                 />
             </FunctionContainer>
             <SwitchContainer>
-                <SwitchCategory
-                    isEnabled={isExpense}
-                    setIsEnabled={setIsExpense}
-                />
+                <SwitchCategory isEnabled={isExpense} setIsEnabled={setIsExpense} />
             </SwitchContainer>
             <IconOnlySelector
                 iconData={Object.values(ICON_NAMES.CATEGORIES_ICONS)}

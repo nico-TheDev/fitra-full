@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Alert } from "react-native";
 import { useFormik } from "formik";
-
+import Toast from "react-native-toast-message";
 //LOCAL IMPORTS
 import CircleBG from "components/common/CircleBG";
 import CustomTextInput from "components/CustomTextInput";
@@ -12,11 +12,7 @@ import IconOnlySelector from "components/IconOnlySelector";
 import ScreenHeader from "components/ScreenHeader";
 import ColorPicker from "components/common/ColorPicker";
 
-import {
-    AccountsContainer,
-    FunctionContainer,
-    ButtonContainer,
-} from "./styles";
+import { AccountsContainer, FunctionContainer, ButtonContainer } from "./styles";
 
 import { colorCollection } from "fitra/SampleData";
 import { ICON_NAMES } from "constants/constant";
@@ -25,11 +21,11 @@ import useAuthStore from "hooks/useAuthStore";
 
 const AccountsCreateAccountScreen = ({ navigation }) => {
     const addAccount = useAccountStore((state) => state.addAccount);
-    const user = useAuthStore(state => state.user);
+    const user = useAuthStore((state) => state.user);
     const [selectedColor, setSelectedColor] = useState("");
     const [selectedIcon, setSelectedIcon] = useState("");
     const [showColorWheel, setShowColorWheel] = useState(false);
-    const accounts = useAccountStore(state => state.accounts);
+    const accounts = useAccountStore((state) => state.accounts);
 
     const initialValues = {
         accountName: "",
@@ -50,10 +46,14 @@ const AccountsCreateAccountScreen = ({ navigation }) => {
     };
 
     const handleFormikSubmit = async (values, { resetForm }) => {
-        const existingAccounts = accounts.map(item => (item.account_name.toLowerCase()));
+        const existingAccounts = accounts.map((item) => item.account_name.toLowerCase());
         if (existingAccounts.includes(values.accountName.toLowerCase())) {
-            Alert.alert("Error", "The account name already exist.");
-
+            // Alert.alert("Error", "The account name already exist.");
+            Toast.show({
+                type: "error",
+                text1: "Status",
+                text2: "The account name already exist.",
+            });
         } else {
             addAccount({
                 account_name: values.accountName,
@@ -62,13 +62,17 @@ const AccountsCreateAccountScreen = ({ navigation }) => {
                 account_icon: values.accountIcon,
                 created_at: new Date(),
                 update_at: "",
-                user_id: user.user_id
+                user_id: user.user_id,
             });
             resetForm();
-            Alert.alert("Success", "Created a New Account");
+            // Alert.alert("Success", "Created a New Account");
+            Toast.show({
+                type: "success",
+                text1: "Status",
+                text2: "Created a new account.",
+            });
             navigation.navigate("Accounts", { screen: "AccountsMain" });
         }
-
     };
 
     const handleClear = () => {
@@ -86,7 +90,12 @@ const AccountsCreateAccountScreen = ({ navigation }) => {
         <AccountsContainer>
             <CircleBG circleSize={250} />
             <ScreenHeader title="Create Account" />
-            {showColorWheel && <ColorPicker handleColorPress={handleColorPress} setShowColorWheel={setShowColorWheel} />}
+            {showColorWheel && (
+                <ColorPicker
+                    handleColorPress={handleColorPress}
+                    setShowColorWheel={setShowColorWheel}
+                />
+            )}
             <FunctionContainer>
                 <CustomTextInput
                     inputProps={{
