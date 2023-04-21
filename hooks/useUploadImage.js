@@ -32,18 +32,15 @@ export default function useUploadImage(id, filepath, metadata = {}) {
             quality: 1
         });
 
-        let source = { uri: result.uri };
+        let source = { uri: result.assets[0].uri };
         // console.log(result);
-        if (!result.cancelled) {
-            const filename = source.uri.substring(source.uri.lastIndexOf('/') + 1);
+        if (!result.canceled) {
+            const filename = source.uri.substring(source.uri.lastIndexOf("/") + 1);
             setImage(source);
             setFilename(filename);
         } else {
             console.log("Choosing an Image Failed");
-            Alert.alert(
-                'Error',
-                "Something went wrong when picking an image"
-            );
+            Alert.alert("Error", "Something went wrong when picking an image");
             setImage(null);
             setFilename("");
         }
