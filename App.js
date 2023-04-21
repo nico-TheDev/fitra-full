@@ -1,3 +1,4 @@
+import 'expo-dev-client';
 // LIBRARY IMPORTS
 import { useState, useEffect, useCallback } from "react";
 // FONT IMPORTS

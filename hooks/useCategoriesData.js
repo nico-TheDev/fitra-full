@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import firestore, { addDoc, collection, serverTimestamp, deleteDoc, doc, updateDoc, query, where, getDocs, writeBatch, getDoc } from 'firebase/firestore';
 
 import { db } from 'fitra/firebase.config.js';
