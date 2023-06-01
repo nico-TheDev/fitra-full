@@ -43,10 +43,7 @@ const CategoriesScreen = () => {
                 onPressIcon={() => navigation.push("CategoriesCreate")}
             />
             <CategoryPanel>
-                <SwitchCategory
-                    isEnabled={isExpense}
-                    setIsEnabled={setIsExpense}
-                />
+                <SwitchCategory isEnabled={isExpense} setIsEnabled={setIsExpense} />
             </CategoryPanel>
             <CategoryList
                 data={categoryData}
@@ -58,7 +55,9 @@ const CategoriesScreen = () => {
                         label={item.category_name}
                         key={item.id}
                         type=""
-                        onPress={() => { handleNavigation(item.id); }}
+                        onPress={() => {
+                            handleNavigation(item.id);
+                        }}
                         styles={{ marginHorizontal: 10 }}
                     />
                 )}
@@ -72,7 +71,7 @@ const CategoriesScreen = () => {
                 }}
                 extraData={{
                     isExpense,
-                    categoryData: categoryData.length
+                    categoryData: categoryData.length,
                 }}
             />
         </CategoriesScreenContainer>

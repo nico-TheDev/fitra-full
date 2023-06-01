@@ -76,7 +76,7 @@ export const RegisterLinkBg = styled.View`
 
 export const RegisterLinkHolder = styled.View`
     position: relative;
-    margin-top: 100px;
+    margin-top: 45%;
     flex-direction: row;
 `;
 export const RegisterHere = styled.Text`
